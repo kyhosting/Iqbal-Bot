@@ -45,7 +45,8 @@ export default function (bot, db, saveDB) {
         status: "active",
         total_operation: 0,
         notified_expiry: false,
-        trial_start: Date.now()
+        trial_start: Date.now(),
+        suspended: false
       };
       saveDB();
       
@@ -60,10 +61,33 @@ export default function (bot, db, saveDB) {
         { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
       ).catch(() => {});
     }
+    
+    // Ambil user data
+    let user = db.users[userId];
+    
+    // Restore akses jika user suspended tapi trial masih aktif
+    if (user && user.suspended && user.vip_expired && user.vip_expired > Date.now()) {
+      user.suspended = false;
+      user.status = "active";
+      // Restore role ke trial/vip
+      if (!user.role || user.role === "user") {
+        user.role = user.trial_start ? "trial" : "vip";
+      }
+      saveDB();
+      
+      const daysLeft = Math.ceil((user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24));
+      await bot.sendMessage(userId,
+        `✅ *Akses Dipulihkan Kak!*\n\n` +
+        `Kamu sudah join kedua grup 🎉\n\n` +
+        `✨ Trial/VIP kamu aktif kembali!\n` +
+        `⏰ Sisa: *${daysLeft} hari*\n\n` +
+        `Lanjut nikmati fitur premium ya 😊`,
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+      ).catch(() => {});
+    }
 
     // Ambil role user
     const role = bot.getRole(userId);
-    const user = db.users[userId];
     
     // Hitung sisa hari VIP
     let expired = "Tidak Aktif";

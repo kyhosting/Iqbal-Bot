@@ -32,16 +32,17 @@ Sistem verifikasi:
 - Dipanggil di setiap VIP command (keyboard + slash)
 - Owner bypass verification check
 
-#### Auto-Revoke Access System 🚫
-**Fitur Keamanan - Saat user keluar dari salah satu grup:**
+#### Auto-Suspend Access System 🚫 (Preserve Trial Duration)
+**Fitur Keamanan - Trial/VIP duration TETAP, hanya akses yang di-suspend:**
 1. Bot otomatis detect event `my_chat_member` (user/bot left group)
 2. System check membership status di kedua grup
-3. JIKA tidak di 2 grup → **Akses DICABUT OTOMATIS**
-4. Role berubah dari VIP/TRIAL → USER biasa
-5. User terima notifikasi: "❌ *Akses Dicabut Kak!*"
-6. User perlu join kedua grup kembali + `/start` untuk re-verify
+3. JIKA tidak di 2 grup → **Akses DI-SUSPEND SEMENTARA**
+4. Set flag: `suspended: true`, `status: "suspended"`
+5. **PENTING:** `vip_expired` timestamp TIDAK direset (trial/VIP masih tersisa!)
+6. User terima notifikasi: "❌ *Akses Dicabut Sementara Kak!*" dengan info trial masih ada
+7. User join kedua grup → ketik `/start` → Akses otomatis DIPULIHKAN + notif ✅
 
-**Flow Detail:**
+**Flow Detail - Suspend & Restore:**
 ```
 User keluar @agentviber12 atau @channelviber
     ↓
@@ -49,20 +50,27 @@ my_chat_member event trigger
     ↓
 checkGroupMembership() verify status
     ↓
-Status != verified → VIP/TRIAL status REVOKED
+Status != verified → Set suspended=true (vip_expired TETAP)
     ↓
-Database update: role="user", vip_expired=0
+Database update: suspended=true, status="suspended"
     ↓
-Notifikasi dikirim ke user
+Notifikasi: "Akses dicabut sementara, trial masih ada"
     ↓
-User must join BOTH groups + /start to restore
+User join BOTH groups + /start
+    ↓
+Command detects: suspended=true && vip_expired > now()
+    ↓
+Auto-restore: suspended=false, status="active", role restored
+    ↓
+Notifikasi: "Akses dipulihkan! Sisa X hari" ✅
 ```
 
 **Komponen Code:**
-- Event: `bot.on("my_chat_member", async (update) => {...})`
-- Lokasi: index.js line 221-250
+- Suspend Event: `bot.on("my_chat_member", async (update) => {...})`
+- Lokasi suspend: index.js line 224-254
+- Restore Logic: commands/user-start.js line 71-90
 - Check method: `bot.checkGroupMembership(userId)`
-- DB update: role, vip_expired, status changes
+- DB fields: `suspended`, `status`, `vip_expired` (preserved!)
 
 ### VIP & Redeem System 💎
 **Redeem Code Features**:
