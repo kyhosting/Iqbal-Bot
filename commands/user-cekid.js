@@ -2,6 +2,7 @@ export default function (bot, db, saveDB) {
   bot.onText(/^\/cekid$/, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
+    const chatType = msg.chat.type; // private, group, supergroup, channel
 
     // Check group membership
     const groupCheck = await bot.checkGroupMembership(userId);
@@ -13,53 +14,46 @@ export default function (bot, db, saveDB) {
       );
     }
 
-    let message = `🆔 *CEK ID INFORMASI*\n\n`;
-    message += `${'─'.repeat(35)}\n\n`;
+    // Only in PRIVATE chat - show user ID
+    if (chatType === 'private') {
+      let message = `🆔 *CEK ID TELEGRAM USER*\n\n`;
+      message += `${'─'.repeat(35)}\n\n`;
+      message += `👤 *DATA TELEGRAM KAM:*\n`;
+      message += `├─ User ID: \`${userId}\`\n`;
+      message += `├─ Nama: *${msg.from.first_name}${msg.from.last_name ? ' ' + msg.from.last_name : ''}*\n`;
+      message += `├─ Username: ${msg.from.username ? '@' + msg.from.username : '-'}\n`;
+      message += `└─ Chat ID: \`${chatId}\`\n\n`;
+      message += `${'─'.repeat(35)}\n\n`;
+      message += `💡 Gunakan ID ini jika owner butuh untuk setting! 😊`;
 
-    message += `👤 *DATA TELEGRAM KAM:*\n`;
-    message += `├─ User ID: \`${userId}\`\n`;
-    message += `├─ Nama: *${msg.from.first_name}${msg.from.last_name ? ' ' + msg.from.last_name : ''}*\n`;
-    message += `├─ Username: ${msg.from.username ? '@' + msg.from.username : '-'}\n`;
-    message += `└─ Chat ID: \`${chatId}\`\n\n`;
+      return await bot.sendMessage(chatId, message, { parse_mode: "Markdown" });
+    }
 
-    message += `${'─'.repeat(35)}\n\n`;
-    message += `👥 *GRUP MANDATORY:*\n`;
-    message += `├─ Grup Utama: @agentviber12\n`;
-    message += `└─ Channel: @channelviber\n\n`;
-
-    message += `${'─'.repeat(35)}\n\n`;
-    message += `💡 *INFO PENTING:*\n`;
-    message += `Jika ingin cek ID grup/channel:\n`;
-    message += `• Tambahkan bot ke grup/channel\n`;
-    message += `• Ketik /cekid di grup/channel\n`;
-    message += `• Bot akan kirim ID grup tersebut\n\n`;
-
-    message += `_Gunakan ID ini jika dibutuhkan owner untuk setting! 😊_`;
-
-    await bot.sendMessage(chatId, message, { parse_mode: "Markdown" });
-  });
-
-  // Handle /cekid di grup/channel
-  bot.onText(/^\/cekid(@\w+)?/, async (msg) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-    const chatType = msg.chat.type; // private, group, supergroup, channel
-
-    // If it's a group or channel, show group/channel info
-    if (chatType === 'group' || chatType === 'supergroup' || chatType === 'channel') {
-      let groupInfo = `🆔 *CEK ID GRUP/CHANNEL*\n\n`;
+    // In GROUP/SUPERGROUP - show group ID only
+    if (chatType === 'group' || chatType === 'supergroup') {
+      let groupInfo = `🆔 *CEK ID GRUP*\n\n`;
       groupInfo += `${'─'.repeat(35)}\n\n`;
-
-      groupInfo += `📌 *INFORMASI:*\n`;
-      groupInfo += `├─ Chat ID: \`${chatId}\`\n`;
+      groupInfo += `📌 *INFORMASI GRUP:*\n`;
+      groupInfo += `├─ Grup ID: \`${chatId}\`\n`;
       groupInfo += `├─ Nama: *${msg.chat.title}*\n`;
-      groupInfo += `├─ Tipe: *${chatType === 'supergroup' ? 'Supergroup' : chatType === 'channel' ? 'Channel' : 'Group'}*\n`;
-      groupInfo += `└─ User ID: \`${userId}\`\n\n`;
-
+      groupInfo += `└─ Tipe: *${chatType === 'supergroup' ? 'Supergroup' : 'Group'}*\n\n`;
       groupInfo += `${'─'.repeat(35)}\n\n`;
-      groupInfo += `_ID grup/channel ini sudah tercatat! 😊_`;
+      groupInfo += `_ID grup ini sudah tersimpan! 😊_`;
 
-      return bot.sendMessage(chatId, groupInfo, { parse_mode: "Markdown" });
+      return await bot.sendMessage(chatId, groupInfo, { parse_mode: "Markdown" });
+    }
+
+    // In CHANNEL - show channel ID only
+    if (chatType === 'channel') {
+      let channelInfo = `🆔 *CEK ID CHANNEL*\n\n`;
+      channelInfo += `${'─'.repeat(35)}\n\n`;
+      channelInfo += `📢 *INFORMASI CHANNEL:*\n`;
+      channelInfo += `├─ Channel ID: \`${chatId}\`\n`;
+      channelInfo += `└─ Nama: *${msg.chat.title}*\n\n`;
+      channelInfo += `${'─'.repeat(35)}\n\n`;
+      channelInfo += `_ID channel ini sudah tercatat! 😊_`;
+
+      return await bot.sendMessage(chatId, channelInfo, { parse_mode: "Markdown" });
     }
   });
 }
