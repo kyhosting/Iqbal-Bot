@@ -31,3 +31,51 @@ dist/
 *.sln
 *.sw?
 *.env
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Database
+data/
+data.json
+db.json
+
+# Logs
+logs/
+*.log
+
+# Backups
+backup_*.json
+*.backup
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+temp/
+extracted_*.txt
+
+# Optional npm cache
+.npm
+
+# Replit specific (KEEP replit.md and .replit config)
