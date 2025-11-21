@@ -10,33 +10,19 @@ export default function (bot, db, saveDB) {
     const userId = msg.from.id;
     const role = bot.getRole(userId);
 
-    if (!["owner", "admin", "vip"].includes(role)) {
+    if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
-        `❌ *Yah… fitur ini khusus VIP nih Kak* 😔\n\n` +
-        `Upgrade ke VIP dulu ya untuk akses semua fitur premium!\n` +
-        `Hubungi @Iqbaldev untuk info lebih lanjut 💎`,
-        { 
-          parse_mode: "Markdown",
-          reply_markup: bot.getMainKeyboard()
-        }
+        `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`,
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
       );
     }
 
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `🧹 *Rapikan File TXT*\n\n` +
-      `Silakan kirim file TXT yang mau dirapikan ya Kak ✨\n\n` +
-      `Fitur ini akan:\n` +
-      `• Hapus nomor duplikat\n` +
-      `• Hapus baris kosong\n` +
-      `• Urutkan nomor (A-Z)\n\n` +
-      `Ketik \`batal\` untuk membatalkan.`,
-      { 
-        parse_mode: "Markdown",
-        reply_markup: bot.getMainKeyboard()
-      }
+      `🧹 *RAPIKAN FILE TXT*\n\n📌 *Fungsi:* Membersihkan file TXT dengan menghapus duplikat, baris kosong, dan mengurutkan secara alfabetis.\n\n📝 Kirim file TXT yang ingin dirapikan:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`,
+      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
     );
   });
 
@@ -46,33 +32,19 @@ export default function (bot, db, saveDB) {
     const userId = msg.from.id;
     const role = bot.getRole(userId);
 
-    if (!["owner", "admin", "vip"].includes(role)) {
+    if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
-        `❌ *Yah… fitur ini khusus VIP nih Kak* 😔\n\n` +
-        `Upgrade ke VIP dulu ya untuk akses semua fitur premium!\n` +
-        `Hubungi @Iqbaldev untuk info lebih lanjut 💎`,
-        { 
-          parse_mode: "Markdown",
-          reply_markup: bot.getMainKeyboard()
-        }
+        `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`,
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
       );
     }
 
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `🧹 *Rapikan File TXT*\n\n` +
-      `Silakan kirim file TXT yang mau dirapikan ya Kak ✨\n\n` +
-      `Fitur ini akan:\n` +
-      `• Hapus nomor duplikat\n` +
-      `• Hapus baris kosong\n` +
-      `• Urutkan nomor (A-Z)\n\n` +
-      `Ketik \`batal\` untuk membatalkan.`,
-      { 
-        parse_mode: "Markdown",
-        reply_markup: bot.getMainKeyboard()
-      }
+      `🧹 *RAPIKAN FILE TXT*\n\n📌 *Fungsi:* Membersihkan file TXT dengan menghapus duplikat, baris kosong, dan mengurutkan secara alfabetis.\n\n📝 Kirim file TXT yang ingin dirapikan:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`,
+      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
     );
   });
 

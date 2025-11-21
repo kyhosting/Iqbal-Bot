@@ -22,12 +22,12 @@ export default function (bot, db, saveDB) {
     if (!hasAccess) return;
     
     const role = bot.getRole(userId);
-    if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, `❌ *Yah… fitur ini khusus VIP nih Kak* 😔`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    if (!["owner", "admin", "vip", "trial"].includes(role)) {
+      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `📨 *Buat File Admin*\n\nMasukkan daftar nomor admin ya Kak ✨\n\nPisahkan dengan spasi jika lebih dari satu\n\nKetik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `👤 *BUAT FILE ADMIN*\n\n📌 *Fungsi:* Membuat file VCF yang berisi daftar nomor admin dengan format terstruktur.\n\n📝 Masukkan daftar nomor admin (pisahkan dengan spasi):\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.onText(/^\/createadmin$/, async (msg) => {
@@ -38,12 +38,12 @@ export default function (bot, db, saveDB) {
     if (!hasAccess) return;
     
     const role = bot.getRole(userId);
-    if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, `❌ *Yah… fitur ini khusus VIP nih Kak* 😔`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    if (!["owner", "admin", "vip", "trial"].includes(role)) {
+      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `📨 *Buat File Admin*\n\nMasukkan daftar nomor admin ya Kak ✨\n\nPisahkan dengan spasi jika lebih dari satu\n\nKetik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `👤 *BUAT FILE ADMIN*\n\n📌 *Fungsi:* Membuat file VCF yang berisi daftar nomor admin dengan format terstruktur.\n\n📝 Masukkan daftar nomor admin (pisahkan dengan spasi):\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", (msg) => {

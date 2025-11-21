@@ -13,12 +13,12 @@ export default function (bot, db, saveDB) {
     if (!hasAccess) return;
     
     const role = bot.getRole(userId);
-    if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, `❌ *Yah… fitur ini khusus VIP nih Kak* 😔\n\nUpgrade ke VIP dulu ya!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    if (!["owner", "admin", "vip", "trial"].includes(role)) {
+      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `📨 *Masukkan teks atau nomor*\n\nyang ingin diubah jadi file TXT ya Kak ✨\n\nKetik \`batal\` untuk membatalkan.`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `📨 *PESAN KE FILE TXT*\n\n📌 *Fungsi:* Mengubah pesan teks atau daftar nomor menjadi file TXT yang dapat diunduh.\n\n📝 Kirim teks atau nomor yang ingin diubah:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.onText(/^\/msgtotxt$/, async (msg) => {
@@ -29,12 +29,12 @@ export default function (bot, db, saveDB) {
     if (!hasAccess) return;
     
     const role = bot.getRole(userId);
-    if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, `❌ *Yah… fitur ini khusus VIP nih Kak* 😔\n\nUpgrade ke VIP dulu ya!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    if (!["owner", "admin", "vip", "trial"].includes(role)) {
+      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `📨 *Masukkan teks atau nomor*\n\nyang ingin diubah jadi file TXT ya Kak ✨\n\nKetik \`batal\` untuk membatalkan.`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `📨 *PESAN KE FILE TXT*\n\n📌 *Fungsi:* Mengubah pesan teks atau daftar nomor menjadi file TXT yang dapat diunduh.\n\n📝 Kirim teks atau nomor yang ingin diubah:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", (msg) => {
