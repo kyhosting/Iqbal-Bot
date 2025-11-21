@@ -10,22 +10,24 @@ export default function (bot, db, saveDB) {
       const keyboard = {
         inline_keyboard: [
           [
-            { text: "📱 Join @agentviber12", url: "https://t.me/agentviber12" },
+            { text: "📱 Join @agentviber12", url: "https://t.me/agentviber12" }
+          ],
+          [
             { text: "📱 Join @channelviber", url: "https://t.me/channelviber" }
           ],
           [
-            { text: "✅ Sudah Join - Cek Lagi", callback_data: "start_recheck" }
+            { text: "✅ Saya sudah join — Verifikasi", callback_data: "start_recheck" }
           ]
         ]
       };
       
       return bot.sendMessage(
         chatId,
-        `⚠️ *Akses Ditolak Kak!*\n\n` +
-        `Kamu harus join 2 grup berikut dulu:\n\n` +
-        `✓ @agentviber12\n` +
-        `✓ @channelviber\n\n` +
-        `Setelah join, klik tombol di bawah 😊`,
+        `🔐 *VERIFIKASI GRUP DIPERLUKAN*\n\n` +
+        `Silakan bergabung ke grup berikut untuk mendapatkan akses gratis 24 jam:\n\n` +
+        `📌 *@agentviber12* - Grup utama\n` +
+        `📌 *@channelviber* - Channel CV\n\n` +
+        `Setelah bergabung, klik tombol di bawah untuk verifikasi akses Anda 😊`,
         { parse_mode: "Markdown", reply_markup: keyboard }
       );
     }
