@@ -144,8 +144,13 @@ export default function (bot, db, saveDB) {
     if (session.step === 6) {
       if (/^lanjut$/i.test(text)) {
         session.step = 1;
-        bot.sendMessage(chatId, `📤 *Kirim file VCF berikutnya ya Kak*\n\nNomor kontak melanjut dari sebelumnya 📈`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        bot.sendMessage(chatId, `📤 *Kirim file VCF berikutnya ya Kak*\n\nNomor kontak melanjut dari sebelumnya 📈\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
         return;
+      }
+
+      if (/^done$/i.test(text) || /^selesai$/i.test(text)) {
+        delete sessions[userId];
+        return bot.sendMessage(chatId, "✅ Semua proses selesai ya Kak! 😊", { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       }
 
       delete sessions[userId];

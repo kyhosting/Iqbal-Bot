@@ -14,12 +14,12 @@ export default function (bot, db, saveDB) {
     if (!hasAccess) return;
     
     const role = bot.getRole(userId);
-    if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, `Kirim file untuk ekstrak nomor telepon (VCF, TXT, XLSX, CSV).`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    if (!["owner", "admin", "vip", "trial"].includes(role)) {
+      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `📄 *Ekstrak Nomor Dimulai*\n\nKirim file untuk ekstrak nomor telepon\n(VCF, TXT, XLSX, CSV).\n\n_Ketik "batal" untuk membatalkan proses._`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `📄 *EKSTRAK NOMOR*\n\n📌 *Fungsi:* Ekstrak semua nomor telepon dari file VCF, TXT, XLSX, atau CSV.\n\n📝 Kirim file Anda (VCF, TXT, XLSX, atau CSV):\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.onText(/^\/extractnomor$/, async (msg) => {
@@ -30,12 +30,12 @@ export default function (bot, db, saveDB) {
     if (!hasAccess) return;
     
     const role = bot.getRole(userId);
-    if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, `Kirim file untuk ekstrak nomor telepon (VCF, TXT, XLSX, CSV).`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    if (!["owner", "admin", "vip", "trial"].includes(role)) {
+      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `📄 *Ekstrak Nomor Dimulai*\n\nKirim file untuk ekstrak nomor telepon\n(VCF, TXT, XLSX, CSV).\n\n_Ketik "batal" untuk membatalkan proses._`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `📄 *EKSTRAK NOMOR*\n\n📌 *Fungsi:* Ekstrak semua nomor telepon dari file VCF, TXT, XLSX, atau CSV.\n\n📝 Kirim file Anda (VCF, TXT, XLSX, atau CSV):\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", async (msg) => {
