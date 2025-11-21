@@ -1,5 +1,22 @@
+function generateRandomCode() {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let code = "";
+  for (let i = 0; i < 8; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}
+
 export default function (bot, db, saveDB) {
   const sessions = {};
+  
+  // Make sure bot has saveRedeemDB method
+  if (!bot.saveRedeemDB) {
+    bot.saveRedeemDB = () => {
+      const fs = require("fs");
+      fs.writeFileSync("redeem.json", JSON.stringify(bot.redeemDB, null, 2));
+    };
+  }
   
   // Handle keyboard button "⛓️MENU OWNER"
   bot.onText(/^⛓️MENU OWNER$/i, (msg) => {
