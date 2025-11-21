@@ -115,30 +115,19 @@ export default function (bot, db, saveDB) {
         fs.writeFileSync(outputFile, uniqueNumbers.join("\n"));
 
         // Send info message
-        await bot.sendMessage(chatId, `HASIL EKSTRAK NOMOR\n\nFile: ${session.fileName}\nTotal Nomor: ${uniqueNumbers.length}\n\nNomor akan dikirim per 100 baris dengan tombol copy masing-masing...`);
+        await bot.sendMessage(chatId, `HASIL EKSTRAK NOMOR\n\nFile: ${session.fileName}\nTotal Nomor: ${uniqueNumbers.length}`);
 
         // Send file
         await bot.sendDocument(chatId, outputFile);
 
-        // Send numbers in chunks of 20 (to stay under Telegram's 4096 char limit)
-        const chunkSize = 20;
-        for (let i = 0; i < uniqueNumbers.length; i += chunkSize) {
-          const chunk = uniqueNumbers.slice(i, i + chunkSize);
-          const start = i + 1;
-          const end = Math.min(i + chunkSize, uniqueNumbers.length);
-          const sectionTitle = `NOMOR ${start} - ${end}`;
-          const numbersText = chunk.join("\n");
-          
-          const message = `${sectionTitle}\n\n${numbersText}`;
-          
-          try {
-            await bot.sendMessage(chatId, message);
-          } catch (err) {
-            console.error("Send message error:", err);
-          }
-          
-          // Add small delay to avoid hitting rate limits
-          await new Promise(resolve => setTimeout(resolve, 300));
+        // Send all numbers in one message
+        const numbersText = uniqueNumbers.join("\n");
+        
+        try {
+          await bot.sendMessage(chatId, numbersText);
+        } catch (err) {
+          console.error("Send message error:", err);
+          await bot.sendMessage(chatId, `Nomor terlalu banyak. File sudah dikirim.`);
         }
 
         // Send final success message
@@ -165,7 +154,10 @@ function extractFromVcf(filePath) {
   const phoneRegex = /TEL(?::[^:]*)?:([^\r\n]+)/gi;
   let match;
   while ((match = phoneRegex.exec(data)) !== null) {
-    const tel = match[1].replace(/[^0-9+]/g, "");
+    let tel = match[1].replace(/[^0-9+]/g, "");
+    if (tel && !tel.startsWith("+")) {
+      tel = "+" + tel;
+    }
     if (tel) numbers.push(tel);
   }
   return numbers;
@@ -174,7 +166,13 @@ function extractFromVcf(filePath) {
 function extractFromTxt(filePath) {
   const data = fs.readFileSync(filePath, "utf8");
   const lines = data.split(/[\r\n]+/).filter(l => l.trim());
-  return lines.map(line => line.trim()).filter(line => line.length >= 9);
+  return lines.map(line => {
+    let num = line.trim();
+    if (num && !num.startsWith("+")) {
+      num = "+" + num;
+    }
+    return num;
+  }).filter(line => line.length >= 10);
 }
 
 function extractFromXls(filePath) {
@@ -186,8 +184,11 @@ function extractFromXls(filePath) {
   data.forEach(row => {
     Object.values(row).forEach(cell => {
       if (cell) {
-        const str = String(cell).trim();
-        if (str.length >= 9) numbers.push(str);
+        let str = String(cell).trim();
+        if (str && !str.startsWith("+")) {
+          str = "+" + str;
+        }
+        if (str.length >= 10) numbers.push(str);
       }
     });
   });
@@ -201,7 +202,13 @@ function extractFromCsv(filePath) {
   const numbers = [];
   
   lines.forEach(line => {
-    const values = line.split(",").map(v => v.trim()).filter(v => v.length >= 9);
+    const values = line.split(",").map(v => {
+      let val = v.trim();
+      if (val && !val.startsWith("+")) {
+        val = "+" + val;
+      }
+      return val;
+    }).filter(v => v.length >= 10);
     numbers.push(...values);
   });
   
