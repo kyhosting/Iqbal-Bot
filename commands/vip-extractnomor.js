@@ -5,7 +5,7 @@ import XLSX from "xlsx";
 export default function (bot, db, saveDB) {
   const sessions = {};
 
-  // EKSTRAK NOMOR - Support VCF, TXT, dan XLS
+  // EKSTRAK NOMOR - Support VCF, TXT, XLS, CSV
   bot.onText(/^⛓️ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
@@ -15,11 +15,11 @@ export default function (bot, db, saveDB) {
     
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { reply_markup: bot.getMainKeyboard() });
+      return bot.sendMessage(chatId, `Kirim file untuk ekstrak nomor telepon (VCF, TXT, XLSX, CSV).`, { reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n(Extract Phone Number)\n\n▸ Support Format:\n  • VCF (Contact)\n  • TXT (Text)\n  • XLS (Excel)\n\n▸ Kirim file untuk ekstrak nomor\n\n▸ Ketik 'batal' untuk membatalkan\n\n◆`, { reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `Kirim file untuk ekstrak nomor\ntelepon (VCF, TXT, XLSX, CSV).`, { reply_markup: bot.getMainKeyboard() });
   });
 
   bot.onText(/^\/extractnomor$/, async (msg) => {
@@ -31,11 +31,11 @@ export default function (bot, db, saveDB) {
     
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { reply_markup: bot.getMainKeyboard() });
+      return bot.sendMessage(chatId, `Kirim file untuk ekstrak nomor telepon (VCF, TXT, XLSX, CSV).`, { reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n(Extract Phone Number)\n\n▸ Support Format:\n  • VCF (Contact)\n  • TXT (Text)\n  • XLS (Excel)\n\n▸ Kirim file untuk ekstrak nomor\n\n▸ Ketik 'batal' untuk membatalkan\n\n◆`, { reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `Kirim file untuk ekstrak nomor\ntelepon (VCF, TXT, XLSX, CSV).`, { reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", async (msg) => {
@@ -49,20 +49,21 @@ export default function (bot, db, saveDB) {
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n\n▸ ❌ Proses Dibatalkan\n\nAda yg bisa dibantu lagi?\n\n◆`, { reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `Proses dibatalkan.`, { reply_markup: bot.getMainKeyboard() });
       }
 
       if (!msg.document) {
-        return bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n\n▸ ⚠️ Bukan File\n\nKirim file VCF, TXT, atau XLS ya Kak\n\n◆`, { reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `Kirim file ya Kak!`, { reply_markup: bot.getMainKeyboard() });
       }
 
       const fileName = msg.document.file_name || "";
       const isVcf = fileName.endsWith(".vcf");
       const isTxt = fileName.endsWith(".txt");
       const isXls = fileName.endsWith(".xlsx") || fileName.endsWith(".xls");
+      const isCsv = fileName.endsWith(".csv");
 
-      if (!isVcf && !isTxt && !isXls) {
-        return bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n\n▸ ⚠️ Tipe File Salah\n\nHanya VCF, TXT, atau XLS\n\n◆`, { reply_markup: bot.getMainKeyboard() });
+      if (!isVcf && !isTxt && !isXls && !isCsv) {
+        return bot.sendMessage(chatId, `Format file tidak didukung.`, { reply_markup: bot.getMainKeyboard() });
       }
 
       try {
@@ -76,12 +77,13 @@ export default function (bot, db, saveDB) {
 
         session.step = 2;
         session.localPath = localPath;
-        session.fileType = isVcf ? "vcf" : isTxt ? "txt" : "xls";
+        session.fileName = fileName;
+        session.fileType = isVcf ? "vcf" : isTxt ? "txt" : isCsv ? "csv" : "xls";
 
-        return bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n\n▸ ✅ File Diterima\n\n▸ Masukkan nama file output\n(Tanpa ekstensi .txt)\n\nContoh: nomor_hasil\n\n▸ Ketik 'batal' untuk membatalkan\n\n◆`, { reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `Masukkan nama file output\n(Tanpa ekstensi):`, { reply_markup: bot.getMainKeyboard() });
       } catch (err) {
         console.error("Download error:", err);
-        return bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n\n▸ ⚠️ Gagal Download\n\nAda masalah saat download file\n\n◆`, { reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `Gagal download file.`, { reply_markup: bot.getMainKeyboard() });
       }
     }
 
@@ -90,7 +92,7 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text)) {
         try { fs.unlinkSync(session.localPath); } catch {}
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n\n▸ ❌ Proses Dibatalkan\n\n◆`, { reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `Proses dibatalkan.`, { reply_markup: bot.getMainKeyboard() });
       }
 
       const outputName = text.trim().replace(/[^a-zA-Z0-9-_]/g, "_") || "nomor_hasil";
@@ -105,13 +107,36 @@ export default function (bot, db, saveDB) {
           numbers = extractFromTxt(session.localPath);
         } else if (session.fileType === "xls") {
           numbers = extractFromXls(session.localPath);
+        } else if (session.fileType === "csv") {
+          numbers = extractFromCsv(session.localPath);
         }
 
         const uniqueNumbers = [...new Set(numbers)].sort();
         fs.writeFileSync(outputFile, uniqueNumbers.join("\n"));
 
+        // Send info message
+        await bot.sendMessage(chatId, `HASIL EKSTRAK NOMOR\n\nFile: ${session.fileName}\nTotal Nomor: ${uniqueNumbers.length}\n\nNomor akan dikirim per 100 baris dengan tombol copy masing-masing...`);
+
+        // Send file
         await bot.sendDocument(chatId, outputFile);
-        await bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ - ✅ SUKSES\n\n▸ Total Nomor: ${uniqueNumbers.length}\n▸ Nama File: ${outputName}.txt\n▸ Tipe: ${session.fileType.toUpperCase()}\n\n💎 Terima kasih sudah menggunakan bot ini 🙏\nJangan lupa support bot dengan subscribe channel 🤗\n\n◆`, { reply_markup: bot.getMainKeyboard() });
+
+        // Send numbers in chunks of 100
+        const chunkSize = 100;
+        for (let i = 0; i < uniqueNumbers.length; i += chunkSize) {
+          const chunk = uniqueNumbers.slice(i, i + chunkSize);
+          const start = i + 1;
+          const end = Math.min(i + chunkSize, uniqueNumbers.length);
+          const sectionTitle = `NOMOR ${start} - ${end}`;
+          const numbersText = chunk.join("\n");
+          
+          await bot.sendMessage(chatId, `${sectionTitle}\n\n${numbersText}`);
+          
+          // Add small delay to avoid hitting rate limits
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+
+        // Send final success message
+        await bot.sendMessage(chatId, `✅ Ekstrak Selesai\n\nTotal nomor: ${uniqueNumbers.length}`, { reply_markup: bot.getMainKeyboard() });
         
         bot.incrementOperation(userId);
 
@@ -122,7 +147,7 @@ export default function (bot, db, saveDB) {
       } catch (err) {
         console.error("Extract error:", err);
         try { fs.unlinkSync(session.localPath); } catch {}
-        return bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n\n▸ ⚠️ Ekstrak Gagal\n\nAda masalah saat ekstrak nomor\n\n◆`, { reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `Ekstrak gagal.`, { reply_markup: bot.getMainKeyboard() });
       }
     }
   });
@@ -163,6 +188,23 @@ function extractFromXls(filePath) {
           if (clean.length >= 9) numbers.push(clean);
         });
       }
+    });
+  });
+  
+  return numbers;
+}
+
+function extractFromCsv(filePath) {
+  const data = fs.readFileSync(filePath, "utf8");
+  const lines = data.split(/[\r\n]+/).filter(l => l.trim());
+  const numbers = [];
+  const phoneRegex = /(\+?[0-9\-\s()]{9,})/g;
+  
+  lines.forEach(line => {
+    const matches = line.match(phoneRegex) || [];
+    matches.forEach(num => {
+      const clean = num.replace(/[^0-9+]/g, "");
+      if (clean.length >= 9) numbers.push(clean);
     });
   });
   
