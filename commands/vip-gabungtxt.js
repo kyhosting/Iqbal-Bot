@@ -1,30 +1,39 @@
 import fs from "fs";
 import path from "path";
 
-export default function (bot) {
+export default function (bot, db, saveDB) {
   const sessions = {};
 
-  bot.onText(/^\/gabungtxt$/, (msg) => {
+  bot.onText(/^⛓️ ɢᴀʙᴜɴɢ ᴛxᴛ$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
+    
+    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
+    if (!hasAccess) return;
+    
     const role = bot.getRole(userId);
-
-    // Hanya untuk owner, admin, vip
     if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(
-        chatId,
-        "❌ Kamu tidak punya akses ke fitur ini.\n\nHubungi @oktodev untuk upgrade ke VIP.",
-        { parse_mode: "HTML" }
-      );
+      return bot.sendMessage(chatId, `❌ *Yah… fitur ini khusus VIP nih Kak* 😔`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1, files: [] };
+    bot.sendMessage(chatId, `📥 *Gabung File TXT*\n\nKirim file TXT yang mau digabung ya Kak ✨\n\nKetik \`done\` setelah 2+ file\nKetik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+  });
 
-    bot.sendMessage(
-      chatId,
-      "📥 <b>Kirim file .txt yang ingin kamu gabung</b>\n\nKetik <code>done</code> setelah minimal 2 file dikirim.\nKetik <code>batal</code> untuk membatalkan.",
-      { parse_mode: "HTML" }
-    );
+  bot.onText(/^\/gabungtxt$/, async (msg) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+    
+    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
+    if (!hasAccess) return;
+    
+    const role = bot.getRole(userId);
+    if (!["owner", "admin", "vip"].includes(role)) {
+      return bot.sendMessage(chatId, `❌ *Yah… fitur ini khusus VIP nih Kak* 😔`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    }
+
+    sessions[userId] = { step: 1, files: [] };
+    bot.sendMessage(chatId, `📥 *Gabung File TXT*\n\nKirim file TXT yang mau digabung ya Kak ✨\n\nKetik \`done\` setelah 2+ file\nKetik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", async (msg) => {
@@ -34,31 +43,25 @@ export default function (bot) {
     const session = sessions[userId];
     if (!session) return;
 
-    // Step 1 → Kirim file satu per satu
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
-        return bot.sendMessage(chatId, "❌ Proses dibatalkan.");
+        return bot.sendMessage(chatId, "❌ Proses dibatalkan ya Kak 😊", { reply_markup: bot.getMainKeyboard() });
       }
 
       if (/^done$/i.test(text)) {
         if (session.files.length < 2) {
-          return bot.sendMessage(chatId, "⚠️ Minimal 2 file untuk digabung!");
+          return bot.sendMessage(chatId, "⚠️ *Minimal 2 file untuk digabung ya Kak* 😊", { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
         }
         session.step = 2;
-        return bot.sendMessage(
-          chatId,
-          "📎 <b>Masukkan nama file output (tanpa .txt):</b>",
-          { parse_mode: "HTML" }
-        );
+        return bot.sendMessage(chatId, `📎 *Masukkan nama file output ya Kak*\n\nTanpa ekstensi .txt`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       }
 
       if (!msg.document || !msg.document.file_name.endsWith(".txt")) {
-        return bot.sendMessage(chatId, "⚠️ Kirim file dengan ekstensi .txt!");
+        return bot.sendMessage(chatId, "⚠️ *Harus file TXT ya Kak* 😊", { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       }
 
-      // Download file
       const fileId = msg.document.file_id;
       const file = await bot.getFile(fileId);
       const fileUrl = `https://api.telegram.org/file/bot${bot.token}/${file.file_path}`;
@@ -68,17 +71,14 @@ export default function (bot) {
       fs.writeFileSync(localPath, Buffer.from(buffer));
 
       session.files.push(localPath);
-      return bot.sendMessage(chatId, `✅ File <b>${msg.document.file_name}</b> disimpan.`, {
-        parse_mode: "HTML",
-      });
+      return bot.sendMessage(chatId, `✅ *File ${msg.document.file_name} disimpan* ✨\n\nKirim file lagi atau ketik \`done\` ya!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
-    // Step 2 → Input nama file output
     if (session.step === 2) {
       if (/^batal$/i.test(text)) {
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
-        return bot.sendMessage(chatId, "❌ Proses dibatalkan.");
+        return bot.sendMessage(chatId, "❌ Proses dibatalkan ya Kak 😊", { reply_markup: bot.getMainKeyboard() });
       }
 
       const outputName = text.trim().replace(/[^a-zA-Z0-9-_]/g, "_") || "gabungan";
@@ -87,17 +87,13 @@ export default function (bot) {
       try {
         mergeTxtFiles(session.files, outputFile);
         await bot.sendDocument(chatId, outputFile);
-        bot.sendMessage(
-          chatId,
-          `✅ <b>Berhasil digabung!</b>\n\nTotal file: ${session.files.length}\nOutput: <code>${outputName}.txt</code>`,
-          { parse_mode: "HTML" }
-        );
+        bot.sendMessage(chatId, `✅ *File TXT berhasil digabung Kak!* 🎉\n\n📂 *Nama:* \`${outputName}.txt\`\n📊 *Total file:* ${session.files.length}\n\nSemoga membantu ya! 😊`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        bot.incrementOperation(userId);
       } catch (err) {
         console.error(err);
-        bot.sendMessage(chatId, "⚠️ Gagal menggabungkan file!");
+        bot.sendMessage(chatId, "⚠️ *Yah… gagal gabung file* 😔", { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       }
 
-      // Bersihkan file sementara
       for (const f of [...session.files, outputFile]) {
         try { fs.unlinkSync(f); } catch {}
       }
@@ -106,8 +102,6 @@ export default function (bot) {
     }
   });
 }
-
-// ===== Fungsi Pendukung =====
 
 function mergeTxtFiles(inputFiles, outputFile) {
   let result = "";
