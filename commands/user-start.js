@@ -1,9 +1,39 @@
+import config from "../config.js";
+
 export default function (bot, db, saveDB) {
   bot.onText(/^\/start$/, async (msg) => {
     const userId = msg.from.id;
     const chatId = msg.chat.id;
 
-    // STEP 1: Show mandatory verification message
+    // ===== OWNER BYPASS - Go straight to dashboard =====
+    if (config.owner.includes(userId)) {
+      return showDashboard(bot, userId, chatId, db, saveDB);
+    }
+
+    const user = db.users[userId];
+
+    // ===== USER YANG SUDAH AKTIF - No verification needed =====
+    if (user && !user.suspended && user.status === "active") {
+      return showDashboard(bot, userId, chatId, db, saveDB);
+    }
+
+    // ===== USER YANG SUSPENDED - Must rejoin =====
+    if (user && user.suspended) {
+      const verifyKeyboard = {
+        inline_keyboard: [
+          [{ text: "✅ Verifikasi Sekarang", callback_data: "verify_join" }]
+        ]
+      };
+
+      return bot.sendMessage(
+        chatId,
+        `⚠️ *Wajib Join Grup Untuk Mengakses Bot*\n\n` +
+          `Klik tombol di bawah untuk verifikasi keanggotaan Anda.`,
+        { parse_mode: "Markdown", reply_markup: verifyKeyboard }
+      );
+    }
+
+    // ===== NEW USER - Show verification =====
     const verifyKeyboard = {
       inline_keyboard: [
         [{ text: "✅ Verifikasi Sekarang", callback_data: "verify_join" }]
@@ -13,7 +43,7 @@ export default function (bot, db, saveDB) {
     return bot.sendMessage(
       chatId,
       `⚠️ *Wajib Join Grup Untuk Mengakses Bot*\n\n` +
-      `Klik tombol di bawah untuk verifikasi keanggotaan Anda.`,
+        `Klik tombol di bawah untuk verifikasi keanggotaan Anda.`,
       { parse_mode: "Markdown", reply_markup: verifyKeyboard }
     );
   });
@@ -51,10 +81,10 @@ export default function (bot, db, saveDB) {
           await bot.sendMessage(
             chatId,
             `⚠️ *Silakan Join Grup Terlebih Dahulu*\n\n` +
-            `Klik tombol di bawah untuk join ke kedua grup:\n\n` +
-            `📌 *@agentviber12* - Grup utama\n` +
-            `📌 *@channelviber* - Channel CV\n\n` +
-            `Setelah join, klik "Sudah Join" untuk verifikasi 😊`,
+              `Klik tombol di bawah untuk join ke kedua grup:\n\n` +
+              `📌 *@agentviber12* - Grup utama\n` +
+              `📌 *@channelviber* - Channel CV\n\n` +
+              `Setelah join, klik "Sudah Join" untuk verifikasi 😊`,
             { parse_mode: "Markdown", reply_markup: joinKeyboard }
           );
         } catch (err) {
@@ -64,7 +94,7 @@ export default function (bot, db, saveDB) {
         // User sudah join - delete message & proceed to dashboard
         try {
           await bot.deleteMessage(chatId, messageId).catch(() => {});
-          await showDashboard(bot, userId, chatId, db);
+          await showDashboard(bot, userId, chatId, db, saveDB);
         } catch (err) {
           console.error("Error di verify_join (already joined):", err);
         }
@@ -87,7 +117,7 @@ export default function (bot, db, saveDB) {
         // User sudah join - delete message & proceed
         try {
           await bot.deleteMessage(chatId, messageId).catch(() => {});
-          await showDashboard(bot, userId, chatId, db);
+          await showDashboard(bot, userId, chatId, db, saveDB);
         } catch (err) {
           console.error("Error di verify_again:", err);
         }
@@ -96,39 +126,41 @@ export default function (bot, db, saveDB) {
   });
 }
 
-// ===== HELPER: Show Dashboard setelah verifikasi =====
-async function showDashboard(bot, userId, chatId, db) {
-  const user = db.users[userId];
+// ===== HELPER: Show Dashboard =====
+async function showDashboard(bot, userId, chatId, db, saveDB) {
+  let user = db.users[userId];
 
   // Jika user belum ada, tambahkan ke database + kasih trial 1 hari
   if (!user) {
-    const trialExpired = Date.now() + (1 * 24 * 60 * 60 * 1000); // 1 hari
+    const trialExpired = Date.now() + 1 * 24 * 60 * 60 * 1000; // 1 hari
     db.users[userId] = {
       id: userId,
       username: (await bot.getChat(userId)).username || "",
       first_name: (await bot.getChat(userId)).first_name || "",
       last_name: (await bot.getChat(userId)).last_name || "",
-      role: "trial",
-      vip_expired: trialExpired,
+      role: config.owner.includes(userId) ? "owner" : "trial",
+      vip_expired: config.owner.includes(userId) ? 0 : trialExpired,
       status: "active",
       total_operation: 0,
       notified_expiry: false,
       trial_start: Date.now(),
       suspended: false
     };
-    // bikinDB();
+    saveDB();
 
-    // Notif trial diberikan
-    await bot.sendMessage(
-      userId,
-      `🎁 *TRIAL 1 HARI GRATIS!*\n\n` +
-        `Selamat! Kamu sudah verifikasi grup 🎉\n\n` +
-        `✅ Akses trial selama 1 hari sudah aktif!\n` +
-        `⏰ Berlaku sampai: ${new Date(trialExpired).toLocaleDateString("id-ID")}\n\n` +
-        `Nikmati semua fitur premium dulu ya Kak! 💎\n` +
-        `Setelah trial habis, beli VIP untuk terus akses 😊`,
-      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
-    ).catch(() => {});
+    // Notif trial diberikan (hanya untuk non-owner)
+    if (!config.owner.includes(userId)) {
+      await bot.sendMessage(
+        userId,
+        `🎁 *TRIAL 1 HARI GRATIS!*\n\n` +
+          `Selamat! Kamu sudah verifikasi grup 🎉\n\n` +
+          `✅ Akses trial selama 1 hari sudah aktif!\n` +
+          `⏰ Berlaku sampai: ${new Date(trialExpired).toLocaleDateString("id-ID")}\n\n` +
+          `Nikmati semua fitur premium dulu ya Kak! 💎\n` +
+          `Setelah trial habis, beli VIP untuk terus akses 😊`,
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+      ).catch(() => {});
+    }
   } else {
     // User sudah ada - restore jika suspended
     if (user.suspended && user.vip_expired && user.vip_expired > Date.now()) {
@@ -137,7 +169,7 @@ async function showDashboard(bot, userId, chatId, db) {
       if (!user.role || user.role === "user") {
         user.role = user.trial_start ? "trial" : "vip";
       }
-      // bikinDB();
+      saveDB();
 
       const daysLeft = Math.ceil(
         (user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24)
@@ -155,19 +187,19 @@ async function showDashboard(bot, userId, chatId, db) {
   }
 
   // Get user data (refresh)
-  let userUpdated = db.users[userId];
+  user = db.users[userId];
   const role = bot.getRole(userId);
 
   // Hitung sisa hari VIP
   let expired = "Tidak Aktif";
   let remaining = "0 hari";
-  let status = userUpdated.status || "inactive";
+  let status = user.status || "inactive";
 
-  if (userUpdated.vip_expired && userUpdated.vip_expired > Date.now()) {
-    const expDate = new Date(userUpdated.vip_expired);
+  if (user.vip_expired && user.vip_expired > Date.now()) {
+    const expDate = new Date(user.vip_expired);
     expired = expDate.toLocaleDateString("id-ID");
     const daysLeft = Math.ceil(
-      (userUpdated.vip_expired - Date.now()) / (1000 * 60 * 60 * 24)
+      (user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24)
     );
     remaining = `${daysLeft} hari`;
     status = "active";
@@ -187,12 +219,16 @@ async function showDashboard(bot, userId, chatId, db) {
       `╭─❖ ꜱᴛᴀᴛᴜꜱ ᴀᴋᴄᴇꜱ\n` +
       `│ ➤ Nama: *${(await bot.getChat(userId)).first_name}*\n` +
       `│ ➤ ID: \`${userId}\`\n` +
-      `│ ➤ Username: ${(await bot.getChat(userId)).username ? "@" + (await bot.getChat(userId)).username : "-"}\n` +
+      `│ ➤ Username: ${
+        (await bot.getChat(userId)).username
+          ? "@" + (await bot.getChat(userId)).username
+          : "-"
+      }\n` +
       `│ ➤ Role: *${role.toUpperCase()}*\n` +
       `│ ➤ Status: *${status === "active" ? "✅ Aktif" : "❌ Tidak Aktif"}*\n` +
       `│ ➤ Masa Aktif: *${expired}*\n` +
       `│ ➤ Hari Tersisa: *${remaining}*\n` +
-      `│ ➤ Total Operasi: *${userUpdated.total_operation || 0}*\n` +
+      `│ ➤ Total Operasi: *${user.total_operation || 0}*\n` +
       `╰───────────────❖\n\n` +
       `╭─❖ ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ\n` +
       `│ ➤ 📄 TXT 📇 VCF 📊 XLSX\n` +
@@ -243,7 +279,7 @@ async function showDashboard(bot, userId, chatId, db) {
       `│ ➤ Status: *${status === "active" ? "✅ Aktif" : "❌ Tidak Aktif"}*\n` +
       `│ ➤ Masa Aktif: *${expired}*\n` +
       `│ ➤ Hari Tersisa: *${remaining}*\n` +
-      `│ ➤ Total Operasi: *${userUpdated.total_operation || 0}*\n` +
+      `│ ➤ Total Operasi: *${user.total_operation || 0}*\n` +
       `╰───────────────❖\n\n` +
       `💎 ご利用ありがとうございます。`;
 
