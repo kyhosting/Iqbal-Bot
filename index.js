@@ -161,17 +161,21 @@ bot.verifyGroupAccess = async (userId, chatId) => {
   const groupCheck = await bot.checkGroupMembership(userId);
   
   if (!groupCheck.verified) {
-    const missingGroups = [];
-    if (!groupCheck.inGroup1) missingGroups.push(`@agentviber12`);
-    if (!groupCheck.inGroup2) missingGroups.push(`@channelviber`);
+    const groupMainDeeplink = `https://t.me/agentviber12?join`;
+    const groupCvDeeplink = `https://t.me/channelviber?join`;
+
+    const joinKeyboard = {
+      inline_keyboard: [
+        [{ text: "📱 @agentviber12", url: groupMainDeeplink }],
+        [{ text: "📱 @channelviber", url: groupCvDeeplink }],
+        [{ text: "✅ Sudah Join", callback_data: "verify_again" }]
+      ]
+    };
     
     await bot.sendMessage(
       chatId,
-      `⚠️ *Akses Ditolak Kak!*\n\n` +
-      `Kamu harus tetap join grup ini ya:\n` +
-      `${missingGroups.map(g => `• ${g}`).join('\n')}\n\n` +
-      `Setelah join, coba lagi 😊`,
-      { parse_mode: "Markdown" }
+      `⚠️ Wajib join 2 grup untuk akses`,
+      { reply_markup: joinKeyboard }
     );
     
     return false;
