@@ -46,7 +46,7 @@ export default function (bot, db, saveDB) {
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, "❌ Proses dibatalkan ya Kak 😊", { reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, "❌ Proses dibatalkan ya Kak 😊", { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       }
 
       if (!msg.document || !msg.document.file_name.endsWith(".vcf")) {
@@ -73,7 +73,7 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text)) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
-        return bot.sendMessage(chatId, "❌ Proses dibatalkan ya Kak 😊", { reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, "❌ Proses dibatalkan ya Kak 😊", { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       }
 
       session.newFileName = /^skip$/i.test(text) || !text ? session.originalName : text.replace(/[^a-zA-Z0-9-_]/g, "_");
@@ -91,7 +91,7 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text) || isNaN(parseInt(text))) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
-        return bot.sendMessage(chatId, "❌ Proses dibatalkan ya Kak 😊", { reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, "❌ Proses dibatalkan ya Kak 😊", { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       }
       session.splitCounter = parseInt(text);
       session.step = 4;
@@ -103,7 +103,7 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text) || isNaN(parseInt(text))) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
-        return bot.sendMessage(chatId, "❌ Proses dibatalkan ya Kak 😊", { reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, "❌ Proses dibatalkan ya Kak 😊", { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       }
       session.fileCounter = parseInt(text);
       session.step = 5;
@@ -115,7 +115,7 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text) || isNaN(parseInt(text)) || parseInt(text) <= 0) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
-        return bot.sendMessage(chatId, "❌ Proses dibatalkan ya Kak 😊", { reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, "❌ Proses dibatalkan ya Kak 😊", { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       }
 
       const bagian = parseInt(text);
