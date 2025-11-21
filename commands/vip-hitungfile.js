@@ -5,14 +5,9 @@ export default function (bot, db, saveDB) {
   const sessions = {};
 
   // Handle keyboard button
-  bot.onText(/^⛓️ ᴠᴄꜱ ᴛᴏ ᴛxᴛ$/i, async (msg) => {
+  bot.onText(/^⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ$/i, (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
-    
-    // Verify group membership first
-    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
-    if (!hasAccess) return;
-    
     const role = bot.getRole(userId);
 
     if (!["owner", "admin", "vip"].includes(role)) {
@@ -31,8 +26,11 @@ export default function (bot, db, saveDB) {
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `📇 *VCF to TXT Converter*\n\n` +
-      `Silakan kirim file VCF yang mau diubah jadi TXT ya Kak ✨\n\n` +
+      `🔢 *Hitung Kontak di File*\n\n` +
+      `Silakan kirim file yang mau dihitung ya Kak ✨\n\n` +
+      `Format yang didukung:\n` +
+      `• 📄 TXT (nomor per baris)\n` +
+      `• 📇 VCF (vCard)\n\n` +
       `Ketik \`batal\` untuk membatalkan.`,
       { 
         parse_mode: "Markdown",
@@ -41,14 +39,10 @@ export default function (bot, db, saveDB) {
     );
   });
 
-  bot.onText(/^\/vcftotxt$/, async (msg) => {
+  // Handle /hitungfile command
+  bot.onText(/^\/hitungfile$/, (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
-    
-    // Verify group membership first
-    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
-    if (!hasAccess) return;
-    
     const role = bot.getRole(userId);
 
     if (!["owner", "admin", "vip"].includes(role)) {
@@ -67,8 +61,11 @@ export default function (bot, db, saveDB) {
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `📇 *VCF to TXT Converter*\n\n` +
-      `Silakan kirim file VCF yang mau diubah jadi TXT ya Kak ✨\n\n` +
+      `🔢 *Hitung Kontak di File*\n\n` +
+      `Silakan kirim file yang mau dihitung ya Kak ✨\n\n` +
+      `Format yang didukung:\n` +
+      `• 📄 TXT (nomor per baris)\n` +
+      `• 📇 VCF (vCard)\n\n` +
       `Ketik \`batal\` untuk membatalkan.`,
       { 
         parse_mode: "Markdown",
@@ -84,7 +81,7 @@ export default function (bot, db, saveDB) {
     const session = sessions[userId];
     if (!session) return;
 
-    // Step 1 → kirim file .vcf
+    // Step 1 → kirim file
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
@@ -95,10 +92,25 @@ export default function (bot, db, saveDB) {
         );
       }
 
-      if (!msg.document || !msg.document.file_name.endsWith(".vcf")) {
+      if (!msg.document) {
         return bot.sendMessage(
           chatId, 
-          "⚠️ *Harus file VCF ya Kak* 😊\n\nCoba kirim file dengan ekstensi .vcf",
+          "⚠️ *Kirim file dulu ya Kak* 😊",
+          { 
+            parse_mode: "Markdown",
+            reply_markup: bot.getMainKeyboard()
+          }
+        );
+      }
+
+      const fileName = msg.document.file_name;
+      const isTXT = fileName.endsWith(".txt");
+      const isVCF = fileName.endsWith(".vcf");
+
+      if (!isTXT && !isVCF) {
+        return bot.sendMessage(
+          chatId,
+          "⚠️ *Hanya support TXT atau VCF ya Kak* 😊",
           { 
             parse_mode: "Markdown",
             reply_markup: bot.getMainKeyboard()
@@ -111,70 +123,37 @@ export default function (bot, db, saveDB) {
       const filePath = `https://api.telegram.org/file/bot${bot.token}/${file.file_path}`;
       const res = await fetch(filePath);
       const buffer = await res.arrayBuffer();
-      const localPath = path.join(process.cwd(), msg.document.file_name);
+      const localPath = path.join(process.cwd(), fileName);
       fs.writeFileSync(localPath, Buffer.from(buffer));
 
-      session.file = localPath;
-      session.originalName = msg.document.file_name.replace(".vcf", "");
-      session.step = 2;
-
-      return bot.sendMessage(
-        chatId,
-        `📝 *Masukkan nama file baru ya Kak*\n\n` +
-        `Ketik nama tanpa ekstensi .txt\n` +
-        `Ketik \`skip\` untuk gunakan nama sama.\n` +
-        `Ketik \`batal\` untuk membatalkan.`,
-        { 
-          parse_mode: "Markdown",
-          reply_markup: bot.getMainKeyboard()
-        }
-      );
-    }
-
-    // Step 2 → input nama file output
-    if (session.step === 2) {
-      if (/^batal$/i.test(text)) {
-        fs.unlinkSync(session.file);
-        delete sessions[userId];
-        return bot.sendMessage(
-          chatId, 
-          "❌ Proses dibatalkan ya Kak 😊",
-          { reply_markup: bot.getMainKeyboard() }
-        );
-      }
-
-      const outputName = /^skip$/i.test(text)
-        ? session.originalName
-        : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
-
       try {
-        const content = fs.readFileSync(session.file, "utf8");
-        const matches = content.match(/TEL;[^:]*:(\+?\d+)/g) || [];
-        const numbers = matches.map((m) => m.replace(/.*:/, ""));
+        const content = fs.readFileSync(localPath, "utf8");
+        let count = 0;
+        let unique = 0;
 
-        if (numbers.length === 0) {
-          fs.unlinkSync(session.file);
-          delete sessions[userId];
-          return bot.sendMessage(
-            chatId, 
-            "⚠️ *Tidak ditemukan nomor telepon di file Kak* 😔",
-            { 
-              parse_mode: "Markdown",
-              reply_markup: bot.getMainKeyboard()
-            }
-          );
+        if (isTXT) {
+          const lines = content.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+          count = lines.length;
+          unique = new Set(lines).size;
+        } else if (isVCF) {
+          const matches = content.match(/TEL;[^:]*:(\+?\d+)/g) || [];
+          count = matches.length;
+          const numbers = matches.map(m => m.replace(/.*:/, ""));
+          unique = new Set(numbers).size;
         }
 
-        const outputFile = `${outputName}.txt`;
-        const outputPath = path.join(process.cwd(), outputFile);
-        fs.writeFileSync(outputPath, numbers.join("\n"));
+        const duplicates = count - unique;
+        const fileSize = (msg.document.file_size / 1024).toFixed(2);
 
-        await bot.sendDocument(chatId, outputPath);
         await bot.sendMessage(
           chatId,
-          `✅ *File TXT berhasil dibuat Kak!* 🎉\n\n` +
-          `📂 *Nama file:* \`${outputFile}\`\n` +
-          `📊 *Total nomor:* ${numbers.length}\n\n` +
+          `✅ *Berhasil hitung kontak Kak!* 📊\n\n` +
+          `📂 *File:* \`${fileName}\`\n` +
+          `📏 *Ukuran:* ${fileSize} KB\n\n` +
+          `📊 *Detail:*\n` +
+          `• Total kontak: *${count}*\n` +
+          `• Kontak unik: *${unique}*\n` +
+          `• Duplikat: *${duplicates}*\n\n` +
           `Semoga membantu ya! 😊`,
           { 
             parse_mode: "Markdown",
@@ -183,13 +162,15 @@ export default function (bot, db, saveDB) {
         );
 
         bot.incrementOperation(userId);
-        fs.unlinkSync(outputPath);
-        fs.unlinkSync(session.file);
+        fs.unlinkSync(localPath);
       } catch (err) {
-        console.error("Gagal convert:", err);
+        console.error("Gagal hitung file:", err);
+        if (fs.existsSync(localPath)) {
+          fs.unlinkSync(localPath);
+        }
         bot.sendMessage(
-          chatId, 
-          "⚠️ *Yah… ada masalah saat konversi file* 😔\n\nCoba lagi ya Kak!",
+          chatId,
+          "⚠️ *Yah… ada masalah saat hitung file* 😔\n\nCoba lagi ya Kak!",
           { 
             parse_mode: "Markdown",
             reply_markup: bot.getMainKeyboard()
