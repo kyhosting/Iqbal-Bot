@@ -105,8 +105,9 @@ export default function (bot, db, saveDB) {
         `File asli: \`${msg.document.file_name}\`\n` +
         `Ekstensi: \`${ext}\`\n\n` +
         `Ketik nama baru (tanpa ekstensi).\n` +
-        `Ketik \`skip\` untuk pakai nama yang sama.\n` +
-        `Ketik \`batal\` untuk batalkan.`,
+        `Ketik \`skip\` untuk pakai nama yang sama.\n\n` +
+        `✓ Ketik \`done\` setelah selesai\n` +
+        `✗ Ketik \`batal\` untuk batalkan`,
         { 
           parse_mode: "Markdown",
           reply_markup: bot.getMainKeyboard()
@@ -122,6 +123,16 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId, 
           "❌ Proses dibatalkan ya Kak 😊",
+          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+        );
+      }
+
+      if (/^done$/i.test(text)) {
+        fs.unlinkSync(session.file);
+        delete sessions[userId];
+        return bot.sendMessage(
+          chatId, 
+          "❌ Nama file tidak boleh kosong Kak 😊\n\nCoba lagi ya!",
           { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
         );
       }

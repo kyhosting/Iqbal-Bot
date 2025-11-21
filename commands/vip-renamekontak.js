@@ -102,7 +102,8 @@ export default function (bot, db, saveDB) {
         `📝 *Masukkan nama kontak baru ya Kak*\n\n` +
         `Semua kontak di file ini akan diganti namanya dengan nama yang kamu masukkan.\n\n` +
         `Contoh: Iqbal CV, Teman Iqbal, dll\n\n` +
-        `Ketik \`batal\` untuk membatalkan.`,
+        `✓ Ketik \`done\` setelah selesai\n` +
+        `✗ Ketik \`batal\` untuk membatalkan`,
         { 
           parse_mode: "Markdown",
           reply_markup: bot.getMainKeyboard()
@@ -118,6 +119,16 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId, 
           "❌ Proses dibatalkan ya Kak 😊",
+          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+        );
+      }
+
+      if (/^done$/i.test(text)) {
+        fs.unlinkSync(session.file);
+        delete sessions[userId];
+        return bot.sendMessage(
+          chatId, 
+          "❌ Nama kontak tidak boleh kosong Kak 😊\n\nCoba lagi ya!",
           { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
         );
       }
