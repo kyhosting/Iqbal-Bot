@@ -14,23 +14,7 @@ function createVcfEntry(phone, name) {
 export default function (bot, db, saveDB) {
   const sessions = {};
 
-  bot.onText(/^⛓️ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ$/i, async (msg) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-    
-    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
-    if (!hasAccess) return;
-    
-    const role = bot.getRole(userId);
-    if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
-    }
-
-    sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `👤 *BUAT FILE ADMIN*\n\n📌 *Fungsi:* Membuat file VCF yang berisi daftar nomor admin dengan format terstruktur.\n\n📝 Masukkan daftar nomor admin (pisahkan dengan spasi):\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
-  });
-
-  bot.onText(/^\/createadmin$/, async (msg) => {
+  bot.onText(/^⛓️ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ$|^\/createadmin$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     

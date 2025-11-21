@@ -4,8 +4,8 @@ import path from "path";
 export default function (bot, db, saveDB) {
   const sessions = {};
 
-  // Handle keyboard button
-  bot.onText(/^⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ$/i, (msg) => {
+  // Handle keyboard button & /renamefile command (MERGED - no duplicate!)
+  bot.onText(/^⛓️ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ$|^\/renamefile$/i, (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);
@@ -13,9 +13,7 @@ export default function (bot, db, saveDB) {
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
-        `❌ *Yah… fitur ini khusus VIP nih Kak* 😔\n\n` +
-        `Upgrade ke VIP dulu ya untuk akses semua fitur premium!\n` +
-        `Hubungi @Iqbaldev untuk info lebih lanjut 💎`,
+        `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`,
         { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
       );
     }
@@ -23,35 +21,7 @@ export default function (bot, db, saveDB) {
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `✏️ *Rename File*\n\n` +
-      `Silakan kirim file yang mau direname ya Kak ✨\n\n` +
-      `Ketik \`batal\` untuk membatalkan.`,
-      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
-    );
-  });
-
-  // Handle /renamefile command
-  bot.onText(/^\/renamefile$/, (msg) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-    const role = bot.getRole(userId);
-
-    if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(
-        chatId,
-        `❌ *Yah… fitur ini khusus VIP nih Kak* 😔\n\n` +
-        `Upgrade ke VIP dulu ya untuk akses semua fitur premium!\n` +
-        `Hubungi @Iqbaldev untuk info lebih lanjut 💎`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
-      );
-    }
-
-    sessions[userId] = { step: 1 };
-    bot.sendMessage(
-      chatId,
-      `✏️ *Rename File*\n\n` +
-      `Silakan kirim file yang mau direname ya Kak ✨\n\n` +
-      `Ketik \`batal\` untuk membatalkan.`,
+      `✏️ *RENAME FILE*\n\n📌 *Fungsi:* Mengubah nama file Anda dengan nama baru yang diinginkan.\n\n📝 Kirim file yang ingin di-rename:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`,
       { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
     );
   });
