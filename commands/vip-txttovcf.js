@@ -25,11 +25,11 @@ export default function (bot, db, saveDB) {
     
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      return bot.sendMessage(chatId, `◆ TXT TO VCF\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `📝 *TXT KE VCF CONVERTER*\n\n📌 *Fungsi:* Mengubah file TXT atau XLSX menjadi file VCF dengan kontak terformat.\n\n📋 *Format File:*\n• Satu nomor per baris (untuk TXT)\n• Satu nomor per kolom (untuk XLSX)\n\n📤 Kirim file TXT atau XLSX:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `◆ TXT TO VCF\n(Text to Contact Converter)\n\n▸ Support Format:\n  • TXT (Text)\n  • XLS (Excel)\n\n▸ Satu nomor per baris (TXT)\n▸ Satu nomor per kolom (Excel)\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", async (msg) => {
