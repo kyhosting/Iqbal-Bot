@@ -1,27 +1,42 @@
 {
   "name": "iqbal-cv-bot",
-  "version": "2.0.0",
-  "description": "Iqbal CV Bot - Advanced File Converter Bot by Iqbaldev",
+  "version": "2.1.0",
+  "description": "Iqbal CV Bot - Telegraf v4 Bot untuk konversi file dan manajemen grup",
   "keywords": [
     "telegram",
+    "telegraf",
     "bot",
     "vcf",
     "converter",
-    "iqbaldev"
+    "file-management"
   ],
   "license": "MIT",
   "author": "Iqbaldev",
   "type": "module",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node main.js",
+    "dev": "nodemon main.js",
+    "migrate": "node scripts/migrations.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "cheerio": "github:syawaloktasyahputra/cheerio",
+    "cheerio": "^1.0.0-rc.12",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "lowdb": "^4.0.1",
     "node-fetch": "^3.3.2",
-    "node-telegram-bot-api": "^0.66.0",
+    "node-schedule": "^2.1.1",
+    "rate-limiter-flexible": "^2.4.1",
+    "telegraf": "^4.12.0",
     "vcard-parser": "^1.0.0",
+    "winston": "^3.11.0",
     "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
