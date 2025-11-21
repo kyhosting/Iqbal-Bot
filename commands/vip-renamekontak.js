@@ -13,7 +13,7 @@ export default function (bot, db, saveDB) {
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
-        `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`,
+        `◆ RENAME KONTAK\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
         { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
       );
     }
@@ -21,7 +21,7 @@ export default function (bot, db, saveDB) {
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `✏️ *RENAME KONTAK DALAM VCF*\n\n📌 *Fungsi:* Mengubah nama semua kontak dalam file VCF dengan nama yang Anda tentukan.\n\n📝 Kirim file VCF yang ingin di-rename kontaknya:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`,
+      `◆ RENAME KONTAK\n(Rename All Contacts)\n\n▸ Support Format:\n  • VCF (Contact)\n\n▸ Ubah nama semua kontak\n▸ Dalam file VCF\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,
       { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
     );
   });

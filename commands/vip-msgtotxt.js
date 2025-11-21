@@ -4,8 +4,8 @@ import path from "path";
 export default function (bot, db, saveDB) {
   const sessions = {};
 
-  // Handle keyboard button
-  bot.onText(/^⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ$/i, async (msg) => {
+  // Handle keyboard button & /msgtotxt command
+  bot.onText(/^⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ$|^\/msgtotxt$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     
@@ -14,27 +14,11 @@ export default function (bot, db, saveDB) {
     
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      return bot.sendMessage(chatId, `◆ MSG TO TXT\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `📨 *PESAN KE FILE TXT*\n\n📌 *Fungsi:* Mengubah pesan teks atau daftar nomor menjadi file TXT yang dapat diunduh.\n\n📝 Kirim teks atau nomor yang ingin diubah:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
-  });
-
-  bot.onText(/^\/msgtotxt$/, async (msg) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-    
-    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
-    if (!hasAccess) return;
-    
-    const role = bot.getRole(userId);
-    if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
-    }
-
-    sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `📨 *PESAN KE FILE TXT*\n\n📌 *Fungsi:* Mengubah pesan teks atau daftar nomor menjadi file TXT yang dapat diunduh.\n\n📝 Kirim teks atau nomor yang ingin diubah:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `◆ MSG TO TXT\n(Message to File)\n\n▸ Support Format:\n  • Text\n  • Nomor/Data\n\n▸ Kirim teks atau nomor\n▸ Simpan jadi file TXT\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", (msg) => {

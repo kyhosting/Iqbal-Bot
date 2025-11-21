@@ -23,11 +23,11 @@ export default function (bot, db, saveDB) {
     
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      return bot.sendMessage(chatId, `◆ CREATE ADMIN\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `👤 *BUAT FILE ADMIN*\n\n📌 *Fungsi:* Membuat file VCF yang berisi daftar nomor admin dengan format terstruktur.\n\n📝 Masukkan daftar nomor admin (pisahkan dengan spasi):\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `◆ CREATE ADMIN\n(Buat File Admin)\n\n▸ Support Format:\n  • VCF (Contact)\n\n▸ Buat daftar nomor admin\n▸ Format terstruktur\n\n▸ Masukkan nomor (spasi pisahkan)\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", (msg) => {

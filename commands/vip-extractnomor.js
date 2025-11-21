@@ -6,7 +6,7 @@ export default function (bot, db, saveDB) {
   const sessions = {};
 
   // EKSTRAK NOMOR - Support VCF, TXT, XLS, CSV
-  bot.onText(/^⛓️ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ$/i, async (msg) => {
+  bot.onText(/^⛓️ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ$|^\/extractnomor$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     
@@ -15,27 +15,11 @@ export default function (bot, db, saveDB) {
     
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      return bot.sendMessage(chatId, `◆ EKSTRAK NOMOR\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `📄 *EKSTRAK NOMOR*\n\n📌 *Fungsi:* Ekstrak semua nomor telepon dari file VCF, TXT, XLSX, atau CSV.\n\n📝 Kirim file Anda (VCF, TXT, XLSX, atau CSV):\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
-  });
-
-  bot.onText(/^\/extractnomor$/, async (msg) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-    
-    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
-    if (!hasAccess) return;
-    
-    const role = bot.getRole(userId);
-    if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
-    }
-
-    sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `📄 *EKSTRAK NOMOR*\n\n📌 *Fungsi:* Ekstrak semua nomor telepon dari file VCF, TXT, XLSX, atau CSV.\n\n📝 Kirim file Anda (VCF, TXT, XLSX, atau CSV):\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `◆ EKSTRAK NOMOR\n(Extract Phone Numbers)\n\n▸ Support Format:\n  • VCF (Contact)\n  • TXT (Text)\n  • XLSX (Excel)\n  • CSV (Spreadsheet)\n\n▸ Ekstrak semua nomor telepon\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", async (msg) => {
