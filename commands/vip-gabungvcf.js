@@ -4,7 +4,7 @@ import path from "path";
 export default function (bot, db, saveDB) {
   const sessions = {};
 
-  bot.onText(/^⛓️ ɢᴀʙᴜɴɢ ᴠᴄꜰ$/i, async (msg) => {
+  bot.onText(/^⛓️ ɢᴀʙᴜɴɢ ᴠᴄꜰ$|^\/gabungvcf$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     
@@ -13,27 +13,11 @@ export default function (bot, db, saveDB) {
     
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      return bot.sendMessage(chatId, `◆ GABUNG VCF\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1, files: [] };
-    bot.sendMessage(chatId, `📥 *GABUNG FILE VCF*\n\n📌 *Fungsi:* Menggabungkan beberapa file VCF menjadi satu file yang lebih besar.\n\n📝 Kirim file VCF yang ingin digabung (minimal 2 file):\n\n✓ Ketik \`done\` setelah 2+ file\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
-  });
-
-  bot.onText(/^\/gabungvcf$/, async (msg) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-    
-    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
-    if (!hasAccess) return;
-    
-    const role = bot.getRole(userId);
-    if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
-    }
-
-    sessions[userId] = { step: 1, files: [] };
-    bot.sendMessage(chatId, `📥 *GABUNG FILE VCF*\n\n📌 *Fungsi:* Menggabungkan beberapa file VCF menjadi satu file yang lebih besar.\n\n📝 Kirim file VCF yang ingin digabung (minimal 2 file):\n\n✓ Ketik \`done\` setelah 2+ file\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `◆ GABUNG VCF\n(Gabung Multiple File)\n\n▸ Support Format:\n  • VCF (Contact)\n\n▸ Minimal 2 file\n▸ Semua file harus tipe VCF\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", async (msg) => {

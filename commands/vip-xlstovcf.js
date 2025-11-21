@@ -5,8 +5,8 @@ import XLSX from "xlsx";
 export default function (bot, db, saveDB) {
   const sessions = {};
 
-  // Handle keyboard button
-  bot.onText(/^⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ$/i, (msg) => {
+  // Handle keyboard button & /xlstovcf command
+  bot.onText(/^⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ$|^\/xlstovcf$/i, (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);
@@ -14,7 +14,7 @@ export default function (bot, db, saveDB) {
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
-        `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`,
+        `◆ XLS TO VCF\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
         { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
       );
     }
@@ -22,29 +22,7 @@ export default function (bot, db, saveDB) {
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `📊 *EXCEL KE VCF CONVERTER*\n\n📌 *Fungsi:* Mengubah file Excel (XLS/XLSX) menjadi file VCF dengan kontak terformat rapi.\n\n📋 *Format Excel yang dibutuhkan:*\n• Kolom 1: Nama kontak\n• Kolom 2: Nomor telepon\n\n📝 Kirim file Excel:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`,
-      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
-    );
-  });
-
-  // Handle /xlstovcf command
-  bot.onText(/^\/xlstovcf$/, (msg) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-    const role = bot.getRole(userId);
-
-    if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(
-        chatId,
-        `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
-      );
-    }
-
-    sessions[userId] = { step: 1 };
-    bot.sendMessage(
-      chatId,
-      `📊 *EXCEL KE VCF CONVERTER*\n\n📌 *Fungsi:* Mengubah file Excel (XLS/XLSX) menjadi file VCF dengan kontak terformat rapi.\n\n📋 *Format Excel yang dibutuhkan:*\n• Kolom 1: Nama kontak\n• Kolom 2: Nomor telepon\n\n📝 Kirim file Excel:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`,
+      `◆ XLS TO VCF\n(Excel to Contact Converter)\n\n▸ Support Format:\n  • XLS (Excel)\n  • XLSX (Excel)\n\n▸ Kolom 1: Nama kontak\n▸ Kolom 2: Nomor telepon\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,
       { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
     );
   });
