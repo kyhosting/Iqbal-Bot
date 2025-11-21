@@ -1,15 +1,8 @@
 import config from "../config.js";
 
 export default function (bot, db, saveDB) {
-  const OWNER_ID = config.owner[0];
+  const OWNER_USERNAME = config.ownerUsername;
 
-  const VIP_PACKAGES = {
-    vip_7h: { days: 7, price: "15K", priceRp: "Rp 15.000" },
-    vip_30h: { days: 30, price: "35K", priceRp: "Rp 35.000" },
-    vip_1y: { days: 365, price: "100K", priceRp: "Rp 100.000" }
-  };
-
-  // ===== COMMAND: /buyvip =====
   bot.onText(/^\/buyvip$|^💎 BELI VIP$/, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
@@ -24,19 +17,25 @@ export default function (bot, db, saveDB) {
       );
     }
 
+    // Create deep-link URLs dengan pesan pre-filled untuk setiap paket
+    const vip7Message = `Halo Owner, saya ingin membeli VIP.\n\n• Harga yang saya pilih: VIP 7 Hari (15K)\n• User ID saya: ${userId}\n\nMohon diproses ya 🙏`;
+    const vip30Message = `Halo Owner, saya ingin membeli VIP.\n\n• Harga yang saya pilih: VIP 30 Hari (35K)\n• User ID saya: ${userId}\n\nMohon diproses ya 🙏`;
+    const vip1yMessage = `Halo Owner, saya ingin membeli VIP.\n\n• Harga yang saya pilih: VIP 1 Tahun (100K)\n• User ID saya: ${userId}\n\nMohon diproses ya 🙏`;
+
+    const vip7Url = `https://t.me/${OWNER_USERNAME}?text=${encodeURIComponent(vip7Message)}`;
+    const vip30Url = `https://t.me/${OWNER_USERNAME}?text=${encodeURIComponent(vip30Message)}`;
+    const vip1yUrl = `https://t.me/${OWNER_USERNAME}?text=${encodeURIComponent(vip1yMessage)}`;
+
     const keyboard = {
       inline_keyboard: [
         [
-          { text: "💎 VIP 7 Hari — 15K", callback_data: "vip_7h" }
+          { text: "💎 VIP 7 Hari — 15K", url: vip7Url }
         ],
         [
-          { text: "💎 VIP 30 Hari — 35K", callback_data: "vip_30h" }
+          { text: "💎 VIP 30 Hari — 35K", url: vip30Url }
         ],
         [
-          { text: "💎 VIP 1 Tahun — 100K", callback_data: "vip_1y" }
-        ],
-        [
-          { text: "❌ Close", callback_data: "buyvip_close" }
+          { text: "💎 VIP 1 Tahun — 100K", url: vip1yUrl }
         ]
       ]
     };
@@ -70,63 +69,11 @@ export default function (bot, db, saveDB) {
     message += `Transfer ke rekening owner\n`;
     message += `Hubungi owner untuk info detail\n\n`;
 
-    message += `_Pilih paket di bawah! 😊_`;
+    message += `_Klik tombol di bawah untuk membeli! 😊_`;
 
     await bot.sendMessage(chatId, message, {
       parse_mode: "Markdown",
       reply_markup: keyboard
     });
-  });
-
-  // ===== HANDLER: VIP Button Callbacks =====
-  bot.on("callback_query", async (query) => {
-    const userId = query.from.id;
-    const chatId = query.message.chat.id;
-    const data = query.data;
-
-    // Handle VIP package selection
-    if (data.startsWith("vip_")) {
-      const pkg = VIP_PACKAGES[data];
-      
-      if (pkg) {
-        // Send auto-message to owner
-        const ownerMessage = 
-          `💎 *PEMBELIAN VIP*\n\n` +
-          `Halo Owner, saya ingin membeli VIP.\n\n` +
-          `• Harga yang saya pilih: VIP ${pkg.days} Hari — ${pkg.priceRp}\n` +
-          `• User ID saya: \`${userId}\`\n` +
-          `• Username: @${query.from.username || "no username"}\n` +
-          `• Nama: ${query.from.first_name || "N/A"}\n\n` +
-          `Mohon diproses ya 🙏`;
-
-        await bot.sendMessage(OWNER_ID, ownerMessage, { parse_mode: "Markdown" });
-
-        // Notify user and provide DM link
-        const dmLink = `https://t.me/${config.ownerUsername}`;
-        const userNotif = 
-          `✅ *PESANAN DITERIMA*\n\n` +
-          `Paket: VIP ${pkg.days} Hari (${pkg.priceRp})\n` +
-          `Status: Menunggu konfirmasi owner\n\n` +
-          `Owner akan menghubungi Anda segera! 😊\n\n` +
-          `[Buka DM Owner](${dmLink})`;
-
-        await bot.sendMessage(chatId, userNotif, {
-          parse_mode: "Markdown",
-          reply_markup: {
-            inline_keyboard: [
-              [{ text: "💬 Buka DM Owner", url: dmLink }]
-            ]
-          }
-        });
-      }
-
-      await bot.answerCallbackQuery(query.id, "✅ Pesanan terkirim ke owner!");
-    }
-
-    // Close button
-    else if (data === "buyvip_close") {
-      await bot.deleteMessage(chatId, query.message.message_id).catch(() => {});
-      await bot.answerCallbackQuery(query.id);
-    }
   });
 }
