@@ -28,7 +28,7 @@ export default function (bot, db, saveDB) {
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `◆ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n(Konversi TXT ke VCF)\n\n▸ Kirim file TXT yang mau diubah\n\nFile harus berisi nomor telepon\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `◆ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n(Konversi TXT ke VCF)\n\n▸ Kirim file TXT yang mau diubah\n\nFile harus berisi nomor telepon\nKetik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.onText(/^\/txttovcf$/, async (msg) => {
@@ -44,7 +44,7 @@ export default function (bot, db, saveDB) {
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `◆ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n(Konversi TXT ke VCF)\n\n▸ Kirim file TXT yang mau diubah\n\nFile harus berisi nomor telepon\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `◆ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n(Konversi TXT ke VCF)\n\n▸ Kirim file TXT yang mau diubah\n\nFile harus berisi nomor telepon\nKetik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", async (msg) => {
@@ -78,7 +78,7 @@ export default function (bot, db, saveDB) {
         session.originalName = msg.document.file_name.replace(".txt", "");
         session.step = 2;
 
-        bot.sendMessage(chatId, `◆ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n\n▸ Nama File Output\n\nMasukkan nama file (tanpa .vcf)\nAtau ketik 'skip' untuk pakai nama lama\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        bot.sendMessage(chatId, `◆ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n\n▸ Nama File Output\n\nMasukkan nama file (tanpa .vcf)\nAtau ketik 'skip' untuk pakai nama lama\nKetik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       } catch (err) {
         console.error("Download error:", err);
         return bot.sendMessage(chatId, `◆ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n\n▸ ⚠️ Gagal Download\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
@@ -94,7 +94,7 @@ export default function (bot, db, saveDB) {
 
       session.newFileName = /^skip$/i.test(text) ? session.originalName : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
       session.step = 3;
-      bot.sendMessage(chatId, `◆ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n\n▸ Nama Prefix Kontak\n\nMasukkan nama prefix kontak\nAtau ketik 'skip' untuk pakai nama file\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      bot.sendMessage(chatId, `◆ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n\n▸ Nama Prefix Kontak\n\nMasukkan nama prefix kontak\nAtau ketik 'skip' untuk pakai nama file\nKetik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     if (session.step === 3) {

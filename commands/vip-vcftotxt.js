@@ -17,7 +17,7 @@ export default function (bot, db, saveDB) {
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n(Konversi VCF ke TXT)\n\n▸ Kirim file VCF yang mau diubah\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n(Konversi VCF ke TXT)\n\n▸ Kirim file VCF yang mau diubah\n\nKetik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.onText(/^\/vcftotxt$/, async (msg) => {
@@ -33,7 +33,7 @@ export default function (bot, db, saveDB) {
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n(Konversi VCF ke TXT)\n\n▸ Kirim file VCF yang mau diubah\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n(Konversi VCF ke TXT)\n\n▸ Kirim file VCF yang mau diubah\n\nKetik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", async (msg) => {
@@ -67,7 +67,7 @@ export default function (bot, db, saveDB) {
         session.originalName = msg.document.file_name.replace(".vcf", ".txt");
         session.step = 2;
 
-        bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ Nama File Output\n\nMasukkan nama file (tanpa .txt)\nAtau ketik 'skip' untuk pakai nama lama\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ Nama File Output\n\nMasukkan nama file (tanpa .txt)\nAtau ketik 'skip' untuk pakai nama lama\nKetik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       } catch (err) {
         console.error("Download error:", err);
         return bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ⚠️ Gagal Download\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
