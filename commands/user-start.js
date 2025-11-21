@@ -97,28 +97,8 @@ export default function (bot, db, saveDB) {
       }
     }
 
-    // ===== CALLBACK: Verify Again Button =====
-    if (query.data === "verify_again") {
-      await bot.answerCallbackQuery(query.id);
-
-      const groupCheck = await bot.checkGroupMembership(userId);
-
-      if (!groupCheck.verified) {
-        // Still not joined
-        await bot.answerCallbackQuery(query.id, {
-          text: "⚠️ Anda masih belum join kedua grup. Silakan join terlebih dahulu!",
-          show_alert: true
-        });
-      } else {
-        // User sudah join - delete message & proceed
-        try {
-          await bot.deleteMessage(chatId, messageId).catch(() => {});
-          await showDashboard(bot, userId, chatId, db, saveDB);
-        } catch (err) {
-          console.error("Error di verify_again:", err);
-        }
-      }
-    }
+    // ===== CALLBACK: Verify Join Button (dari /start) =====
+    // Note: verify_again callback sudah di handle global di index.js
   });
 }
 

@@ -191,6 +191,92 @@ bot.incrementOperation = (userId) => {
   }
 };
 
+// ===== GLOBAL CALLBACK: Verify Again (dari inline button join) =====
+bot.on("callback_query", async (query) => {
+  if (query.data === "verify_again") {
+    const userId = query.from.id;
+    const chatId = query.message.chat.id;
+    const messageId = query.message.message_id;
+    
+    await bot.answerCallbackQuery(query.id);
+    
+    const groupCheck = await bot.checkGroupMembership(userId);
+    
+    if (!groupCheck.verified) {
+      // Still not joined
+      await bot.answerCallbackQuery(query.id, {
+        text: "⚠️ Masih belum join kedua grup!",
+        show_alert: true
+      });
+    } else {
+      // User sudah join - DELETE message & show success
+      try {
+        await bot.deleteMessage(chatId, messageId).catch(() => {});
+        await delay(300);
+        
+        // Jika user belum ada di database, tambahkan dengan trial 1 hari
+        if (!db.users[userId]) {
+          const trialExpired = Date.now() + 1 * 24 * 60 * 60 * 1000;
+          db.users[userId] = {
+            id: userId,
+            username: (await bot.getChat(userId)).username || "",
+            first_name: (await bot.getChat(userId)).first_name || "",
+            last_name: (await bot.getChat(userId)).last_name || "",
+            role: config.owner.includes(userId) ? "owner" : "trial",
+            vip_expired: config.owner.includes(userId) ? 0 : trialExpired,
+            status: "active",
+            total_operation: 0,
+            notified_expiry: false,
+            trial_start: Date.now(),
+            suspended: false
+          };
+          saveDB();
+          
+          // Notif trial gratis
+          if (!config.owner.includes(userId)) {
+            await bot.sendMessage(
+              userId,
+              `🎁 *TRIAL 1 HARI GRATIS!*\n\nSelamat verifikasi! ✅\n\n✨ Akses semua fitur premium sudah aktif!\n\nNikmati ya Kak! 😊`,
+              { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+            ).catch(() => {});
+          } else {
+            await bot.sendMessage(
+              userId,
+              `✅ *Selamat Datang Owner!*\n\nDashboard siap digunakan 🎉`,
+              { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+            ).catch(() => {});
+          }
+        } else {
+          // User sudah ada - restore jika suspended
+          if (db.users[userId].suspended && db.users[userId].vip_expired && db.users[userId].vip_expired > Date.now()) {
+            db.users[userId].suspended = false;
+            db.users[userId].status = "active";
+            if (!db.users[userId].role || db.users[userId].role === "user") {
+              db.users[userId].role = db.users[userId].trial_start ? "trial" : "vip";
+            }
+            saveDB();
+            
+            const daysLeft = Math.ceil((db.users[userId].vip_expired - Date.now()) / (1000 * 60 * 60 * 24));
+            await bot.sendMessage(
+              userId,
+              `✅ *Akses Dipulihkan!*\n\n⏰ Sisa: ${daysLeft} hari\n\nSelamat, fitur premium sudah bisa diakses! 🎉`,
+              { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+            ).catch(() => {});
+          } else {
+            await bot.sendMessage(
+              userId,
+              `✅ *Verifikasi Berhasil!*\n\nSiap menggunakan fitur premium 🎉`,
+              { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+            ).catch(() => {});
+          }
+        }
+      } catch (err) {
+        console.error("Error di verify_again callback:", err);
+      }
+    }
+  }
+});
+
 // ===== AUTO CHECK VIP EXPIRE + TRIAL NOTIFICATION =====
 setInterval(() => {
   for (const id in db.users) {
