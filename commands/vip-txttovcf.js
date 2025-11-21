@@ -15,7 +15,8 @@ function createVcfEntry(phone, name) {
 export default function (bot) {
   const sessions = {};
 
-  bot.onText(/^\/txttovcf$/, (msg) => {
+  // Trigger dari keyboard button
+  bot.onText(/^⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ$|^\/txttovcf$/i, (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);
