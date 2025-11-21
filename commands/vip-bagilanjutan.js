@@ -17,7 +17,7 @@ export default function (bot, db, saveDB) {
     }
 
     sessions[userId] = { step: 1, splitCounter: 1, fileCounter: 1 };
-    bot.sendMessage(chatId, `📤 *Bagi File VCF Lanjutan*\n\nKirim file .vcf yang ingin dibagi ya Kak ✨\n\nKetik \`batal\` untuk membatalkan.`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `📤 *Bagi File VCF Lanjutan*\n\nKirim file VCF yang mau dibagi ya Kak ✨\n\nKetik \`batal\` untuk membatalkan.`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.onText(/^\/bagilanjutan$/, async (msg) => {
@@ -33,13 +33,13 @@ export default function (bot, db, saveDB) {
     }
 
     sessions[userId] = { step: 1, splitCounter: 1, fileCounter: 1 };
-    bot.sendMessage(chatId, `📤 *Bagi File VCF Lanjutan*\n\nKirim file .vcf yang ingin dibagi ya Kak ✨\n\nKetik \`batal\` untuk membatalkan.`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `📤 *Bagi File VCF Lanjutan*\n\nKirim file VCF yang mau dibagi ya Kak ✨\n\nKetik \`batal\` untuk membatalkan.`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
-    const text = msg.text?.trim();
+    const text = msg.text?.trim() || "";
     const session = sessions[userId];
     if (!session) return;
 
@@ -65,7 +65,7 @@ export default function (bot, db, saveDB) {
       session.originalName = msg.document.file_name.replace(".vcf", "");
       session.step = 2;
 
-      bot.sendMessage(chatId, `📎 *Masukkan nama file output ya Kak*\n\nKetik \`skip\` untuk pakai nama lama`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      bot.sendMessage(chatId, `📎 *Masukkan nama file output ya Kak*\n\nKetik \`skip\` untuk pakai nama lama.`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       return;
     }
 
@@ -76,13 +76,13 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(chatId, "❌ Proses dibatalkan ya Kak 😊", { reply_markup: bot.getMainKeyboard() });
       }
 
-      session.newFileName = /^skip$/i.test(text) || !text ? session.originalName : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
+      session.newFileName = /^skip$/i.test(text) || !text ? session.originalName : text.replace(/[^a-zA-Z0-9-_]/g, "_");
       session.step = session.splitCounter === 1 ? 3 : 5;
 
       if (session.splitCounter === 1) {
-        bot.sendMessage(chatId, `🔢 *Masukkan angka awal penomoran kontak ya Kak*`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        bot.sendMessage(chatId, `🔢 *Masukkan angka awal penomoran kontak ya Kak*\n\nContoh: 100 → "Nama-100", "Nama-101", dsb.`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       } else {
-        bot.sendMessage(chatId, `🪓 *Berapa jumlah file yang mau dibuat ya Kak?*`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        bot.sendMessage(chatId, `🪓 *Berapa jumlah file (bagian) yang mau dibuat ya Kak?*`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       }
       return;
     }
@@ -95,7 +95,7 @@ export default function (bot, db, saveDB) {
       }
       session.splitCounter = parseInt(text);
       session.step = 4;
-      bot.sendMessage(chatId, `🔢 *Masukkan angka awal nama file ya Kak*`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      bot.sendMessage(chatId, `🔢 *Masukkan angka awal nama file ya Kak*\n\nContoh: 1 → "nama-1.vcf", "nama-2.vcf", dsb.`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       return;
     }
 
@@ -107,7 +107,7 @@ export default function (bot, db, saveDB) {
       }
       session.fileCounter = parseInt(text);
       session.step = 5;
-      bot.sendMessage(chatId, `🪓 *Berapa jumlah file yang mau dibuat ya Kak?*`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      bot.sendMessage(chatId, `🪓 *Berapa jumlah file (bagian) yang mau dibuat ya Kak?*`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       return;
     }
 
@@ -132,7 +132,7 @@ export default function (bot, db, saveDB) {
         fs.unlinkSync(session.file);
 
         session.step = 6;
-        bot.sendMessage(chatId, `✅ *Selesai dibagi Kak!* 🎉\n\nKetik \`lanjut\` untuk file berikutnya\nKetik \`selesai\` untuk berhenti`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        bot.sendMessage(chatId, `✅ *Selesai dibagi Kak!* 🎉\n\n📊 Total: ${hasil.files.length} file\n\nKetik \`lanjut\` untuk file berikutnya\nKetik \`selesai\` untuk berhenti`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
         bot.incrementOperation(userId);
       } catch (err) {
         console.error(err);
@@ -144,7 +144,7 @@ export default function (bot, db, saveDB) {
     if (session.step === 6) {
       if (/^lanjut$/i.test(text)) {
         session.step = 1;
-        bot.sendMessage(chatId, `📤 *Kirim file VCF berikutnya ya Kak*`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        bot.sendMessage(chatId, `📤 *Kirim file VCF berikutnya ya Kak*\n\nNomor kontak melanjut dari sebelumnya 📈`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
         return;
       }
 
