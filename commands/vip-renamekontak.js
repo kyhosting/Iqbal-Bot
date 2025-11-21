@@ -4,8 +4,8 @@ import path from "path";
 export default function (bot, db, saveDB) {
   const sessions = {};
 
-  // Handle keyboard button
-  bot.onText(/^⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ$/i, (msg) => {
+  // Handle keyboard button & /renamekontak command (unified)
+  bot.onText(/^⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ$|^\/renamekontak$/i, (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);
@@ -13,9 +13,7 @@ export default function (bot, db, saveDB) {
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
-        `❌ *Yah… fitur ini khusus VIP nih Kak* 😔\n\n` +
-        `Upgrade ke VIP dulu ya untuk akses semua fitur premium!\n` +
-        `Hubungi @Iqbaldev untuk info lebih lanjut 💎`,
+        `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`,
         { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
       );
     }
@@ -23,35 +21,7 @@ export default function (bot, db, saveDB) {
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `✏️ *Rename Kontak dalam VCF*\n\n` +
-      `Silakan kirim file VCF yang mau direname kontaknya ya Kak ✨\n\n` +
-      `Ketik \`batal\` untuk membatalkan.`,
-      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
-    );
-  });
-
-  // Handle /renamekontak command
-  bot.onText(/^\/renamekontak$/, (msg) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-    const role = bot.getRole(userId);
-
-    if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(
-        chatId,
-        `❌ *Yah… fitur ini khusus VIP nih Kak* 😔\n\n` +
-        `Upgrade ke VIP dulu ya untuk akses semua fitur premium!\n` +
-        `Hubungi @Iqbaldev untuk info lebih lanjut 💎`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
-      );
-    }
-
-    sessions[userId] = { step: 1 };
-    bot.sendMessage(
-      chatId,
-      `✏️ *Rename Kontak dalam VCF*\n\n` +
-      `Silakan kirim file VCF yang mau direname kontaknya ya Kak ✨\n\n` +
-      `Ketik \`batal\` untuk membatalkan.`,
+      `✏️ *RENAME KONTAK DALAM VCF*\n\n📌 *Fungsi:* Mengubah nama semua kontak dalam file VCF dengan nama yang Anda tentukan.\n\n📝 Kirim file VCF yang ingin di-rename kontaknya:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`,
       { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
     );
   });
