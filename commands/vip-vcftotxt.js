@@ -5,7 +5,7 @@ export default function (bot) {
   const sessions = {};
 
   // Trigger dari keyboard button
-  bot.onText(/^⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ$|^\/vcftotxt$/i, (msg) => {
+  bot.onText(/^⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ$|^\/vcftotxt$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);
@@ -18,6 +18,10 @@ export default function (bot) {
         { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
       );
     }
+
+    // Verify group membership
+    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
+    if (!hasAccess) return;
 
     sessions[userId] = { step: 1 };
     bot.sendMessage(
