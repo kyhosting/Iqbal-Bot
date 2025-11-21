@@ -10,16 +10,13 @@ export default function (bot, db, saveDB) {
     const userId = msg.from.id;
     const role = bot.getRole(userId);
 
-    if (!["owner", "admin", "vip"].includes(role)) {
+    if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
         `❌ *Yah… fitur ini khusus VIP nih Kak* 😔\n\n` +
         `Upgrade ke VIP dulu ya untuk akses semua fitur premium!\n` +
         `Hubungi @Iqbaldev untuk info lebih lanjut 💎`,
-        { 
-          parse_mode: "Markdown",
-          reply_markup: bot.getMainKeyboard()
-        }
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
       );
     }
 
@@ -29,10 +26,7 @@ export default function (bot, db, saveDB) {
       `✏️ *Rename Kontak dalam VCF*\n\n` +
       `Silakan kirim file VCF yang mau direname kontaknya ya Kak ✨\n\n` +
       `Ketik \`batal\` untuk membatalkan.`,
-      { 
-        parse_mode: "Markdown",
-        reply_markup: bot.getMainKeyboard()
-      }
+      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
     );
   });
 
@@ -42,16 +36,13 @@ export default function (bot, db, saveDB) {
     const userId = msg.from.id;
     const role = bot.getRole(userId);
 
-    if (!["owner", "admin", "vip"].includes(role)) {
+    if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
         `❌ *Yah… fitur ini khusus VIP nih Kak* 😔\n\n` +
         `Upgrade ke VIP dulu ya untuk akses semua fitur premium!\n` +
         `Hubungi @Iqbaldev untuk info lebih lanjut 💎`,
-        { 
-          parse_mode: "Markdown",
-          reply_markup: bot.getMainKeyboard()
-        }
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
       );
     }
 
@@ -61,10 +52,7 @@ export default function (bot, db, saveDB) {
       `✏️ *Rename Kontak dalam VCF*\n\n` +
       `Silakan kirim file VCF yang mau direname kontaknya ya Kak ✨\n\n` +
       `Ketik \`batal\` untuk membatalkan.`,
-      { 
-        parse_mode: "Markdown",
-        reply_markup: bot.getMainKeyboard()
-      }
+      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
     );
   });
 

@@ -117,13 +117,14 @@ bot.getRole = (userId) => {
   const user = db.users[userId];
   if (!user) return "user";
 
-  // Check VIP expiry
+  // Check VIP/TRIAL expiry
   if (user.vip_expired && user.vip_expired !== 0 && Date.now() > user.vip_expired) {
     user.role = "user";
     user.vip_expired = 0;
     user.status = "inactive";
+    user.notified_expiry = false;
     saveDB();
-    bot.sendMessage(userId, `⏰ *Masa VIP kamu sudah habis Kak*\nSekarang kembali jadi user biasa ya 😊`, {
+    bot.sendMessage(userId, `⏰ *Masa Trial/VIP kamu sudah habis Kak*\nSekarang kembali jadi user biasa ya 😊`, {
       parse_mode: "Markdown",
       reply_markup: bot.getMainKeyboard()
     }).catch(() => {});

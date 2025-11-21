@@ -1,7 +1,5 @@
 import config from "../config.js";
 
-import config from "../config.js";
-
 export default function (bot, db, saveDB) {
   const OWNER_USERNAME = config.ownerUsername;
 
