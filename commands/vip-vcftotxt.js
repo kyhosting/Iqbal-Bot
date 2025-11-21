@@ -15,15 +15,15 @@ export default function (bot) {
       return bot.sendMessage(
         chatId,
         "❌ Kamu tidak punya akses ke fitur ini.\n\nHubungi @oktodev untuk upgrade ke VIP.",
-        { parse_mode: "HTML" }
+        { parse_mode: "Markdown" }
       );
     }
 
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      "📂 <b>Kirim file .vcf yang ingin kamu ubah menjadi file .txt</b>\n\nKetik <code>batal</code> untuk membatalkan.",
-      { parse_mode: "HTML" }
+      `◆ VCF TO TXT\n(Mengubah file vcf ke txt)\n\n▸ Support Format:\n  • VCF (Contact)\n\n▸ Kirim file VCF (bisa multiple)\n▸ Minimal 1 file\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,
+      { parse_mode: "Markdown" }
     );
   });
 
@@ -36,13 +36,13 @@ export default function (bot) {
 
     // Step 1 → kirim file .vcf
     if (session.step === 1) {
-      if (/^batal$/i.test(text)) {
+      if (/^batal$/i.test(text) || /^done$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, "❌ Proses dibatalkan.");
+        return bot.sendMessage(chatId, "❌ Proses dibatalkan.", { parse_mode: "Markdown" });
       }
 
       if (!msg.document || !msg.document.file_name.endsWith(".vcf")) {
-        return bot.sendMessage(chatId, "⚠️ Kirim file dengan ekstensi .vcf!");
+        return bot.sendMessage(chatId, "⚠️ Kirim file dengan ekstensi .vcf!", { parse_mode: "Markdown" });
       }
 
       const fileId = msg.document.file_id;
@@ -59,8 +59,8 @@ export default function (bot) {
 
       return bot.sendMessage(
         chatId,
-        "📝 <b>Masukkan nama file baru (tanpa .txt)</b>\nKetik <code>skip</code> untuk gunakan nama sama.",
-        { parse_mode: "HTML" }
+        `◆ VCF TO TXT\n\n▸ Nama File Output\n\nMasukkan nama file hasil konversi\n(Tanpa ekstensi .txt)\n\nKetik 'done' untuk skip\n\n◆`,
+        { parse_mode: "Markdown" }
       );
     }
 
@@ -69,10 +69,10 @@ export default function (bot) {
       if (/^batal$/i.test(text)) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
-        return bot.sendMessage(chatId, "❌ Proses dibatalkan.");
+        return bot.sendMessage(chatId, "❌ Proses dibatalkan.", { parse_mode: "Markdown" });
       }
 
-      const outputName = /^skip$/i.test(text)
+      const outputName = /^done$/i.test(text)
         ? session.originalName
         : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
 
@@ -84,7 +84,7 @@ export default function (bot) {
         if (numbers.length === 0) {
           fs.unlinkSync(session.file);
           delete sessions[userId];
-          return bot.sendMessage(chatId, "⚠️ Tidak ditemukan nomor telepon di file!");
+          return bot.sendMessage(chatId, "⚠️ Tidak ditemukan nomor telepon di file!", { parse_mode: "Markdown" });
         }
 
         const outputFile = `${outputName}.txt`;
@@ -94,15 +94,15 @@ export default function (bot) {
         await bot.sendDocument(chatId, outputPath);
         await bot.sendMessage(
           chatId,
-          `✅ <b>File TXT berhasil dibuat!</b>\nNama file: <code>${outputFile}</code>`,
-          { parse_mode: "HTML" }
+          `✅ *File TXT berhasil dibuat!*\n📂 *Nama file:* \`${outputFile}\``,
+          { parse_mode: "Markdown" }
         );
 
         fs.unlinkSync(outputPath);
         fs.unlinkSync(session.file);
       } catch (err) {
         console.error("Gagal convert:", err);
-        bot.sendMessage(chatId, "⚠️ Terjadi kesalahan saat konversi file.");
+        bot.sendMessage(chatId, "⚠️ Terjadi kesalahan saat konversi file.", { parse_mode: "Markdown" });
       }
 
       delete sessions[userId];
