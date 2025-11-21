@@ -21,12 +21,12 @@ export default function (bot) {
     const userId = msg.from.id;
     const role = bot.getRole(userId);
 
-    // Batasi akses hanya untuk owner/admin/vip
-    if (!["owner", "admin", "vip"].includes(role)) {
+    // Batasi akses hanya untuk owner/admin/vip/trial
+    if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
-        "❌ Kamu tidak punya akses ke fitur ini.\n\nHubungi @oktodev untuk upgrade ke VIP.",
-        { parse_mode: "Markdown" }
+        `◆ TXT TO VCF\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
       );
     }
 
