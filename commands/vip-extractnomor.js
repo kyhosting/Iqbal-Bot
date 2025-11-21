@@ -43,62 +43,87 @@ export default function (bot, db, saveDB) {
     const userId = msg.from.id;
     const text = msg.text?.trim() || "";
     const session = sessions[userId];
-    if (!session || session.step !== 1) return;
+    if (!session) return;
 
-    if (/^batal$/i.test(text)) {
-      delete sessions[userId];
-      return bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n\n▸ ❌ Proses Dibatalkan\n\nAda yg bisa dibantu lagi?\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
-    }
-
-    if (!msg.document) {
-      return bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n\n▸ ⚠️ Bukan File\n\nKirim file VCF, TXT, atau XLS ya Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
-    }
-
-    const fileName = msg.document.file_name || "";
-    const isVcf = fileName.endsWith(".vcf");
-    const isTxt = fileName.endsWith(".txt");
-    const isXls = fileName.endsWith(".xlsx") || fileName.endsWith(".xls");
-
-    if (!isVcf && !isTxt && !isXls) {
-      return bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n\n▸ ⚠️ Tipe File Salah\n\nHanya VCF, TXT, atau XLS\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
-    }
-
-    try {
-      const fileId = msg.document.file_id;
-      const file = await bot.getFile(fileId);
-      const fileUrl = `https://api.telegram.org/file/bot${bot.token}/${file.file_path}`;
-      const res = await fetch(fileUrl);
-      const buffer = await res.arrayBuffer();
-      const localPath = path.join(process.cwd(), fileName);
-      fs.writeFileSync(localPath, Buffer.from(buffer));
-
-      let numbers = [];
-      
-      if (isVcf) {
-        numbers = extractFromVcf(localPath);
-      } else if (isTxt) {
-        numbers = extractFromTxt(localPath);
-      } else if (isXls) {
-        numbers = extractFromXls(localPath);
+    // Step 1: Upload file
+    if (session.step === 1) {
+      if (/^batal$/i.test(text)) {
+        delete sessions[userId];
+        return bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n\n▸ ❌ Proses Dibatalkan\n\nAda yg bisa dibantu lagi?\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       }
 
-      // Simpan hasil ke file
-      const outputFile = path.join(process.cwd(), `extracted_${Date.now()}.txt`);
-      const uniqueNumbers = [...new Set(numbers)].sort();
-      fs.writeFileSync(outputFile, uniqueNumbers.join("\n"));
+      if (!msg.document) {
+        return bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n\n▸ ⚠️ Bukan File\n\nKirim file VCF, TXT, atau XLS ya Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      }
 
-      await bot.sendDocument(chatId, outputFile);
-      await bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ - ✅ SUKSES\n\n▸ Total Nomor: ${uniqueNumbers.length}\n▸ File: extracted_${Date.now()}.txt\n▸ Tipe: ${isVcf ? "VCF" : isTxt ? "TXT" : "XLS"}\n\n💎 Terima kasih sudah menggunakan bot ini 🙏\nJangan lupa support bot dengan subscribe channel 🤗\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
-      
-      bot.incrementOperation(userId);
+      const fileName = msg.document.file_name || "";
+      const isVcf = fileName.endsWith(".vcf");
+      const isTxt = fileName.endsWith(".txt");
+      const isXls = fileName.endsWith(".xlsx") || fileName.endsWith(".xls");
 
-      // Cleanup
-      try { fs.unlinkSync(localPath); } catch {}
-      try { fs.unlinkSync(outputFile); } catch {}
-      delete sessions[userId];
-    } catch (err) {
-      console.error("Extract error:", err);
-      return bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n\n▸ ⚠️ Ekstrak Gagal\n\nAda masalah saat ekstrak nomor\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      if (!isVcf && !isTxt && !isXls) {
+        return bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n\n▸ ⚠️ Tipe File Salah\n\nHanya VCF, TXT, atau XLS\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      }
+
+      try {
+        const fileId = msg.document.file_id;
+        const file = await bot.getFile(fileId);
+        const fileUrl = `https://api.telegram.org/file/bot${bot.token}/${file.file_path}`;
+        const res = await fetch(fileUrl);
+        const buffer = await res.arrayBuffer();
+        const localPath = path.join(process.cwd(), fileName);
+        fs.writeFileSync(localPath, Buffer.from(buffer));
+
+        session.step = 2;
+        session.localPath = localPath;
+        session.fileType = isVcf ? "vcf" : isTxt ? "txt" : "xls";
+
+        return bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n\n▸ ✅ File Diterima\n\n▸ Masukkan nama file output\n(Tanpa ekstensi .txt)\n\nContoh: nomor_hasil\n\n▸ Ketik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      } catch (err) {
+        console.error("Download error:", err);
+        return bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n\n▸ ⚠️ Gagal Download\n\nAda masalah saat download file\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      }
+    }
+
+    // Step 2: Custom filename
+    if (session.step === 2) {
+      if (/^batal$/i.test(text)) {
+        try { fs.unlinkSync(session.localPath); } catch {}
+        delete sessions[userId];
+        return bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n\n▸ ❌ Proses Dibatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      }
+
+      const outputName = text.trim().replace(/[^a-zA-Z0-9-_]/g, "_") || "nomor_hasil";
+      const outputFile = path.join(process.cwd(), `${outputName}.txt`);
+
+      try {
+        let numbers = [];
+        
+        if (session.fileType === "vcf") {
+          numbers = extractFromVcf(session.localPath);
+        } else if (session.fileType === "txt") {
+          numbers = extractFromTxt(session.localPath);
+        } else if (session.fileType === "xls") {
+          numbers = extractFromXls(session.localPath);
+        }
+
+        const uniqueNumbers = [...new Set(numbers)].sort();
+        fs.writeFileSync(outputFile, uniqueNumbers.join("\n"));
+
+        await bot.sendDocument(chatId, outputFile);
+        await bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ - ✅ SUKSES\n\n▸ Total Nomor: ${uniqueNumbers.length}\n▸ Nama File: ${outputName}.txt\n▸ Tipe: ${session.fileType.toUpperCase()}\n\n💎 Terima kasih sudah menggunakan bot ini 🙏\nJangan lupa support bot dengan subscribe channel 🤗\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        
+        bot.incrementOperation(userId);
+
+        // Cleanup
+        try { fs.unlinkSync(session.localPath); } catch {}
+        try { fs.unlinkSync(outputFile); } catch {}
+        delete sessions[userId];
+      } catch (err) {
+        console.error("Extract error:", err);
+        try { fs.unlinkSync(session.localPath); } catch {}
+        return bot.sendMessage(chatId, `◆ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ\n\n▸ ⚠️ Ekstrak Gagal\n\nAda masalah saat ekstrak nomor\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      }
     }
   });
 }
