@@ -236,14 +236,13 @@ bot.on("my_chat_member", async (update) => {
         saveDB();
         
         bot.sendMessage(userId, 
-          `❌ *Akses Dicabut Sementara Kak!*\n\n` +
-          `Kamu keluar dari salah satu grup yang diwajibkan.\n` +
-          `Trial/VIP ${user.role === "trial" ? "1 hari" : "kamu"} masih tersisa, tapi dibekukan.\n\n` +
-          `✅ Untuk melanjutkan, silakan join lagi:\n` +
+          `⚠️ *Anda Keluar Dari Grup*\n\n` +
+          `Akses bot dihentikan. Silakan join kembali untuk melanjutkan.\n\n` +
+          `📌 Grup yang wajib diikuti:\n` +
           `• @agentviber12\n` +
           `• @channelviber\n\n` +
-          `Setelah join, ketik /start untuk aktifkan kembali 😊`,
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+          `Ketik /start untuk verifikasi ulang 😊`,
+          { parse_mode: "Markdown" }
         ).catch(() => {});
       }
     }
