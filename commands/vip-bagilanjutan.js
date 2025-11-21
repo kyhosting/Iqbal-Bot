@@ -4,23 +4,7 @@ import path from "path";
 export default function (bot, db, saveDB) {
   const sessions = {};
 
-  bot.onText(/^⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ$/i, async (msg) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-    
-    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
-    if (!hasAccess) return;
-    
-    const role = bot.getRole(userId);
-    if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
-    }
-
-    sessions[userId] = { step: 1, splitCounter: 1, fileCounter: 1 };
-    bot.sendMessage(chatId, `📤 *BAGI FILE VCF LANJUTAN*\n\n📌 *Fungsi:* Membagi file VCF menjadi beberapa bagian sesuai jumlah kontak yang Anda inginkan per file.\n\n📝 Kirim file VCF yang ingin dibagi:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
-  });
-
-  bot.onText(/^\/bagilanjutan$/, async (msg) => {
+  bot.onText(/^⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ$|^\/bagilanjutan$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     
