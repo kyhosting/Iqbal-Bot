@@ -319,3 +319,31 @@ async function showBotInfo(commandCount) {
   const count = await loadPlugins();
   await showBotInfo(count);
 })();
+
+// ===== LOAD NEW GROUP FEATURES =====
+const groupFeatureFiles = [
+  "./commands/group-permission-check.js",
+  "./commands/group-welcome.js",
+  "./commands/group-admin-panel.js",
+  "./commands/group-vip-badge.js",
+  "./commands/group-statistics.js",
+  "./commands/group-file-tracking.js",
+  "./commands/group-help-menu.js",
+  "./commands/group-auto-delete.js",
+  "./commands/group-lapor-admin.js",
+  "./commands/group-warn-ban-system.js"
+];
+
+for (const file of groupFeatureFiles) {
+  if (fs.existsSync(file)) {
+    try {
+      const module = await import(file);
+      module.default(bot, db, saveDB);
+      console.log(`✅ Loaded: ${file}`);
+    } catch (error) {
+      console.error(`❌ Error loading ${file}:`, error.message);
+    }
+  }
+}
+
+console.log(`\n✅ GROUP FEATURES LOADED!\n`);
