@@ -27,9 +27,8 @@ export default function (bot, db, saveDB) {
 
       return bot.sendMessage(
         chatId,
-        `⚠️ *Wajib Join Grup Untuk Mengakses Bot*\n\n` +
-          `Klik tombol di bawah untuk verifikasi keanggotaan Anda.`,
-        { parse_mode: "Markdown", reply_markup: verifyKeyboard }
+        `⚠️ Wajib join 2 grup untuk akses`,
+        { reply_markup: verifyKeyboard }
       );
     }
 
@@ -42,9 +41,8 @@ export default function (bot, db, saveDB) {
 
     return bot.sendMessage(
       chatId,
-      `⚠️ *Wajib Join Grup Untuk Mengakses Bot*\n\n` +
-        `Klik tombol di bawah untuk verifikasi keanggotaan Anda.`,
-      { parse_mode: "Markdown", reply_markup: verifyKeyboard }
+      `⚠️ Wajib join 2 grup untuk akses`,
+      { reply_markup: verifyKeyboard }
     );
   });
 
@@ -61,31 +59,29 @@ export default function (bot, db, saveDB) {
       const groupCheck = await bot.checkGroupMembership(userId);
 
       if (!groupCheck.verified) {
-        // User belum join - kirim pesan dengan deep-link + button
+        // User belum join - kirim pesan dengan deep-link button SAJA
         const groupMainDeeplink = `https://t.me/agentviber12?join`;
         const groupCvDeeplink = `https://t.me/channelviber?join`;
 
         const joinKeyboard = {
           inline_keyboard: [
             [
-              { text: "📱 @agentviber12", url: groupMainDeeplink },
+              { text: "📱 @agentviber12", url: groupMainDeeplink }
+            ],
+            [
               { text: "📱 @channelviber", url: groupCvDeeplink }
             ],
             [{ text: "✅ Sudah Join", callback_data: "verify_again" }]
           ]
         };
 
-        // Delete old message & send new one
+        // Delete old message & send new one (minimal text, button only)
         try {
           await bot.deleteMessage(chatId, messageId).catch(() => {});
           await bot.sendMessage(
             chatId,
-            `⚠️ *Silakan Join Grup Terlebih Dahulu*\n\n` +
-              `Klik tombol di bawah untuk join ke kedua grup:\n\n` +
-              `📌 *@agentviber12* - Grup utama\n` +
-              `📌 *@channelviber* - Channel CV\n\n` +
-              `Setelah join, klik "Sudah Join" untuk verifikasi 😊`,
-            { parse_mode: "Markdown", reply_markup: joinKeyboard }
+            `⚠️ Wajib join 2 grup terlebih dahulu`,
+            { reply_markup: joinKeyboard }
           );
         } catch (err) {
           console.error("Error di verify_join:", err);
