@@ -1,4 +1,8 @@
+import config from "../config.js";
+
 export default function (bot, db, saveDB) {
+  const OWNER_USERNAME = config.ownerUsername;
+
   bot.onText(/^\/bantuan$/, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
@@ -13,30 +17,35 @@ export default function (bot, db, saveDB) {
       );
     }
 
+    // Create deep-link URLs with user ID and pre-filled messages
+    const bugReportUrl = `https://t.me/${OWNER_USERNAME}?text=Halo%20Owner,%20ID%20saya%20${userId}.%20Saya%20ingin%20lapor%20bug.`;
+    const botErrorUrl = `https://t.me/${OWNER_USERNAME}?text=Woi%20Owner,%20ID%20saya%20${userId}.%20Botnya%20error%20tuh.`;
+    const featureRequestUrl = `https://t.me/${OWNER_USERNAME}?text=Halo%20Owner,%20ID%20saya%20${userId}.%20Saya%20request%20fitur%20baru.`;
+    const ownerUrl = `https://t.me/${OWNER_USERNAME}`;
+
     const keyboard = {
       inline_keyboard: [
         [
-          { text: "🐞 Lapor Bug", callback_data: "bug_report" },
-          { text: "⚠️ Bot Error", callback_data: "bot_error" }
+          { text: "🐞 Lapor Bug", url: bugReportUrl }
         ],
         [
-          { text: "🛠️ Request Fitur", callback_data: "feature_request" }
+          { text: "⚠️ Bot Error", url: botErrorUrl }
         ],
         [
-          { text: "💎 Beli VIP", callback_data: "report_buyvip_menu" }
+          { text: "🛠️ Request Fitur", url: featureRequestUrl }
         ],
         [
-          { text: "💬 Chat Owner", url: "https://t.me/Iqbaldev" }
+          { text: "💎 Beli VIP", url: `https://t.me/${OWNER_USERNAME}/buyvip` }
         ],
         [
-          { text: "❌ Close", callback_data: "report_close" }
+          { text: "💬 Chat Owner", url: ownerUrl }
         ]
       ]
     };
 
     const message = `🆘 *MENU BANTUAN*\n\n` +
       `Ada yang bisa dibantu Kak?\n\n` +
-      `Pilih salah satu opsi:\n` +
+      `📋 *Pilihan Tersedia:*\n` +
       `• 🐞 Lapor Bug - Laporkan bug yang Anda temukan\n` +
       `• ⚠️ Bot Error - Laporkan error yang Anda alami\n` +
       `• 🛠️ Request Fitur - Usulkan fitur baru\n` +
