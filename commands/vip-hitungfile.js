@@ -4,8 +4,8 @@ import path from "path";
 export default function (bot, db, saveDB) {
   const sessions = {};
 
-  // Handle keyboard button
-  bot.onText(/^⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ$/i, (msg) => {
+  // Handle keyboard button & /hitungfile command
+  bot.onText(/^⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ$|^\/hitungfile$/i, (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);
@@ -13,7 +13,7 @@ export default function (bot, db, saveDB) {
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
-        `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`,
+        `◆ HITUNG FILE\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
         { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
       );
     }
@@ -21,29 +21,7 @@ export default function (bot, db, saveDB) {
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `🔢 *HITUNG KONTAK DI FILE*\n\n📌 *Fungsi:* Menghitung jumlah kontak/nomor yang terdapat dalam file Anda.\n\n📋 *Format yang didukung:*\n• 📄 TXT (nomor per baris)\n• 📇 VCF (vCard)\n\n📝 Kirim file Anda:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`,
-      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
-    );
-  });
-
-  // Handle /hitungfile command
-  bot.onText(/^\/hitungfile$/, (msg) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-    const role = bot.getRole(userId);
-
-    if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(
-        chatId,
-        `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
-      );
-    }
-
-    sessions[userId] = { step: 1 };
-    bot.sendMessage(
-      chatId,
-      `🔢 *HITUNG KONTAK DI FILE*\n\n📌 *Fungsi:* Menghitung jumlah kontak/nomor yang terdapat dalam file Anda.\n\n📋 *Format yang didukung:*\n• 📄 TXT (nomor per baris)\n• 📇 VCF (vCard)\n\n📝 Kirim file Anda:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`,
+      `◆ HITUNG FILE\n(Count Contacts)\n\n▸ Support Format:\n  • TXT (Text)\n  • VCF (Contact)\n\n▸ Hitung total kontak/nomor\n▸ Minimal 1 file\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,
       { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
     );
   });

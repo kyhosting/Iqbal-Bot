@@ -4,8 +4,8 @@ import path from "path";
 export default function (bot, db, saveDB) {
   const sessions = {};
 
-  // Handle keyboard button
-  bot.onText(/^⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ$/i, (msg) => {
+  // Handle keyboard button & /rapikatntxt command
+  bot.onText(/^⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ$|^\/rapikatntxt$/i, (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);
@@ -13,7 +13,7 @@ export default function (bot, db, saveDB) {
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
-        `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`,
+        `◆ RAPIKAN TXT\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
         { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
       );
     }
@@ -21,29 +21,7 @@ export default function (bot, db, saveDB) {
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `🧹 *RAPIKAN FILE TXT*\n\n📌 *Fungsi:* Membersihkan file TXT dengan menghapus duplikat, baris kosong, dan mengurutkan secara alfabetis.\n\n📝 Kirim file TXT yang ingin dirapikan:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`,
-      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
-    );
-  });
-
-  // Handle /rapikatntxt command
-  bot.onText(/^\/rapikatntxt$/, (msg) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-    const role = bot.getRole(userId);
-
-    if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(
-        chatId,
-        `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
-      );
-    }
-
-    sessions[userId] = { step: 1 };
-    bot.sendMessage(
-      chatId,
-      `🧹 *RAPIKAN FILE TXT*\n\n📌 *Fungsi:* Membersihkan file TXT dengan menghapus duplikat, baris kosong, dan mengurutkan secara alfabetis.\n\n📝 Kirim file TXT yang ingin dirapikan:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`,
+      `◆ RAPIKAN TXT\n(Clean & Sort)\n\n▸ Support Format:\n  • TXT (Text)\n\n▸ Hapus duplikat\n▸ Hapus baris kosong\n▸ Sort alfabetis\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,
       { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
     );
   });
