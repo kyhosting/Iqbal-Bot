@@ -7,17 +7,26 @@ export default function (bot, db, saveDB) {
     const groupCheck = await bot.checkGroupMembership(userId);
     
     if (!groupCheck.verified) {
-      const missingGroups = [];
-      if (!groupCheck.inGroup1) missingGroups.push(`@agentviber12`);
-      if (!groupCheck.inGroup2) missingGroups.push(`@channelviber`);
+      const keyboard = {
+        inline_keyboard: [
+          [
+            { text: "📱 Join @agentviber12", url: "https://t.me/agentviber12" },
+            { text: "📱 Join @channelviber", url: "https://t.me/channelviber" }
+          ],
+          [
+            { text: "✅ Sudah Join - Cek Lagi", callback_data: "start_recheck" }
+          ]
+        ]
+      };
       
       return bot.sendMessage(
         chatId,
         `⚠️ *Akses Ditolak Kak!*\n\n` +
-        `Kamu harus join grup ini dulu ya:\n` +
-        `${missingGroups.map(g => `• ${g}`).join('\n')}\n\n` +
-        `Setelah join, ketik /start lagi 😊`,
-        { parse_mode: "Markdown" }
+        `Kamu harus join 2 grup berikut dulu:\n\n` +
+        `✓ @agentviber12\n` +
+        `✓ @channelviber\n\n` +
+        `Setelah join, klik tombol di bawah 😊`,
+        { parse_mode: "Markdown", reply_markup: keyboard }
       );
     }
 
@@ -139,5 +148,64 @@ export default function (bot, db, saveDB) {
 
     // Log ke console
     console.log(`🔹 /start digunakan oleh: ${msg.from.first_name} (@${msg.from.username || "no username"}), ID: ${userId}`);
+  });
+
+  // Handle inline button callback untuk recheck
+  bot.on('callback_query', async (query) => {
+    if (query.data === 'start_recheck') {
+      const userId = query.from.id;
+      const chatId = query.message.chat.id;
+      
+      const groupCheck = await bot.checkGroupMembership(userId);
+      
+      if (groupCheck.verified) {
+        await bot.answerCallbackQuery(query.id, "✅ Verifikasi berhasil! Lanjut...", true);
+        // Trigger /start command
+        const msg = { from: query.from, chat: { id: chatId }, text: '/start' };
+        msg.from.first_name = query.from.first_name;
+        msg.from.username = query.from.username;
+        
+        // Call start handler manually by re-triggering the /start logic
+        // Actually, we'll just send the welcome message directly
+        if (!db.users[userId]) {
+          db.users[userId] = {
+            id: userId,
+            username: query.from.username || "",
+            first_name: query.from.first_name || "",
+            last_name: query.from.last_name || "",
+            role: "user",
+            vip_expired: 0,
+            status: "inactive",
+            total_operation: 0
+          };
+          saveDB();
+        }
+        
+        const role = bot.getRole(userId);
+        const user = db.users[userId];
+        
+        let expired = "Tidak Aktif";
+        let remaining = "0 hari";
+        let status = user.status || "inactive";
+        
+        if (user.vip_expired && user.vip_expired > Date.now()) {
+          const expDate = new Date(user.vip_expired);
+          expired = expDate.toLocaleDateString('id-ID');
+          const daysLeft = Math.ceil((user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24));
+          remaining = `${daysLeft} hari`;
+          status = "active";
+        }
+        
+        const caption = `✅ *Verifikasi Berhasil!*\n\n🎌 *iqbal ᴄᴠ ʙᴏᴛꜱ*\n\n` +
+          `Selamat datang, *${query.from.first_name}*! 🎉`;
+        
+        await bot.sendMessage(chatId, caption, {
+          parse_mode: "Markdown",
+          reply_markup: bot.getMainKeyboard()
+        });
+      } else {
+        await bot.answerCallbackQuery(query.id, "❌ Kamu belum join semua grup!", true);
+      }
+    }
   });
 }
