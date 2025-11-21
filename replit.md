@@ -30,8 +30,39 @@ Bot memerlukan user join 2 grup mandatory:
 Sistem verifikasi:
 - Check membership via `bot.verifyGroupAccess()` helper
 - Dipanggil di setiap VIP command (keyboard + slash)
-- Auto-revoke akses jika user keluar dari salah satu grup
 - Owner bypass verification check
+
+#### Auto-Revoke Access System 🚫
+**Fitur Keamanan - Saat user keluar dari salah satu grup:**
+1. Bot otomatis detect event `my_chat_member` (user/bot left group)
+2. System check membership status di kedua grup
+3. JIKA tidak di 2 grup → **Akses DICABUT OTOMATIS**
+4. Role berubah dari VIP/TRIAL → USER biasa
+5. User terima notifikasi: "❌ *Akses Dicabut Kak!*"
+6. User perlu join kedua grup kembali + `/start` untuk re-verify
+
+**Flow Detail:**
+```
+User keluar @agentviber12 atau @channelviber
+    ↓
+my_chat_member event trigger
+    ↓
+checkGroupMembership() verify status
+    ↓
+Status != verified → VIP/TRIAL status REVOKED
+    ↓
+Database update: role="user", vip_expired=0
+    ↓
+Notifikasi dikirim ke user
+    ↓
+User must join BOTH groups + /start to restore
+```
+
+**Komponen Code:**
+- Event: `bot.on("my_chat_member", async (update) => {...})`
+- Lokasi: index.js line 221-250
+- Check method: `bot.checkGroupMembership(userId)`
+- DB update: role, vip_expired, status changes
 
 ### VIP & Redeem System 💎
 **Redeem Code Features**:
@@ -188,7 +219,7 @@ Bot berjalan dengan workflow "Iqbal CV Bot" (`node index.js`)
 - Error handling user-friendly
 - 19 plugins loaded successfully
 
-## Recent Updates (v2.0.0)
+## Recent Updates (v2.0.0 Final)
 
 - ✅ Upgraded to Japanese aesthetic UI
 - ✅ Implemented mandatory dual-group verification
@@ -200,6 +231,9 @@ Bot berjalan dengan workflow "Iqbal CV Bot" (`node index.js`)
 - ✅ Operation tracking system
 - ✅ File cleanup improvements
 - ✅ VIP auto-expiry with countdown
+- ✅ **AUTO-REVOKE ACCESS** - Detect & revoke saat user leave grup
+- ✅ TXT TO VCF & VCF TO TXT dengan format ◆ ▸
+- ✅ Normalized message format across all features
 
 ## File Structure
 
