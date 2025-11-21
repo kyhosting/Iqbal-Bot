@@ -10,32 +10,19 @@ export default function (bot, db, saveDB) {
     const userId = msg.from.id;
     const role = bot.getRole(userId);
 
-    if (!["owner", "admin", "vip"].includes(role)) {
+    if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
-        `❌ *Yah… fitur ini khusus VIP nih Kak* 😔\n\n` +
-        `Upgrade ke VIP dulu ya untuk akses semua fitur premium!\n` +
-        `Hubungi @Iqbaldev untuk info lebih lanjut 💎`,
-        { 
-          parse_mode: "Markdown",
-          reply_markup: bot.getMainKeyboard()
-        }
+        `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`,
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
       );
     }
 
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `🔢 *Hitung Kontak di File*\n\n` +
-      `Silakan kirim file yang mau dihitung ya Kak ✨\n\n` +
-      `Format yang didukung:\n` +
-      `• 📄 TXT (nomor per baris)\n` +
-      `• 📇 VCF (vCard)\n\n` +
-      `Ketik \`batal\` untuk membatalkan.`,
-      { 
-        parse_mode: "Markdown",
-        reply_markup: bot.getMainKeyboard()
-      }
+      `🔢 *HITUNG KONTAK DI FILE*\n\n📌 *Fungsi:* Menghitung jumlah kontak/nomor yang terdapat dalam file Anda.\n\n📋 *Format yang didukung:*\n• 📄 TXT (nomor per baris)\n• 📇 VCF (vCard)\n\n📝 Kirim file Anda:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`,
+      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
     );
   });
 
@@ -45,32 +32,19 @@ export default function (bot, db, saveDB) {
     const userId = msg.from.id;
     const role = bot.getRole(userId);
 
-    if (!["owner", "admin", "vip"].includes(role)) {
+    if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
-        `❌ *Yah… fitur ini khusus VIP nih Kak* 😔\n\n` +
-        `Upgrade ke VIP dulu ya untuk akses semua fitur premium!\n` +
-        `Hubungi @Iqbaldev untuk info lebih lanjut 💎`,
-        { 
-          parse_mode: "Markdown",
-          reply_markup: bot.getMainKeyboard()
-        }
+        `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`,
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
       );
     }
 
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `🔢 *Hitung Kontak di File*\n\n` +
-      `Silakan kirim file yang mau dihitung ya Kak ✨\n\n` +
-      `Format yang didukung:\n` +
-      `• 📄 TXT (nomor per baris)\n` +
-      `• 📇 VCF (vCard)\n\n` +
-      `Ketik \`batal\` untuk membatalkan.`,
-      { 
-        parse_mode: "Markdown",
-        reply_markup: bot.getMainKeyboard()
-      }
+      `🔢 *HITUNG KONTAK DI FILE*\n\n📌 *Fungsi:* Menghitung jumlah kontak/nomor yang terdapat dalam file Anda.\n\n📋 *Format yang didukung:*\n• 📄 TXT (nomor per baris)\n• 📇 VCF (vCard)\n\n📝 Kirim file Anda:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`,
+      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
     );
   });
 

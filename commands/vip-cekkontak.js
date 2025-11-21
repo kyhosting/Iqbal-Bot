@@ -13,12 +13,12 @@ export default function (bot, db, saveDB) {
     if (!hasAccess) return;
     
     const role = bot.getRole(userId);
-    if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, `❌ *Yah… fitur ini khusus VIP nih Kak* 😔`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    if (!["owner", "admin", "vip", "trial"].includes(role)) {
+      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `📤 *Cek Kontak VCF*\n\nKirim file VCF yang mau dicek nama kontaknya ya Kak ✨\n\nKetik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `🔍 *CEK DETAIL KONTAK*\n\n📌 *Fungsi:* Melihat detail informasi kontak dari file VCF atau TXT secara lengkap.\n\n📝 Kirim file VCF atau TXT:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.onText(/^\/cekkontak$|^\/ceknamakontak$/, async (msg) => {
@@ -29,12 +29,12 @@ export default function (bot, db, saveDB) {
     if (!hasAccess) return;
     
     const role = bot.getRole(userId);
-    if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, `❌ *Yah… fitur ini khusus VIP nih Kak* 😔`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    if (!["owner", "admin", "vip", "trial"].includes(role)) {
+      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `📤 *Cek Kontak VCF*\n\nKirim file VCF yang mau dicek nama kontaknya ya Kak ✨\n\nKetik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `🔍 *CEK DETAIL KONTAK*\n\n📌 *Fungsi:* Melihat detail informasi kontak dari file VCF atau TXT secara lengkap.\n\n📝 Kirim file VCF atau TXT:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", async (msg) => {

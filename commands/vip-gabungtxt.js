@@ -12,12 +12,12 @@ export default function (bot, db, saveDB) {
     if (!hasAccess) return;
     
     const role = bot.getRole(userId);
-    if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, `❌ *Yah… fitur ini khusus VIP nih Kak* 😔`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    if (!["owner", "admin", "vip", "trial"].includes(role)) {
+      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1, files: [] };
-    bot.sendMessage(chatId, `📥 *Gabung File TXT*\n\nKirim file TXT yang mau digabung ya Kak ✨\n\nKetik \`done\` setelah 2+ file\nKetik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `📥 *GABUNG FILE TXT*\n\n📌 *Fungsi:* Menggabungkan beberapa file TXT menjadi satu file yang berisi semua nomor/data.\n\n📝 Kirim file TXT yang ingin digabung (minimal 2 file):\n\n✓ Ketik \`done\` setelah 2+ file\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.onText(/^\/gabungtxt$/, async (msg) => {
@@ -28,12 +28,12 @@ export default function (bot, db, saveDB) {
     if (!hasAccess) return;
     
     const role = bot.getRole(userId);
-    if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, `❌ *Yah… fitur ini khusus VIP nih Kak* 😔`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    if (!["owner", "admin", "vip", "trial"].includes(role)) {
+      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1, files: [] };
-    bot.sendMessage(chatId, `📥 *Gabung File TXT*\n\nKirim file TXT yang mau digabung ya Kak ✨\n\nKetik \`done\` setelah 2+ file\nKetik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `📥 *GABUNG FILE TXT*\n\n📌 *Fungsi:* Menggabungkan beberapa file TXT menjadi satu file yang berisi semua nomor/data.\n\n📝 Kirim file TXT yang ingin digabung (minimal 2 file):\n\n✓ Ketik \`done\` setelah 2+ file\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", async (msg) => {
