@@ -1,0 +1,21 @@
+{
+  "name": "bot cv v2",
+  "version": "1.0.0",
+  "description": "bot covert v2 by oktodev",
+  "keywords": [
+    "botcv"
+  ],
+  "license": "MIT",
+  "author": "oktodev",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "cheerio": "github:syawaloktasyahputra/cheerio",
+    "node-fetch": "^3.3.2",
+    "node-telegram-bot-api": "^0.66.0",
+    "vcard-parser": "^1.0.0"
+  }
+}
