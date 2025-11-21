@@ -213,19 +213,16 @@ export default function (bot, db, saveDB) {
       );
     }
 
-    // Create code - akan dijelaskan via perintah
+    // Create code
     if (data === "owner_create_code") {
       bot.answerCallbackQuery(query.id);
+      sessions[userId] = { step: "create_code_duration" };
       bot.sendMessage(
         chatId,
-        `➕ *Cara Membuat Kode Redeem*\n\n` +
-        `Gunakan format:\n` +
-        `/createcode <KODE> <DURASI> <EXPIRED>\n\n` +
-        `Contoh:\n` +
-        `/createcode VIP123 30 2025-12-31\n\n` +
-        `*KODE:* Kode unik (huruf kapital)\n` +
-        `*DURASI:* Lama VIP dalam hari\n` +
-        `*EXPIRED:* Tanggal kadaluarsa (YYYY-MM-DD)`,
+        `➕ *Buat Kode Redeem Random*\n\n` +
+        `▸ Masukkan durasi VIP dalam hari\n` +
+        `(contoh: 30)\n\n` +
+        `▸ Ketik 'batal' untuk membatalkan`,
         { parse_mode: "Markdown" }
       );
     }
@@ -260,12 +257,63 @@ export default function (bot, db, saveDB) {
     }
   });
 
-  // Handle broadcast message input
+  // Handle create code input
   bot.on("message", async (msg) => {
     const userId = msg.from.id;
     const chatId = msg.chat.id;
     const text = msg.text?.trim() || "";
     const session = sessions[userId];
+
+    if (session && session.step === "create_code_duration") {
+      if (/^batal$/i.test(text)) {
+        delete sessions[userId];
+        return bot.sendMessage(chatId, `❌ *Buat kode dibatalkan*`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      }
+
+      const duration = parseInt(text);
+      if (isNaN(duration) || duration <= 0) {
+        return bot.sendMessage(chatId, `⚠️ Durasi harus angka ya Kak (contoh: 30)`);
+      }
+
+      sessions[userId].step = "create_code_expiry";
+      sessions[userId].duration = duration;
+      return bot.sendMessage(chatId, `➕ *Buat Kode Redeem*\n\n▸ Masukkan tanggal expired\n(format: YYYY-MM-DD)\n\nContoh: 2025-12-31\n\n▸ Ketik 'batal' untuk membatalkan`, { parse_mode: "Markdown" });
+    }
+
+    if (session && session.step === "create_code_expiry") {
+      if (/^batal$/i.test(text)) {
+        delete sessions[userId];
+        return bot.sendMessage(chatId, `❌ *Buat kode dibatalkan*`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      }
+
+      const expiry = text.trim();
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(expiry)) {
+        return bot.sendMessage(chatId, `⚠️ Format tanggal salah!\n\nGunakan format: YYYY-MM-DD\nContoh: 2025-12-31`);
+      }
+
+      // Generate random code
+      const randomCode = generateRandomCode();
+      const duration = sessions[userId].duration;
+      const expiryDate = new Date(expiry);
+
+      if (bot.redeemDB[randomCode]) {
+        return bot.sendMessage(chatId, `⚠️ Kode sudah ada, coba lagi!`);
+      }
+
+      bot.redeemDB[randomCode] = {
+        code: randomCode,
+        type: "vip",
+        duration: duration,
+        expires_at: expiryDate.toISOString(),
+        created_at: new Date().toISOString(),
+        used_by: null
+      };
+
+      bot.saveRedeemDB();
+
+      bot.sendMessage(chatId, `✅ *Kode Redeem Berhasil Dibuat*\n\n◆ ᴋᴏᴅᴇ ʀᴀɴᴅᴏᴍ\n\n▸ Kode: \`${randomCode}\`\n▸ Durasi: ${duration} hari\n▸ Expired: ${expiryDate.toLocaleDateString('id-ID')}\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      delete sessions[userId];
+    }
 
     if (!session || session.step !== "broadcast_message") return;
 
