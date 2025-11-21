@@ -218,7 +218,7 @@ setInterval(() => {
   saveDB();
 }, 30 * 60 * 1000); // cek tiap 30 menit
 
-// ===== GROUP LEAVE DETECTOR - AUTO REVOKE AKSES =====
+// ===== GROUP LEAVE DETECTOR - AUTO REVOKE AKSES (Suspend, not delete trial) =====
 bot.on("my_chat_member", async (update) => {
   const userId = update.from.id;
   const groupName = update.chat.username;
@@ -230,18 +230,19 @@ bot.on("my_chat_member", async (update) => {
     if (!groupCheck.verified) {
       const user = db.users[userId];
       if (user && (user.role === "vip" || user.role === "trial")) {
-        user.role = "user";
-        user.vip_expired = 0;
-        user.status = "inactive";
+        // JANGAN RESET vip_expired - hanya suspend akses!
+        user.suspended = true;
+        user.status = "suspended";
         saveDB();
         
         bot.sendMessage(userId, 
-          `❌ *Akses Dicabut Kak!*\n\n` +
-          `Kamu keluar dari salah satu grup yang diwajibkan.\n\n` +
-          `✅ Untuk kembali aktif, silakan join lagi:\n` +
+          `❌ *Akses Dicabut Sementara Kak!*\n\n` +
+          `Kamu keluar dari salah satu grup yang diwajibkan.\n` +
+          `Trial/VIP ${user.role === "trial" ? "1 hari" : "kamu"} masih tersisa, tapi dibekukan.\n\n` +
+          `✅ Untuk melanjutkan, silakan join lagi:\n` +
           `• @agentviber12\n` +
           `• @channelviber\n\n` +
-          `Setelah join, ketik /start lagi ya 😊`,
+          `Setelah join, ketik /start untuk aktifkan kembali 😊`,
           { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
         ).catch(() => {});
       }
