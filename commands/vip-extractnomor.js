@@ -130,7 +130,7 @@ export default function (bot, db, saveDB) {
           if ((currentMessage + number).length > maxChunkSize) {
             // Send current chunk
             try {
-              await bot.sendMessage(chatId, currentMessage);
+              await bot.sendMessage(chatId, currentMessage, { parse_mode: "Markdown" });
             } catch (err) {
               console.error("Send message error:", err);
             }
@@ -145,7 +145,7 @@ export default function (bot, db, saveDB) {
         // Send remaining numbers
         if (currentMessage.trim()) {
           try {
-            await bot.sendMessage(chatId, currentMessage);
+            await bot.sendMessage(chatId, currentMessage, { parse_mode: "Markdown" });
           } catch (err) {
             console.error("Send message error:", err);
           }
