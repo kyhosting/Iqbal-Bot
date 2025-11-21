@@ -23,7 +23,7 @@ export default function (bot, db, saveDB) {
     if (!hasAccess) return;
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(
+    return await bot.sendMessage(
       chatId,
       `◆ RENAME KONTAK\n(Rename All Contacts)\n\n▸ Support Format:\n  • VCF (Contact)\n\n▸ Ubah nama semua kontak\n▸ Dalam file VCF\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,
       { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }

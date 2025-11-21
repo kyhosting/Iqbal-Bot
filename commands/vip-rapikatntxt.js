@@ -5,7 +5,7 @@ export default function (bot, db, saveDB) {
   const sessions = {};
 
   // Handle keyboard button & /rapikatntxt command
-  bot.onText(/^⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ$|^\/rapikatntxt$/i, (msg) => {
+  bot.onText(/^⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ$|^\/rapikatntxt$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);
@@ -18,8 +18,12 @@ export default function (bot, db, saveDB) {
       );
     }
 
+    // Verify group membership
+    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
+    if (!hasAccess) return;
+
     sessions[userId] = { step: 1 };
-    bot.sendMessage(
+    return await bot.sendMessage(
       chatId,
       `◆ RAPIKAN TXT\n(Clean & Sort)\n\n▸ Support Format:\n  • TXT (Text)\n\n▸ Hapus duplikat\n▸ Hapus baris kosong\n▸ Sort alfabetis\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,
       { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }

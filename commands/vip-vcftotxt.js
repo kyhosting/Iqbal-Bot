@@ -24,7 +24,7 @@ export default function (bot) {
     if (!hasAccess) return;
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(
+    return await bot.sendMessage(
       chatId,
       `◆ VCF TO TXT\n(Mengubah file vcf ke txt)\n\n▸ Support Format:\n  • VCF (Contact)\n\n▸ Kirim file VCF (bisa multiple)\n▸ Minimal 1 file\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,
       { parse_mode: "Markdown" }
