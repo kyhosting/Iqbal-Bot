@@ -6,7 +6,7 @@ export default function (bot, db, saveDB) {
   const sessions = {};
 
   // Handle keyboard button & /xlstovcf command
-  bot.onText(/^⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ$|^\/xlstovcf$/i, (msg) => {
+  bot.onText(/^⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ$|^\/xlstovcf$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);
@@ -18,6 +18,10 @@ export default function (bot, db, saveDB) {
         { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
       );
     }
+
+    // Verify group membership
+    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
+    if (!hasAccess) return;
 
     sessions[userId] = { step: 1 };
     bot.sendMessage(
