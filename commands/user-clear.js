@@ -1,4 +1,6 @@
 export default function (bot, db, saveDB) {
+  const clearSessions = {};
+
   bot.onText(/^\/clear$/, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
@@ -13,26 +15,80 @@ export default function (bot, db, saveDB) {
       );
     }
 
-    try {
-      // Auto delete message user
-      await bot.deleteMessage(chatId, msg.message_id).catch(() => {});
+    const keyboard = {
+      inline_keyboard: [
+        [
+          { text: "🗑️ Bersihkan Chat", callback_data: "clear_chat_now" }
+        ],
+        [
+          { text: "❌ Batal", callback_data: "clear_cancel" }
+        ]
+      ]
+    };
 
-      // Get recent messages and delete bot messages (keep last 20 to avoid rate limit)
-      await new Promise(resolve => setTimeout(resolve, 200));
+    const message = `🧹 *BERSIHKAN CHAT*\n\n` +
+      `Klik tombol di bawah untuk:\n` +
+      `✓ Hapus semua pesan sebelumnya\n` +
+      `✓ Lanjutkan dengan fresh start\n\n` +
+      `_Gunakan fitur ini untuk rapihkan chat!_ 😊`;
 
-      // Send clean welcome message
-      const cleanMsg = await bot.sendMessage(
-        chatId,
-        `✨ *Chat Dibersihkan!*\n\nSiap melanjutkan dengan fresh start! 😊`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
-      );
+    const sentMsg = await bot.sendMessage(chatId, message, {
+      parse_mode: "Markdown",
+      reply_markup: keyboard
+    });
 
-      // Auto delete this success message after 3 seconds
-      setTimeout(() => {
-        bot.deleteMessage(chatId, cleanMsg.message_id).catch(() => {});
-      }, 3000);
-    } catch (err) {
-      console.error("Clear chat error:", err);
+    // Store message ID for tracking
+    clearSessions[userId] = {
+      messageId: sentMsg.message_id,
+      chatId: chatId,
+      timestamp: Date.now()
+    };
+  });
+
+  // Handle inline button click
+  bot.on('callback_query', async (query) => {
+    if (query.data === 'clear_chat_now') {
+      const userId = query.from.id;
+      const chatId = query.message.chat.id;
+
+      try {
+        // Delete the button message first
+        await bot.deleteMessage(chatId, query.message.message_id).catch(() => {});
+
+        // Small delay
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        // Send fresh message
+        const freshMsg = await bot.sendMessage(
+          chatId,
+          `✨ *Chat Berhasil Dibersihkan!*\n\n💫 Siap melanjutkan dengan fresh start!\n\nGunakan /start untuk menu utama 😊`,
+          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+        );
+
+        await bot.answerCallbackQuery(query.id, "✅ Chat berhasil dibersihkan!", true);
+
+        // Clean up session
+        delete clearSessions[userId];
+      } catch (err) {
+        console.error("Clear chat error:", err);
+        await bot.answerCallbackQuery(query.id, "❌ Gagal membersihkan chat", true);
+      }
+    } else if (query.data === 'clear_cancel') {
+      const userId = query.from.id;
+      const chatId = query.message.chat.id;
+
+      try {
+        // Delete the button message
+        await bot.deleteMessage(chatId, query.message.message_id).catch(() => {});
+
+        await bot.answerCallbackQuery(query.id);
+
+        // Clean up session
+        delete clearSessions[userId];
+      } catch (err) {
+        console.error("Cancel clear error:", err);
+        await bot.answerCallbackQuery(query.id);
+      }
     }
   });
 }
