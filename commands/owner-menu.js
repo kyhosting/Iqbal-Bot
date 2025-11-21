@@ -289,7 +289,7 @@ export default function (bot, db, saveDB) {
 
       const duration = parseInt(text);
       if (isNaN(duration) || duration <= 0) {
-        return bot.sendMessage(chatId, `⚠️ Durasi harus angka ya Kak (contoh: 30)`);
+        return bot.sendMessage(chatId, `⚠️ Durasi harus angka ya Kak (contoh: 30)`, { parse_mode: "Markdown" });
       }
 
       sessions[userId].step = "create_code_expiry";
@@ -305,7 +305,7 @@ export default function (bot, db, saveDB) {
 
       const expiry = text.trim();
       if (!/^\d{4}-\d{2}-\d{2}$/.test(expiry)) {
-        return bot.sendMessage(chatId, `⚠️ Format tanggal salah!\n\nGunakan format: YYYY-MM-DD\nContoh: 2025-12-31`);
+        return bot.sendMessage(chatId, `⚠️ Format tanggal salah!\n\nGunakan format: YYYY-MM-DD\nContoh: 2025-12-31`, { parse_mode: "Markdown" });
       }
 
       // Generate random code
@@ -314,7 +314,7 @@ export default function (bot, db, saveDB) {
       const expiryDate = new Date(expiry);
 
       if (bot.redeemDB[randomCode]) {
-        return bot.sendMessage(chatId, `⚠️ Kode sudah ada, coba lagi!`);
+        return bot.sendMessage(chatId, `⚠️ Kode sudah ada, coba lagi!`, { parse_mode: "Markdown" });
       }
 
       bot.redeemDB[randomCode] = {
@@ -367,7 +367,7 @@ export default function (bot, db, saveDB) {
     const chatId = msg.chat.id;
 
     if (bot.getRole(userId) !== "owner") {
-      return bot.sendMessage(chatId, "❌ Khusus owner!");
+      return bot.sendMessage(chatId, "❌ Khusus owner!", { parse_mode: "Markdown" });
     }
 
     const code = match[1].toUpperCase();
@@ -406,7 +406,7 @@ export default function (bot, db, saveDB) {
     const chatId = msg.chat.id;
 
     if (bot.getRole(userId) !== "owner") {
-      return bot.sendMessage(chatId, "❌ Khusus owner!");
+      return bot.sendMessage(chatId, "❌ Khusus owner!", { parse_mode: "Markdown" });
     }
 
     const code = match[1].toUpperCase();
@@ -429,7 +429,7 @@ export default function (bot, db, saveDB) {
     const days = parseInt(match[2]);
 
     if (bot.getRole(executorId) !== "owner") {
-      return bot.sendMessage(chatId, "❌ Khusus owner!");
+      return bot.sendMessage(chatId, "❌ Khusus owner!", { parse_mode: "Markdown" });
     }
 
     if (!db.users[targetId]) {
