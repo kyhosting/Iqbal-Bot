@@ -132,6 +132,25 @@ bot.getRole = (userId) => {
   return user.role || "user";
 };
 
+// ===== HELPER: DELETE THEN SEND (Auto Clear Chat System) =====
+bot.deleteAndSend = async (query, newText, newMarkup = null) => {
+  try {
+    // Delete old message with button
+    await bot.deleteMessage(query.message.chat.id, query.message.message_id).catch(() => {});
+    
+    // Small delay for smooth transition
+    await delay(300);
+    
+    // Send new message
+    const options = { parse_mode: "Markdown" };
+    if (newMarkup) options.reply_markup = newMarkup;
+    
+    await bot.sendMessage(query.message.chat.id, newText, options);
+  } catch (err) {
+    console.error("deleteAndSend error:", err);
+  }
+};
+
 // ===== HELPER: VERIFY GROUP MEMBERSHIP FOR VIP COMMANDS =====
 bot.verifyGroupAccess = async (userId, chatId) => {
   // Skip check for owner
