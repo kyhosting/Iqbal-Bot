@@ -1,28 +1,17 @@
 export default function (bot, db, saveDB) {
-  bot.on("message", async (msg) => {
-    if (!msg.text || msg.chat.type === "private") return;
+  const AUTO_DELETE = 300000; // 5 minutes
 
-    const userId = msg.from.id;
-    const user = db.users[userId];
-
-    // Check if VIP
-    if (user && user.role === "vip" && user.vip_expired > Date.now()) {
-      const vipTag = `\n\n💎 [VIP] @${msg.from.username || msg.from.first_name} | Status: PREMIUM`;
-      
-      // Optional: Reply dengan VIP badge (tidak mengganggu)
-      // Uncomment jika mau tampilkan badge di setiap message VIP
-      // bot.sendMessage(msg.chat.id, vipTag);
-    }
-  });
-
-  // Command to show VIP status
   bot.onText(/^\/vip_status$/, async (msg) => {
     const userId = msg.from.id;
     const user = db.users[userId];
 
     if (!user || user.role !== "vip" || user.vip_expired < Date.now()) {
-      return bot.sendMessage(msg.chat.id, 
-        `❌ Anda tidak punya VIP aktif.\n\nKetik /vip untuk membeli! 💎`);
+      const errMsg = await bot.sendMessage(msg.chat.id, 
+        `❌ *Anda tidak punya VIP aktif*\n\nKetik /vip untuk membeli! 💎`, {
+          parse_mode: "Markdown"
+        });
+      setTimeout(() => bot.deleteMessage(msg.chat.id, errMsg.message_id).catch(() => {}), 10000);
+      return;
     }
 
     const expiresAt = new Date(user.vip_expired);
@@ -35,7 +24,7 @@ export default function (bot, db, saveDB) {
 ├─ Tipe: ${user.vip_package || "VIP"}
 ├─ Expires: ${expiresAt.toLocaleDateString("id-ID")}
 ├─ Sisa: ${daysLeft} hari
-└─ Priority: ⭐ Support Priority
+└─ Priority: ⭐ Supported
 
 🎯 *Benefit VIP:*
 ✓ Unlimited file conversion
@@ -43,8 +32,34 @@ export default function (bot, db, saveDB) {
 ✓ Badge di grup
 ✓ All premium features
 
-_Selamat menikmati privilege VIP! 🎉_`;
+_Selamat menikmati VIP! 🎉_`;
 
-    bot.sendMessage(msg.chat.id, statusMsg, { parse_mode: "Markdown" });
+    const sentMsg = await bot.sendMessage(msg.chat.id, statusMsg, {
+      parse_mode: "Markdown",
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: "❓ Help", callback_data: "help_menu" },
+            { text: "📞 Bantuan", callback_data: "bantuan_menu" }
+          ],
+          [{ text: "🗑️ Delete", callback_data: `delete_${sentMsg.message_id}` }]
+        ]
+      }
+    });
+
+    setTimeout(() => bot.deleteMessage(msg.chat.id, sentMsg.message_id).catch(() => {}), AUTO_DELETE);
+  });
+
+  // Delete callback
+  bot.on("callback_query", async (query) => {
+    if (query.data.startsWith("delete_")) {
+      const msgId = parseInt(query.data.split("_")[1]);
+      try {
+        await bot.deleteMessage(query.message.chat.id, msgId);
+        await bot.answerCallbackQuery(query.id, "✅ Deleted", true);
+      } catch (error) {
+        await bot.answerCallbackQuery(query.id, "❌ Error", false);
+      }
+    }
   });
 }

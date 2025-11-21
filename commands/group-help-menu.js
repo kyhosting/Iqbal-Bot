@@ -1,4 +1,6 @@
 export default function (bot, db, saveDB) {
+  const AUTO_DELETE = 300000; // 5 minutes
+
   bot.onText(/^\/help$|^❓ HELP$/, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
@@ -9,59 +11,24 @@ export default function (bot, db, saveDB) {
     let helpMsg = `❓ *HELP MENU*\n\n`;
     helpMsg += `👤 *Your Status:* ${isVIP ? "💎 VIP" : isOwner ? "👑 Owner" : "👤 User"}\n\n`;
 
-    // User commands
     helpMsg += `📋 *USER COMMANDS:*\n`;
-    helpMsg += `/start - Welcome & info\n`;
-    helpMsg += `/bantuan - Lapor bug/error/request fitur\n`;
-    helpMsg += `/vip - Beli VIP membership\n`;
-    helpMsg += `/vip_status - Cek VIP Anda\n`;
-    helpMsg += `/me - Info akun Anda\n`;
-    helpMsg += `/stats - Statistik bot\n`;
-    helpMsg += `/leaderboard - Top 10 converters\n`;
-    helpMsg += `/help - Menu bantuan ini\n\n`;
+    helpMsg += `/start • /bantuan • /me • /stats\n`;
+    helpMsg += `/leaderboard • /vip_status • /faq\n\n`;
 
-    // Group commands (admin)
     if (isOwner || msg.chat.type === "group") {
-      helpMsg += `⚙️ *GROUP COMMANDS (Admin):*\n`;
-      helpMsg += `/admin_panel - Buka admin panel\n`;
-      helpMsg += `/welcome_setup - Setup welcome message\n`;
-      helpMsg += `/file_logs - Lihat file operations\n`;
-      helpMsg += `/cleanup_files - Cleanup old files\n`;
-      helpMsg += `/lapor_admin - Lapor admin\n\n`;
+      helpMsg += `⚙️ *GROUP ADMIN:*\n`;
+      helpMsg += `/admin_panel • /lapor_admin • /file_logs\n\n`;
     }
 
-    // VIP commands
     if (isVIP || isOwner) {
-      helpMsg += `💎 *VIP FEATURES:*\n`;
-      helpMsg += `• Unlimited file conversion\n`;
-      helpMsg += `• Priority support\n`;
-      helpMsg += `• VIP badge di grup\n`;
-      helpMsg += `• All premium commands\n`;
-      helpMsg += `• Ad-free experience\n\n`;
+      helpMsg += `💎 *VIP FEATURES:* Unlimited conversions + Priority support + Badge\n\n`;
     } else {
-      helpMsg += `💎 *UPGRADE TO VIP:*\n`;
-      helpMsg += `Unlock premium features!\n`;
-      helpMsg += `Ketik /vip untuk lihat paket.\n\n`;
+      helpMsg += `💎 *UPGRADE TO VIP:* Unlock all premium features!\n\n`;
     }
 
-    // Owner commands
-    if (isOwner) {
-      helpMsg += `👑 *OWNER COMMANDS:*\n`;
-      helpMsg += `/ownerpanel - Owner management\n`;
-      helpMsg += `/file_logs - View all file logs\n`;
-      helpMsg += `/broadcast - Send message ke semua\n\n`;
-    }
+    helpMsg += `📞 *SUPPORT:* Use /bantuan to report bugs or request features.`;
 
-    helpMsg += `📞 *SUPPORT:*\n`;
-    helpMsg += `Ada masalah? Gunakan /bantuan untuk:\n`;
-    helpMsg += `• 🐞 Report bugs\n`;
-    helpMsg += `• ⚠️ Report errors\n`;
-    helpMsg += `• 🛠️ Request features\n`;
-    helpMsg += `• 💬 Chat owner directly\n\n`;
-
-    helpMsg += `_Bot dibuat oleh Iqbaldev dengan ❤️_`;
-
-    bot.sendMessage(chatId, helpMsg, {
+    const sentMsg = await bot.sendMessage(chatId, helpMsg, {
       parse_mode: "Markdown",
       reply_markup: {
         inline_keyboard: [
@@ -72,27 +39,92 @@ export default function (bot, db, saveDB) {
           [
             { text: "📊 Stats", callback_data: "stats_menu" },
             { text: "🏆 Leaderboard", callback_data: "lb_menu" }
+          ],
+          [
+            { text: "📖 FAQ", callback_data: "faq_menu" },
+            { text: "🗑️ Delete", callback_data: `delete_${sentMsg.message_id}` }
           ]
         ]
       }
     });
+
+    setTimeout(() => bot.deleteMessage(chatId, sentMsg.message_id).catch(() => {}), AUTO_DELETE);
   });
 
   // FAQ command
   bot.onText(/^\/faq$/, async (msg) => {
-    const faqMsg = `📖 *FAQ - PERTANYAAN UMUM*\n\n` +
-      `❓ *Apakah VIP worth?*\n` +
-      `✅ Banget! Unlimited features, priority support, badge.\n\n` +
-      `❓ *Berapa lama VIP aktif?*\n` +
-      `7/30/365 hari sesuai paket yang dibeli.\n\n` +
-      `❓ *Bagaimana cara convert file?*\n` +
-      `Upload file → pilih tipe konversi → bot proses → download.\n\n` +
-      `❓ *Apakah data aman?*\n` +
-      `✅ Semua file auto-delete setelah diproses.\n\n` +
-      `❓ *Bagaimana join grup?*\n` +
-      `Klik link di /bantuan untuk join @agentviber12 & @channelviber.\n\n` +
-      `_Pertanyaan lain? Lapor ke /bantuan!_`;
+    const faqMsg = `📖 *FAQ - PERTANYAAN UMUM*
 
-    bot.sendMessage(msg.chat.id, faqMsg, { parse_mode: "Markdown" });
+❓ *Apakah VIP worth?*
+✅ Banget! Unlimited features, priority support, badge.
+
+❓ *Berapa lama VIP aktif?*
+7/30/365 hari sesuai paket yang dibeli.
+
+❓ *Bagaimana cara convert file?*
+Upload file → pilih tipe → bot proses → download.
+
+❓ *Apakah data aman?*
+✅ Semua file auto-delete setelah diproses.
+
+❓ *Bagaimana join grup?*
+Klik link di /bantuan untuk join grup official.`;
+
+    const sentMsg = await bot.sendMessage(msg.chat.id, faqMsg, {
+      parse_mode: "Markdown",
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: "❓ More Help", callback_data: "help_menu" },
+            { text: "💎 VIP Info", callback_data: "vip_menu" }
+          ],
+          [
+            { text: "📞 Bantuan", callback_data: "bantuan_menu" },
+            { text: "🗑️ Delete", callback_data: `delete_${sentMsg.message_id}` }
+          ]
+        ]
+      }
+    });
+
+    setTimeout(() => bot.deleteMessage(msg.chat.id, sentMsg.message_id).catch(() => {}), AUTO_DELETE);
+  });
+
+  // FAQ callback
+  bot.on("callback_query", async (query) => {
+    if (query.data === "faq_menu") {
+      const faqMsg = `📖 *FAQ - PERTANYAAN UMUM*
+
+❓ *Apakah VIP worth?*
+✅ Unlimited features, priority support, badge.
+
+❓ *Berapa lama VIP?*
+7/30/365 hari sesuai paket.
+
+❓ *Bagaimana convert?*
+Upload → pilih tipe → proses → download.
+
+❓ *Data aman?*
+✅ Auto-delete setelah diproses.
+
+❓ *Join grup?*
+Klik link di /bantuan.`;
+
+      try {
+        await bot.editMessageText(faqMsg, {
+          chat_id: query.message.chat.id,
+          message_id: query.message.message_id,
+          parse_mode: "Markdown",
+          reply_markup: {
+            inline_keyboard: [
+              [
+                { text: "❓ Help", callback_data: "help_menu" },
+                { text: "🗑️ Delete", callback_data: `delete_${query.message.message_id}` }
+              ]
+            ]
+          }
+        });
+      } catch (error) {}
+      await bot.answerCallbackQuery(query.id);
+    }
   });
 }

@@ -1,6 +1,9 @@
 export default function (bot, db, saveDB) {
+  const AUTO_DELETE = 300000; // 5 minutes
+
   bot.onText(/^\/stats$|^📊 STATISTIK$/, async (msg) => {
     const chatId = msg.chat.id;
+    const userId = msg.from.id;
 
     try {
       const users = db.users || {};
@@ -32,18 +35,33 @@ export default function (bot, db, saveDB) {
 🔗 *Group Info:*
 ├─ Main Group: @${config.groups.main}
 ├─ CV Channel: @${config.groups.cv}
-└─ Verification: ✅ Required
+└─ Verification: ✅ Required`;
 
-_Bot dibuat dengan ❤️ oleh Iqbaldev_`;
+      const sentMsg = await bot.sendMessage(chatId, statsMsg, {
+        parse_mode: "Markdown",
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: "🏆 Leaderboard", callback_data: "lb_menu" },
+              { text: "📞 Bantuan", callback_data: "bantuan_menu" }
+            ],
+            [
+              { text: "❓ Help", callback_data: "help_menu" },
+              { text: "🗑️ Delete", callback_data: `delete_${sentMsg.message_id}` }
+            ]
+          ]
+        }
+      });
 
-      bot.sendMessage(chatId, statsMsg, { parse_mode: "Markdown" });
+      setTimeout(() => bot.deleteMessage(chatId, sentMsg.message_id).catch(() => {}), AUTO_DELETE);
     } catch (error) {
       console.error("Error in stats:", error);
-      bot.sendMessage(chatId, "❌ Error fetching stats");
+      const errMsg = await bot.sendMessage(chatId, "❌ Error fetching stats");
+      setTimeout(() => bot.deleteMessage(chatId, errMsg.message_id).catch(() => {}), 5000);
     }
   });
 
-  // Leaderboard (top converters)
+  // Leaderboard
   bot.onText(/^\/leaderboard$/, async (msg) => {
     const users = db.users || {};
     const sorted = Object.entries(users)
@@ -51,15 +69,80 @@ _Bot dibuat dengan ❤️ oleh Iqbaldev_`;
       .slice(0, 10);
 
     let leaderboardMsg = `🏆 *TOP 10 CONVERTERS*\n\n`;
-    sorted.forEach((entry, idx) => {
-      const [userId, user] = entry;
-      const ops = user.total_operation || 0;
-      const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `#${idx + 1}`;
-      leaderboardMsg += `${medal} @${user.username || user.first_name} - ${ops} ops\n`;
+    if (sorted.length === 0) {
+      leaderboardMsg += `_Belum ada data leaderboard._`;
+    } else {
+      sorted.forEach((entry, idx) => {
+        const [userId, user] = entry;
+        const ops = user.total_operation || 0;
+        const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `#${idx + 1}`;
+        leaderboardMsg += `${medal} @${user.username || user.first_name} - ${ops} ops\n`;
+      });
+      leaderboardMsg += `\n_Update real-time setiap operasi!_`;
+    }
+
+    const sentMsg = await bot.sendMessage(msg.chat.id, leaderboardMsg, {
+      parse_mode: "Markdown",
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: "📊 Stats", callback_data: "stats_menu" },
+            { text: "📖 Help", callback_data: "help_menu" }
+          ],
+          [{ text: "🗑️ Delete", callback_data: `delete_${sentMsg.message_id}` }]
+        ]
+      }
     });
 
-    leaderboardMsg += `\n_Update real-time setiap operasi!_`;
+    setTimeout(() => bot.deleteMessage(msg.chat.id, sentMsg.message_id).catch(() => {}), AUTO_DELETE);
+  });
 
-    bot.sendMessage(msg.chat.id, leaderboardMsg, { parse_mode: "Markdown" });
+  // Leaderboard callback
+  bot.on("callback_query", async (query) => {
+    if (query.data === "lb_menu") {
+      const users = db.users || {};
+      const sorted = Object.entries(users)
+        .sort((a, b) => (b[1].total_operation || 0) - (a[1].total_operation || 0))
+        .slice(0, 10);
+
+      let leaderboardMsg = `🏆 *TOP 10 CONVERTERS*\n\n`;
+      if (sorted.length === 0) {
+        leaderboardMsg += `_Belum ada data._`;
+      } else {
+        sorted.forEach((entry, idx) => {
+          const [userId, user] = entry;
+          const ops = user.total_operation || 0;
+          const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : `#${idx + 1}`;
+          leaderboardMsg += `${medal} @${user.username || user.first_name} - ${ops} ops\n`;
+        });
+      }
+
+      try {
+        await bot.editMessageText(leaderboardMsg, {
+          chat_id: query.message.chat.id,
+          message_id: query.message.message_id,
+          parse_mode: "Markdown",
+          reply_markup: {
+            inline_keyboard: [
+              [
+                { text: "📊 Stats", callback_data: "stats_menu" },
+                { text: "🗑️ Delete", callback_data: `delete_${query.message.message_id}` }
+              ]
+            ]
+          }
+        });
+      } catch (error) {}
+      await bot.answerCallbackQuery(query.id);
+    }
+
+    if (query.data.startsWith("delete_")) {
+      const msgId = parseInt(query.data.split("_")[1]);
+      try {
+        await bot.deleteMessage(query.message.chat.id, msgId);
+        await bot.answerCallbackQuery(query.id, "✅ Deleted", true);
+      } catch (error) {
+        await bot.answerCallbackQuery(query.id, "❌ Error", false);
+      }
+    }
   });
 }

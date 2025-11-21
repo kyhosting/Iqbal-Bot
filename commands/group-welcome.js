@@ -1,11 +1,14 @@
 export default function (bot, db, saveDB) {
+  const AUTO_DELETE = 300000; // 5 minutes
+
   bot.onText(/^\/welcome_setup$/, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
 
-    // Only owner & admin
     if (!config.owner.includes(userId)) {
-      return bot.sendMessage(chatId, "❌ Hanya owner yang bisa setup welcome.");
+      const errMsg = await bot.sendMessage(chatId, "❌ Hanya owner yang bisa setup welcome.");
+      setTimeout(() => bot.deleteMessage(chatId, errMsg.message_id).catch(() => {}), 5000);
+      return;
     }
 
     try {
@@ -22,11 +25,11 @@ Halo dan terima kasih sudah bergabung dengan komunitas kami!
 🎯 *FITUR BOT:*
 💎 Beli VIP - Akses unlimited semua fitur
 📞 Bantuan - Lapor bug/error/request fitur
-📊 /stats - Lihat statistik bot & member
+📊 Stats - Lihat statistik bot & member
 
-_Silakan /help untuk lihat semua command!_`;
+_Silakan tekan tombol di bawah!_`;
 
-      bot.sendMessage(chatId, welcomeMsg, {
+      const sentMsg = await bot.sendMessage(chatId, welcomeMsg, {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
@@ -34,14 +37,18 @@ _Silakan /help untuk lihat semua command!_`;
               { text: "💎 Beli VIP", callback_data: "vip_menu" },
               { text: "📞 Bantuan", callback_data: "bantuan_menu" }
             ],
-            [{ text: "📖 Help Menu", callback_data: "help_menu" }]
+            [
+              { text: "📊 Stats", callback_data: "stats_menu" },
+              { text: "📖 Help", callback_data: "help_menu" }
+            ],
+            [{ text: "🗑️ Delete", callback_data: `delete_${sentMsg.message_id}` }]
           ]
         }
       });
 
+      setTimeout(() => bot.deleteMessage(chatId, sentMsg.message_id).catch(() => {}), AUTO_DELETE);
     } catch (error) {
       console.error("Error in welcome setup:", error);
-      bot.sendMessage(chatId, "❌ Error setup welcome");
     }
   });
 
@@ -55,21 +62,38 @@ _Silakan /help untuk lihat semua command!_`;
 
       const welcomeMsg = `👋 *Selamat Datang* @${member.username || member.first_name}!
 
-Anda bergabung dengan grup konversi file terbaik. Jangan lupa baca rules dan gunakan bot dengan baik! 😊
+Anda bergabung dengan grup konversi file terbaik. Jangan lupa baca rules dan gunakan bot dengan baik! 😊`;
 
-💎 Tertarik VIP? Klik tombol di bawah!`;
-
-      bot.sendMessage(chatId, welcomeMsg, {
+      const sentMsg = await bot.sendMessage(chatId, welcomeMsg, {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
             [
               { text: "💎 Lihat VIP", callback_data: "vip_menu" },
               { text: "❓ Help", callback_data: "help_menu" }
+            ],
+            [
+              { text: "📞 Bantuan", callback_data: "bantuan_menu" },
+              { text: "📊 Stats", callback_data: "stats_menu" }
             ]
           ]
         }
       });
+
+      setTimeout(() => bot.deleteMessage(chatId, sentMsg.message_id).catch(() => {}), AUTO_DELETE);
+    }
+  });
+
+  // Delete message callback
+  bot.on("callback_query", async (query) => {
+    if (query.data.startsWith("delete_")) {
+      const msgId = parseInt(query.data.split("_")[1]);
+      try {
+        await bot.deleteMessage(query.message.chat.id, msgId);
+        await bot.answerCallbackQuery(query.id, "✅ Message deleted", true);
+      } catch (error) {
+        await bot.answerCallbackQuery(query.id, "❌ Error deleting message", false);
+      }
     }
   });
 }
