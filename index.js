@@ -186,22 +186,67 @@ bot.incrementOperation = (userId) => {
   }
 };
 
-// ===== AUTO CHECK VIP EXPIRE =====
+// ===== AUTO CHECK VIP EXPIRE + TRIAL NOTIFICATION =====
 setInterval(() => {
   for (const id in db.users) {
     const user = db.users[id];
+    
+    // Notif trial/VIP akan habis dalam 6 jam
+    if (user.vip_expired && user.vip_expired > Date.now() && user.vip_expired - Date.now() < 6 * 60 * 60 * 1000 && !user.notified_expiry) {
+      const hours = Math.ceil((user.vip_expired - Date.now()) / (1000 * 60 * 60));
+      bot.sendMessage(id, `⏰ *PERINGATAN: Trial/VIP kamu akan habis dalam ${hours} jam lagi Kak!*\n\n🎁 Perpanjang sekarang sebelum akses dicabut ya! 😊`, { 
+        parse_mode: "Markdown",
+        reply_markup: bot.getMainKeyboard()
+      }).catch(() => {});
+      user.notified_expiry = true;
+      saveDB();
+    }
+    
+    // VIP expire
     if (user.vip_expired && user.vip_expired !== 0 && Date.now() > user.vip_expired) {
       user.role = "user";
       user.vip_expired = 0;
       user.status = "inactive";
-      bot.sendMessage(id, "⏰ *Masa VIP kamu telah berakhir Kak* 😊\nKembali jadi user biasa ya~", { 
+      user.notified_expiry = false;
+      bot.sendMessage(id, "⏰ *Masa Trial/VIP kamu telah berakhir Kak* 😊\n\nKembali jadi user biasa ya. Beli VIP lagi untuk akses fitur premium!", { 
         parse_mode: "Markdown",
         reply_markup: bot.getMainKeyboard()
       }).catch(() => {});
     }
   }
   saveDB();
-}, 60 * 60 * 1000); // cek tiap 1 jam
+}, 30 * 60 * 1000); // cek tiap 30 menit
+
+// ===== GROUP LEAVE DETECTOR - AUTO REVOKE AKSES =====
+bot.on("my_chat_member", async (update) => {
+  const userId = update.from.id;
+  const groupName = update.chat.username;
+  
+  // Cek jika bot atau user keluar dari group
+  if (update.new_chat_member.status === "left" || update.new_chat_member.status === "kicked") {
+    const groupCheck = await bot.checkGroupMembership(userId);
+    
+    if (!groupCheck.verified) {
+      const user = db.users[userId];
+      if (user && (user.role === "vip" || user.role === "trial")) {
+        user.role = "user";
+        user.vip_expired = 0;
+        user.status = "inactive";
+        saveDB();
+        
+        bot.sendMessage(userId, 
+          `❌ *Akses Dicabut Kak!*\n\n` +
+          `Kamu keluar dari salah satu grup yang diwajibkan.\n\n` +
+          `✅ Untuk kembali aktif, silakan join lagi:\n` +
+          `• @agentviber12\n` +
+          `• @channelviber\n\n` +
+          `Setelah join, ketik /start lagi ya 😊`,
+          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+        ).catch(() => {});
+      }
+    }
+  }
+});
 
 // ===== EXPOSE REDEEM DB =====
 bot.redeemDB = redeemDB;

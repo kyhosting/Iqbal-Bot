@@ -106,9 +106,9 @@ export default function (bot, db, saveDB) {
       }
 
       // Redeem sukses!
-      const duration = redeemData.duration || 30; // default 30 hari
-      const vipExpired = Date.now() + (duration * 24 * 60 * 60 * 1000);
-      const expiredDate = new Date(vipExpired);
+      let duration = redeemData.duration || 30; // default 30 hari
+      let vipExpired = Date.now() + (duration * 24 * 60 * 60 * 1000);
+      let expiredDate = new Date(vipExpired);
 
       // Update user
       if (!db.users[userId]) {
@@ -120,12 +120,14 @@ export default function (bot, db, saveDB) {
           role: "vip",
           vip_expired: vipExpired,
           status: "active",
-          total_operation: 0
+          total_operation: 0,
+          notified_expiry: false
         };
       } else {
         db.users[userId].role = "vip";
         db.users[userId].vip_expired = vipExpired;
         db.users[userId].status = "active";
+        db.users[userId].notified_expiry = false;
       }
 
       // Mark redeem as used and save immediately
