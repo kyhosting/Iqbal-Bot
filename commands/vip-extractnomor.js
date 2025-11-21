@@ -120,8 +120,8 @@ export default function (bot, db, saveDB) {
         // Send file
         await bot.sendDocument(chatId, outputFile);
 
-        // Send numbers in chunks of 100
-        const chunkSize = 100;
+        // Send numbers in chunks of 20 (to stay under Telegram's 4096 char limit)
+        const chunkSize = 20;
         for (let i = 0; i < uniqueNumbers.length; i += chunkSize) {
           const chunk = uniqueNumbers.slice(i, i + chunkSize);
           const start = i + 1;
@@ -129,10 +129,16 @@ export default function (bot, db, saveDB) {
           const sectionTitle = `NOMOR ${start} - ${end}`;
           const numbersText = chunk.join("\n");
           
-          await bot.sendMessage(chatId, `${sectionTitle}\n\n${numbersText}`);
+          const message = `${sectionTitle}\n\n${numbersText}`;
+          
+          try {
+            await bot.sendMessage(chatId, message);
+          } catch (err) {
+            console.error("Send message error:", err);
+          }
           
           // Add small delay to avoid hitting rate limits
-          await new Promise(resolve => setTimeout(resolve, 500));
+          await new Promise(resolve => setTimeout(resolve, 300));
         }
 
         // Send final success message
@@ -167,9 +173,8 @@ function extractFromVcf(filePath) {
 
 function extractFromTxt(filePath) {
   const data = fs.readFileSync(filePath, "utf8");
-  const phoneRegex = /(\+?[0-9\-\s()]{9,})/g;
-  const matches = data.match(phoneRegex) || [];
-  return matches.map(num => num.replace(/[^0-9+]/g, "")).filter(num => num.length >= 9);
+  const lines = data.split(/[\r\n]+/).filter(l => l.trim());
+  return lines.map(line => line.trim()).filter(line => line.length >= 9);
 }
 
 function extractFromXls(filePath) {
@@ -177,16 +182,12 @@ function extractFromXls(filePath) {
   const worksheet = workbook.Sheets[workbook.SheetNames[0]];
   const data = XLSX.utils.sheet_to_json(worksheet);
   const numbers = [];
-  const phoneRegex = /(\+?[0-9\-\s()]{9,})/g;
   
   data.forEach(row => {
     Object.values(row).forEach(cell => {
       if (cell) {
-        const matches = String(cell).match(phoneRegex) || [];
-        matches.forEach(num => {
-          const clean = num.replace(/[^0-9+]/g, "");
-          if (clean.length >= 9) numbers.push(clean);
-        });
+        const str = String(cell).trim();
+        if (str.length >= 9) numbers.push(str);
       }
     });
   });
@@ -198,14 +199,10 @@ function extractFromCsv(filePath) {
   const data = fs.readFileSync(filePath, "utf8");
   const lines = data.split(/[\r\n]+/).filter(l => l.trim());
   const numbers = [];
-  const phoneRegex = /(\+?[0-9\-\s()]{9,})/g;
   
   lines.forEach(line => {
-    const matches = line.match(phoneRegex) || [];
-    matches.forEach(num => {
-      const clean = num.replace(/[^0-9+]/g, "");
-      if (clean.length >= 9) numbers.push(clean);
-    });
+    const values = line.split(",").map(v => v.trim()).filter(v => v.length >= 9);
+    numbers.push(...values);
   });
   
   return numbers;
