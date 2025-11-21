@@ -5,7 +5,7 @@ export default function (bot, db, saveDB) {
   const sessions = {};
 
   // Handle keyboard button & /renamefile command (MERGED - no duplicate!)
-  bot.onText(/^⛓️ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ$|^\/renamefile$/i, (msg) => {
+  bot.onText(/^⛓️ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ$|^\/renamefile$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);
@@ -18,8 +18,12 @@ export default function (bot, db, saveDB) {
       );
     }
 
+    // Verify group membership
+    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
+    if (!hasAccess) return;
+
     sessions[userId] = { step: 1 };
-    bot.sendMessage(
+    return await bot.sendMessage(
       chatId,
       `◆ RENAME FILE\n(Rename File)\n\n▸ Support Format:\n  • VCF (Contact)\n  • TXT (Text)\n  • XLSX (Excel)\n\n▸ Ubah nama file Anda\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,
       { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }

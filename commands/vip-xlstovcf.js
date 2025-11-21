@@ -24,7 +24,7 @@ export default function (bot, db, saveDB) {
     if (!hasAccess) return;
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(
+    return await bot.sendMessage(
       chatId,
       `◆ XLS TO VCF\n(Excel to Contact Converter)\n\n▸ Support Format:\n  • XLS (Excel)\n  • XLSX (Excel)\n\n▸ Kolom 1: Nama kontak\n▸ Kolom 2: Nomor telepon\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,
       { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
