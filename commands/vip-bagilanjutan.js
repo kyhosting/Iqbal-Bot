@@ -12,12 +12,12 @@ export default function (bot, db, saveDB) {
     if (!hasAccess) return;
     
     const role = bot.getRole(userId);
-    if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, `❌ *Yah… fitur ini khusus VIP nih Kak* 😔`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    if (!["owner", "admin", "vip", "trial"].includes(role)) {
+      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1, splitCounter: 1, fileCounter: 1 };
-    bot.sendMessage(chatId, `📤 *Bagi File VCF Lanjutan*\n\nKirim file VCF yang mau dibagi ya Kak ✨\n\nKetik \`batal\` untuk membatalkan.`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `📤 *BAGI FILE VCF LANJUTAN*\n\n📌 *Fungsi:* Membagi file VCF menjadi beberapa bagian sesuai jumlah kontak yang Anda inginkan per file.\n\n📝 Kirim file VCF yang ingin dibagi:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.onText(/^\/bagilanjutan$/, async (msg) => {
@@ -28,12 +28,12 @@ export default function (bot, db, saveDB) {
     if (!hasAccess) return;
     
     const role = bot.getRole(userId);
-    if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, `❌ *Yah… fitur ini khusus VIP nih Kak* 😔`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    if (!["owner", "admin", "vip", "trial"].includes(role)) {
+      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1, splitCounter: 1, fileCounter: 1 };
-    bot.sendMessage(chatId, `📤 *Bagi File VCF Lanjutan*\n\nKirim file VCF yang mau dibagi ya Kak ✨\n\nKetik \`batal\` untuk membatalkan.`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `📤 *BAGI FILE VCF LANJUTAN*\n\n📌 *Fungsi:* Membagi file VCF menjadi beberapa bagian sesuai jumlah kontak yang Anda inginkan per file.\n\n📝 Kirim file VCF yang ingin dibagi:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", async (msg) => {
