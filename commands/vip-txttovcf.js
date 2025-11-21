@@ -16,7 +16,7 @@ function createVcfEntry(phone, name) {
 export default function (bot, db, saveDB) {
   const sessions = {};
 
-  bot.onText(/^⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ$/i, async (msg) => {
+  bot.onText(/^⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ$|^\/txttovcf$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     
@@ -24,28 +24,12 @@ export default function (bot, db, saveDB) {
     if (!hasAccess) return;
     
     const role = bot.getRole(userId);
-    if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, `◆ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    if (!["owner", "admin", "vip", "trial"].includes(role)) {
+      return bot.sendMessage(chatId, `❌ *Fitur ini khusus untuk member VIP* 💎\n\nUpgrade ke VIP untuk akses semua fitur premium!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `◆ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n(Konversi TXT/XLS ke VCF)\n\n▸ Kirim file TXT atau XLS\n\nFile harus berisi nomor telepon\nKetik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
-  });
-
-  bot.onText(/^\/txttovcf$/, async (msg) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-    
-    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
-    if (!hasAccess) return;
-    
-    const role = bot.getRole(userId);
-    if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, `◆ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
-    }
-
-    sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `◆ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n(Konversi TXT/XLS ke VCF)\n\n▸ Kirim file TXT atau XLS\n\nFile harus berisi nomor telepon\nKetik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `📝 *TXT KE VCF CONVERTER*\n\n📌 *Fungsi:* Mengubah file TXT atau XLSX menjadi file VCF dengan kontak terformat.\n\n📋 *Format File:*\n• Satu nomor per baris (untuk TXT)\n• Satu nomor per kolom (untuk XLSX)\n\n📤 Kirim file TXT atau XLSX:\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", async (msg) => {
@@ -111,7 +95,13 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text)) {
         try { fs.unlinkSync(session.file); } catch {}
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n\n▸ ❌ Proses Dibatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `❌ Proses dibatalkan ya Kak 😊`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      }
+
+      if (/^done$/i.test(text)) {
+        try { fs.unlinkSync(session.file); } catch {}
+        delete sessions[userId];
+        return bot.sendMessage(chatId, `❌ Nama kontak tidak boleh kosong Kak 😊\n\nCoba lagi ya!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       }
 
       session.contactName = /^skip$/i.test(text) ? session.newFileName : text.trim();
@@ -147,7 +137,7 @@ export default function (bot, db, saveDB) {
         if (numbers.length === 0) {
           try { fs.unlinkSync(session.file); } catch {}
           delete sessions[userId];
-          return bot.sendMessage(chatId, `◆ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n\n▸ ⚠️ Nomor Tidak Ditemukan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+          return bot.sendMessage(chatId, `⚠️ *Nomor Tidak Ditemukan* 😔\n\nPastikan file berisi nomor telepon yang valid ya Kak!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
         }
 
         const outputFile = `${session.newFileName}.vcf`;
@@ -158,8 +148,8 @@ export default function (bot, db, saveDB) {
 
         fs.writeFileSync(outputPath, vcfContent);
 
+        await bot.sendMessage(chatId, `✅ *KONVERSI SELESAI!*\n\n📂 File: \`${outputFile}\`\n📊 Total Nomor: *${numbers.length}*\n📄 Tipe: ${session.fileType.toUpperCase()}\n\nSemoga membantu ya Kak! 😊`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
         await bot.sendDocument(chatId, outputPath);
-        await bot.sendMessage(chatId, `◆ ᴛxᴛ ᴛᴏ ᴠᴄꜰ - ✅ SUKSES\n\n▸ Nama File: ${outputFile}\n▸ Total Nomor: ${numbers.length}\n▸ Tipe: ${session.fileType.toUpperCase()}\n\n💎 Terima kasih sudah menggunakan bot ini 🙏\nJangan lupa support bot dengan subscribe channel 🤗\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
 
         bot.incrementOperation(userId);
 
@@ -169,7 +159,7 @@ export default function (bot, db, saveDB) {
         delete sessions[userId];
       } catch (err) {
         console.error("Conversion error:", err);
-        bot.sendMessage(chatId, `◆ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n\n▸ ⚠️ Konversi Gagal\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        bot.sendMessage(chatId, `⚠️ *Konversi Gagal* 😔\n\nAda kesalahan saat memproses file. Coba lagi ya!`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
         delete sessions[userId];
       }
     }
