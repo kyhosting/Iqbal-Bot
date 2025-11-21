@@ -1,44 +1,42 @@
 export default function (bot, db, saveDB) {
+  const AUTO_DELETE = 300000; // 5 minutes
+
   bot.onText(/^\/lapor_admin$|^📞 LAPOR ADMIN$/, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
 
     if (msg.chat.type === "private") {
-      return bot.sendMessage(chatId, "❌ Command ini hanya di grup!");
+      const errMsg = await bot.sendMessage(chatId, "❌ Hanya di grup!");
+      setTimeout(() => bot.deleteMessage(chatId, errMsg.message_id).catch(() => {}), 5000);
+      return;
     }
 
     try {
       const reportMsg = `📞 *LAPOR ADMIN/ABUSE*
 
-Silakan gunakan tombol di bawah untuk lapor masalah:
-
-🐞 **Lapor Bug** - Ada bug di bot atau grup
-⚠️ **Report Abuse** - Ada member yang spam/abuse
-🛠️ **Request Fitur** - Minta fitur baru
-💬 **Chat Owner** - Hubungi owner langsung
-
-_Laporan Anda akan diproses segera!_`;
+Silakan pilih tipe laporan Anda:`;
 
       const ownerUsername = config.ownerUsername;
-      const reportBugMsg = `Halo Admin, saya ingin melaporkan BUG di grup.\n\nUser ID: ${userId}\nGrup: Lihat pesan sebelumnya\n\nDetail bug:`;
-      const reportAbuseMsg = `Halo Admin, ada member yang spam/abuse.\n\nUser ID: ${userId}\nMember ID: [mention di reply]\n\nDetail:`;
-      const featureMsg = `Halo Admin, saya request fitur baru untuk bot.\n\nUser ID: ${userId}\n\nFitur yang diminta:`;
+      const bugMsg = `Halo Admin, BUG di bot/grup.\n\nUser ID: ${userId}\n\nDetail:`;
+      const abuseMsg = `Halo Admin, ada member spam/abuse.\n\nUser ID: ${userId}\n\nDetail:`;
+      const featureMsg = `Halo Admin, request fitur baru.\n\nUser ID: ${userId}\n\nFitur:`;
 
-      bot.sendMessage(chatId, reportMsg, {
+      const sentMsg = await bot.sendMessage(chatId, reportMsg, {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "🐞 Lapor Bug", url: `https://t.me/${ownerUsername}?text=${encodeURIComponent(reportBugMsg)}` }],
-            [{ text: "⚠️ Report Abuse", url: `https://t.me/${ownerUsername}?text=${encodeURIComponent(reportAbuseMsg)}` }],
-            [{ text: "🛠️ Request Fitur", url: `https://t.me/${ownerUsername}?text=${encodeURIComponent(featureMsg)}` }],
-            [{ text: "💬 Chat Owner", url: `https://t.me/${ownerUsername}` }]
+            [{ text: "🐞 Bug Report", url: `https://t.me/${ownerUsername}?text=${encodeURIComponent(bugMsg)}` }],
+            [{ text: "⚠️ Report Abuse", url: `https://t.me/${ownerUsername}?text=${encodeURIComponent(abuseMsg)}` }],
+            [{ text: "🛠️ Feature Request", url: `https://t.me/${ownerUsername}?text=${encodeURIComponent(featureMsg)}` }],
+            [{ text: "💬 Chat Owner", url: `https://t.me/${ownerUsername}` }],
+            [{ text: "🗑️ Delete", callback_data: `delete_${sentMsg.message_id}` }]
           ]
         }
       });
 
+      setTimeout(() => bot.deleteMessage(chatId, sentMsg.message_id).catch(() => {}), AUTO_DELETE);
     } catch (error) {
       console.error("Error in lapor admin:", error);
-      bot.sendMessage(chatId, "❌ Error, coba lagi");
     }
   });
 
@@ -47,7 +45,9 @@ _Laporan Anda akan diproses segera!_`;
     const userId = msg.from.id;
 
     if (!config.owner.includes(userId)) {
-      return bot.sendMessage(msg.chat.id, "❌ Owner only");
+      const errMsg = await bot.sendMessage(msg.chat.id, "❌ Owner only!");
+      setTimeout(() => bot.deleteMessage(msg.chat.id, errMsg.message_id).catch(() => {}), 5000);
+      return;
     }
 
     const message = match[1];
@@ -55,11 +55,13 @@ _Laporan Anda akan diproses segera!_`;
     let sent = 0;
     let failed = 0;
 
-    const statusMsg = await bot.sendMessage(msg.chat.id, `📢 Mengirim broadcast ke ${users.length} user...`);
+    const statusMsg = await bot.sendMessage(msg.chat.id, `📢 *Broadcasting ke ${users.length} user...*\n\n⏳ Loading...`, {
+      parse_mode: "Markdown"
+    });
 
     for (const userId of users) {
       try {
-        await bot.sendMessage(userId, `📢 *PENGUMUMAN DARI OWNER*\n\n${message}`, {
+        await bot.sendMessage(userId, `📢 *PENGUMUMAN*\n\n${message}`, {
           parse_mode: "Markdown"
         });
         sent++;
@@ -67,20 +69,37 @@ _Laporan Anda akan diproses segera!_`;
         failed++;
       }
 
-      // Delay untuk avoid flood
       if (sent % 10 === 0) await delay(1000);
     }
 
-    bot.editMessageText(
-      `✅ *Broadcast Selesai*\n\n` +
-      `📨 Terkirim: ${sent}\n` +
-      `❌ Gagal: ${failed}`,
+    await bot.editMessageText(
+      `✅ *Broadcast Selesai*\n\n📨 Terkirim: ${sent}\n❌ Gagal: ${failed}`,
       {
         chat_id: msg.chat.id,
         message_id: statusMsg.message_id,
-        parse_mode: "Markdown"
+        parse_mode: "Markdown",
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: "🗑️ Delete", callback_data: `delete_${statusMsg.message_id}` }]
+          ]
+        }
       }
     );
+
+    setTimeout(() => bot.deleteMessage(msg.chat.id, statusMsg.message_id).catch(() => {}), AUTO_DELETE);
+  });
+
+  // Delete callback
+  bot.on("callback_query", async (query) => {
+    if (query.data.startsWith("delete_")) {
+      const msgId = parseInt(query.data.split("_")[1]);
+      try {
+        await bot.deleteMessage(query.message.chat.id, msgId);
+        await bot.answerCallbackQuery(query.id, "✅ Deleted", true);
+      } catch (error) {
+        await bot.answerCallbackQuery(query.id, "❌ Error", false);
+      }
+    }
   });
 }
 

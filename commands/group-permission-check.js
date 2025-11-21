@@ -1,19 +1,15 @@
-// Permission system - User biasa restricted access
 export default function (bot, db, saveDB) {
-  // Middleware untuk check permission sebelum akses features
+  const AUTO_DELETE = 300000; // 5 minutes
+
   bot.checkFeatureAccess = (userId, feature = "default") => {
     const user = db.users[userId] || {};
     const isVIP = user.role === "vip" && user.vip_expired > Date.now();
     const isOwner = config.owner.includes(userId);
 
-    // Owner always has access
     if (isOwner) return { allowed: true, reason: "Owner" };
-
-    // VIP has access to all features
     if (isVIP) return { allowed: true, reason: "VIP" };
 
-    // User biasa only has limited access
-    const allowedFeatures = ["help", "stats", "leaderboard", "faq", "start", "bantuan", "vip", "me"];
+    const allowedFeatures = ["help", "stats", "leaderboard", "faq", "start", "bantuan", "vip", "me", "checkaccess"];
     
     if (allowedFeatures.includes(feature)) {
       return { allowed: true, reason: "Limited Access" };
@@ -22,68 +18,86 @@ export default function (bot, db, saveDB) {
     return { allowed: false, reason: "VIP Required" };
   };
 
-  // Intercept VIP-only commands
-  const restrictedCommands = [
-    "txt_to_vcf",
-    "vcf_to_txt",
-    "xls_to_vcf",
-    "bagi_vcf",
-    "extract_nomor",
-    "gabung_file",
-    "potong_vcf",
-    "rapikan_txt",
-    "hitung_file",
-    "rename_file",
-    "rename_kontak",
-    "cek_kontak",
-    "admin_panel",
-    "welcome_setup",
-    "lapor_admin"
-  ];
-
-  // Check permission on any command
-  bot.onText(/(.+)/, (msg) => {
-    const text = msg.text || "";
-    const userId = msg.from.id;
-
-    // Check if command is restricted
-    const isRestricted = restrictedCommands.some(cmd => text.includes(cmd) || text.includes("⛓️") || text.includes("🎁"));
-
-    if (isRestricted) {
-      const access = bot.checkFeatureAccess(userId);
-
-      if (!access.allowed) {
-        // Don't block, but warn in certain cases
-        // Command handlers akan check lagi
-      }
-    }
-  });
-
-  // Command for checking access
-  bot.onText(/^\/checkaccess$/, (msg) => {
+  bot.onText(/^\/checkaccess$|^🔐 CHECK ACCESS$/, (msg) => {
     const userId = msg.from.id;
     const user = db.users[userId] || {};
     const access = bot.checkFeatureAccess(userId);
 
-    const accessMsg = `🔐 *YOUR ACCESS LEVEL*\n\n` +
-      `Status: ${user.role === "vip" ? "💎 VIP" : config.owner.includes(userId) ? "👑 Owner" : "👤 User"}\n` +
-      `Access: ${access.reason}\n\n` +
-      `📋 *Accessible Features:*\n` +
-      `✅ /help - Help menu\n` +
-      `✅ /stats - Bot statistics\n` +
-      `✅ /leaderboard - Top converters\n` +
-      `✅ /me - Your info\n` +
-      `✅ /bantuan - Support menu\n` +
-      `✅ /vip - Buy VIP\n` +
-      `✅ /faq - FAQ\n\n` +
-      `🔒 *Restricted (VIP Only):*\n` +
-      `⛓️ File conversion\n` +
-      `⛓️ Extract nomor\n` +
-      `⛓️ Gabung/bagi file\n` +
-      `⛓️ Admin panel\n` +
-      `⛓️ Semua premium features\n\n` +
-      `💎 _Beli VIP untuk unlock semua fitur!_`;
+    const accessMsg = `🔐 *YOUR ACCESS LEVEL*
 
-    bot.sendMessage(msg.chat.id, accessMsg, { parse_mode: "Markdown" });
+Status: ${user.role === "vip" ? "💎 VIP" : config.owner.includes(userId) ? "👑 Owner" : "👤 User"}
+Access: ${access.reason}
+
+📋 *Accessible Features:*
+✅ /help • /stats • /leaderboard
+✅ /me • /bantuan • /vip • /faq
+
+🔒 *Restricted (VIP Only):*
+⛓️ File conversions
+⛓️ Extract nomor
+⛓️ Gabung/bagi file
+⛓️ Admin panel
+⛓️ Premium features
+
+💎 _Beli VIP untuk unlock semua!_`;
+
+    bot.sendMessage(msg.chat.id, accessMsg, {
+      parse_mode: "Markdown",
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: "💎 Beli VIP", callback_data: "vip_menu" },
+            { text: "❓ Help", callback_data: "help_menu" }
+          ],
+          [
+            { text: "📞 Bantuan", callback_data: "bantuan_menu" },
+            { text: "🗑️ Delete", callback_data: `delete_${msg.message_id}` }
+          ]
+        ]
+      }
+    });
+  });
+
+  // Restricted feature warning
+  bot.onText(/⛓️/, (msg) => {
+    const userId = msg.from.id;
+    const user = db.users[userId] || {};
+
+    if (user.role !== "vip" || user.vip_expired < Date.now()) {
+      if (!config.owner.includes(userId)) {
+        const warnMsg = `⚠️ *Fitur VIP Terbatas*
+
+Anda harus membeli VIP untuk mengakses fitur ini!
+
+💎 *VIP Packages:*
+• 7 Hari: Rp 15.000
+• 30 Hari: Rp 40.000
+• 1 Tahun: Rp 100.000`;
+
+        bot.sendMessage(msg.chat.id, warnMsg, {
+          parse_mode: "Markdown",
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: "💎 Beli VIP", callback_data: "vip_menu" }],
+              [{ text: "❓ Lihat Paket", callback_data: "vip_packages" }],
+              [{ text: "🗑️ Delete", callback_data: `delete_${msg.message_id}` }]
+            ]
+          }
+        });
+      }
+    }
+  });
+
+  // Delete callback
+  bot.on("callback_query", async (query) => {
+    if (query.data.startsWith("delete_")) {
+      const msgId = parseInt(query.data.split("_")[1]);
+      try {
+        await bot.deleteMessage(query.message.chat.id, msgId);
+        await bot.answerCallbackQuery(query.id, "✅ Deleted", true);
+      } catch (error) {
+        await bot.answerCallbackQuery(query.id, "❌ Error", false);
+      }
+    }
   });
 }

@@ -1,33 +1,30 @@
 export default function (bot, db, saveDB) {
-  // Initialize warn DB
+  const AUTO_DELETE = 300000; // 5 minutes
+
   if (!db.warns) db.warns = {};
   if (!db.banned) db.banned = {};
 
-  // Warn command
-  bot.onText(/^\/warn (@\w+|\d+)$/, async (msg, match) => {
+  bot.onText(/^\/warn (\d+) (.*)$/, async (msg, match) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
-    const targetStr = match[1];
+    const targetId = match[1];
+    const reason = match[2] || "Admin warn";
 
     if (msg.chat.type === "private") {
-      return bot.sendMessage(chatId, "❌ Command ini hanya di grup!");
+      const errMsg = await bot.sendMessage(chatId, "❌ Hanya di grup!");
+      setTimeout(() => bot.deleteMessage(chatId, errMsg.message_id).catch(() => {}), 5000);
+      return;
     }
 
-    // Check admin
     try {
       const member = await bot.getChatMember(chatId, userId);
       if (!["administrator", "creator"].includes(member.status) && !config.owner.includes(userId)) {
-        return bot.sendMessage(chatId, "❌ Hanya admin");
+        const errMsg = await bot.sendMessage(chatId, "❌ Hanya admin!");
+        setTimeout(() => bot.deleteMessage(chatId, errMsg.message_id).catch(() => {}), 5000);
+        return;
       }
     } catch (error) {
-      return bot.sendMessage(chatId, "❌ Error check admin");
-    }
-
-    // Parse target user
-    let targetId = targetStr;
-    if (targetStr.startsWith("@")) {
-      // Convert username to ID (simplified - in production gunakan API)
-      return bot.sendMessage(chatId, "📝 Fitur warn by username - Coming soon, gunakan user ID");
+      return;
     }
 
     const warnKey = `${chatId}_${targetId}`;
@@ -38,7 +35,7 @@ export default function (bot, db, saveDB) {
     db.warns[warnKey].count++;
     db.warns[warnKey].warns.push({
       by: userId,
-      reason: "Admin warn",
+      reason,
       timestamp: new Date().toISOString()
     });
 
@@ -47,22 +44,35 @@ export default function (bot, db, saveDB) {
     const warnCount = db.warns[warnKey].count;
     const maxWarns = 3;
 
-    const warnMsg = `⚠️ *USER WARNED*\n\n`;
-    `User ID: ${targetId}\n`;
-    `Warns: ${warnCount}/${maxWarns}\n\n`;
+    const warnMsg = `⚠️ *USER WARNED*\n\nUser: ${targetId}\nWarns: ${warnCount}/${maxWarns}\nReason: ${reason}`;
 
     if (warnCount >= maxWarns) {
-      bot.kickChatMember(chatId, targetId).catch(() => {});
-      return bot.sendMessage(chatId, 
-        `⚠️ *USER KICKED*\n\nUser ${targetId} kicked after ${warnCount} warns.`, 
-        { parse_mode: "Markdown" }
-      );
+      try {
+        await bot.kickChatMember(chatId, targetId);
+        const kickMsg = await bot.sendMessage(chatId,
+          `🚫 *USER KICKED*\n\nUser ${targetId} kicked after ${warnCount} warns.`,
+          { parse_mode: "Markdown" }
+        );
+        setTimeout(() => bot.deleteMessage(chatId, kickMsg.message_id).catch(() => {}), AUTO_DELETE);
+      } catch (error) {}
+      return;
     }
 
-    bot.sendMessage(chatId, warnMsg, { parse_mode: "Markdown" });
+    const sentMsg = await bot.sendMessage(chatId, warnMsg, {
+      parse_mode: "Markdown",
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: "⚠️ More Warns", callback_data: "warns_list_cb" },
+            { text: "🗑️ Delete", callback_data: `delete_${sentMsg.message_id}` }
+          ]
+        ]
+      }
+    });
+
+    setTimeout(() => bot.deleteMessage(chatId, sentMsg.message_id).catch(() => {}), AUTO_DELETE);
   });
 
-  // Ban command
   bot.onText(/^\/ban (\d+) (.*)$/, async (msg, match) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
@@ -70,23 +80,25 @@ export default function (bot, db, saveDB) {
     const reason = match[2] || "No reason";
 
     if (msg.chat.type === "private") {
-      return bot.sendMessage(chatId, "❌ Command ini hanya di grup!");
+      const errMsg = await bot.sendMessage(chatId, "❌ Hanya di grup!");
+      setTimeout(() => bot.deleteMessage(chatId, errMsg.message_id).catch(() => {}), 5000);
+      return;
     }
 
     try {
       const member = await bot.getChatMember(chatId, userId);
       if (!["administrator", "creator"].includes(member.status) && !config.owner.includes(userId)) {
-        return bot.sendMessage(chatId, "❌ Hanya admin");
+        const errMsg = await bot.sendMessage(chatId, "❌ Hanya admin!");
+        setTimeout(() => bot.deleteMessage(chatId, errMsg.message_id).catch(() => {}), 5000);
+        return;
       }
     } catch (error) {
-      return bot.sendMessage(chatId, "❌ Error check admin");
+      return;
     }
 
-    // Ban user
     try {
       await bot.kickChatMember(chatId, targetId);
 
-      // Store ban info
       if (!db.banned[chatId]) db.banned[chatId] = [];
       db.banned[chatId].push({
         userId: targetId,
@@ -96,15 +108,25 @@ export default function (bot, db, saveDB) {
       });
       saveDB();
 
-      bot.sendMessage(chatId, `🚫 *USER BANNED*\n\nUser: ${targetId}\nReason: ${reason}`, 
-        { parse_mode: "Markdown" }
-      );
+      const banMsg = await bot.sendMessage(chatId, `🚫 *USER BANNED*\n\nUser: ${targetId}\nReason: ${reason}`, {
+        parse_mode: "Markdown",
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: "📋 Banned List", callback_data: "banned_list_cb" },
+              { text: "🗑️ Delete", callback_data: `delete_${banMsg.message_id}` }
+            ]
+          ]
+        }
+      });
+
+      setTimeout(() => bot.deleteMessage(chatId, banMsg.message_id).catch(() => {}), AUTO_DELETE);
     } catch (error) {
-      bot.sendMessage(chatId, "❌ Could not ban user");
+      const errMsg = await bot.sendMessage(chatId, "❌ Could not ban user");
+      setTimeout(() => bot.deleteMessage(chatId, errMsg.message_id).catch(() => {}), 5000);
     }
   });
 
-  // Unban command
   bot.onText(/^\/unban (\d+)$/, async (msg, match) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
@@ -113,30 +135,38 @@ export default function (bot, db, saveDB) {
     try {
       const member = await bot.getChatMember(chatId, userId);
       if (!["administrator", "creator"].includes(member.status) && !config.owner.includes(userId)) {
-        return bot.sendMessage(chatId, "❌ Hanya admin");
+        const errMsg = await bot.sendMessage(chatId, "❌ Hanya admin!");
+        setTimeout(() => bot.deleteMessage(chatId, errMsg.message_id).catch(() => {}), 5000);
+        return;
       }
     } catch (error) {
-      return bot.sendMessage(chatId, "❌ Error check admin");
+      return;
     }
 
     try {
       await bot.unbanChatMember(chatId, targetId);
 
-      // Remove from banned list
       if (db.banned[chatId]) {
         db.banned[chatId] = db.banned[chatId].filter(b => b.userId !== parseInt(targetId));
       }
       saveDB();
 
-      bot.sendMessage(chatId, `✅ *USER UNBANNED*\n\nUser: ${targetId}`, 
-        { parse_mode: "Markdown" }
-      );
+      const unbanMsg = await bot.sendMessage(chatId, `✅ *USER UNBANNED*\n\nUser: ${targetId}`, {
+        parse_mode: "Markdown",
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: "🗑️ Delete", callback_data: `delete_${unbanMsg.message_id}` }]
+          ]
+        }
+      });
+
+      setTimeout(() => bot.deleteMessage(chatId, unbanMsg.message_id).catch(() => {}), AUTO_DELETE);
     } catch (error) {
-      bot.sendMessage(chatId, "❌ Could not unban user");
+      const errMsg = await bot.sendMessage(chatId, "❌ Could not unban user");
+      setTimeout(() => bot.deleteMessage(chatId, errMsg.message_id).catch(() => {}), 5000);
     }
   });
 
-  // List warns
   bot.onText(/^\/warns_list$/, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
@@ -144,7 +174,9 @@ export default function (bot, db, saveDB) {
     try {
       const member = await bot.getChatMember(chatId, userId);
       if (!["administrator", "creator"].includes(member.status) && !config.owner.includes(userId)) {
-        return bot.sendMessage(chatId, "❌ Hanya admin");
+        const errMsg = await bot.sendMessage(chatId, "❌ Hanya admin!");
+        setTimeout(() => bot.deleteMessage(chatId, errMsg.message_id).catch(() => {}), 5000);
+        return;
       }
     } catch (error) {
       return;
@@ -155,15 +187,48 @@ export default function (bot, db, saveDB) {
       .slice(0, 10);
 
     let warnsList = `⚠️ *WARNS LIST*\n\n`;
-    warns.forEach(([key, data]) => {
-      const uid = key.split("_")[1];
-      warnsList += `User ${uid}: ${data.count} warns\n`;
-    });
-
     if (warns.length === 0) {
-      warnsList = `✅ Tidak ada user dengan warns di grup ini.`;
+      warnsList = `✅ Tidak ada warns di grup ini.`;
+    } else {
+      warns.forEach(([key, data]) => {
+        const uid = key.split("_")[1];
+        warnsList += `• User ${uid}: ${data.count} warns\n`;
+      });
     }
 
-    bot.sendMessage(chatId, warnsList, { parse_mode: "Markdown" });
+    const sentMsg = await bot.sendMessage(chatId, warnsList, {
+      parse_mode: "Markdown",
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: "⚙️ Admin", callback_data: `admin_back_${chatId}` },
+            { text: "🗑️ Delete", callback_data: `delete_${sentMsg.message_id}` }
+          ]
+        ]
+      }
+    });
+
+    setTimeout(() => bot.deleteMessage(chatId, sentMsg.message_id).catch(() => {}), AUTO_DELETE);
+  });
+
+  // Callbacks
+  bot.on("callback_query", async (query) => {
+    if (query.data === "warns_list_cb") {
+      await bot.answerCallbackQuery(query.id, "⏳ Loading...", true);
+    }
+
+    if (query.data === "banned_list_cb") {
+      await bot.answerCallbackQuery(query.id, "⏳ Loading...", true);
+    }
+
+    if (query.data.startsWith("delete_")) {
+      const msgId = parseInt(query.data.split("_")[1]);
+      try {
+        await bot.deleteMessage(query.message.chat.id, msgId);
+        await bot.answerCallbackQuery(query.id, "✅ Deleted", true);
+      } catch (error) {
+        await bot.answerCallbackQuery(query.id, "❌ Error", false);
+      }
+    }
   });
 }
