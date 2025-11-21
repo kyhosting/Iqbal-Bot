@@ -115,45 +115,11 @@ export default function (bot, db, saveDB) {
         const uniqueNumbers = [...new Set(numbers)].sort();
         fs.writeFileSync(outputFile, uniqueNumbers.join("\n"));
 
-        // Send info message
-        await bot.sendMessage(chatId, `✅ *HASIL EKSTRAK NOMOR*\n\n📄 File: \`${session.fileName}\`\n📊 Total Nomor: *${uniqueNumbers.length}*`, { parse_mode: "Markdown" });
+        // Send ONE message with info + file + single success message
+        await bot.sendMessage(chatId, `✅ *EKSTRAK NOMOR SELESAI!*\n\n📄 File: \`${session.fileName}\`\n📊 Total Nomor: *${uniqueNumbers.length}*\n\n📝 Nomor-nomor Anda sudah di-extract dan disimpan ke file. Download file di bawah ini.\n\nSemoga membantu ya Kak! 😊`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
 
         // Send file
         await bot.sendDocument(chatId, outputFile);
-
-        // Send numbers in chunks to avoid message length limit
-        const maxChunkSize = 3500; // Stay under 4096 char limit
-        let currentMessage = "";
-        
-        for (let i = 0; i < uniqueNumbers.length; i++) {
-          const number = uniqueNumbers[i] + "\n";
-          
-          if ((currentMessage + number).length > maxChunkSize) {
-            // Send current chunk
-            try {
-              await bot.sendMessage(chatId, currentMessage, { parse_mode: "Markdown" });
-            } catch (err) {
-              console.error("Send message error:", err);
-            }
-            currentMessage = number;
-            // Small delay between messages
-            await new Promise(resolve => setTimeout(resolve, 100));
-          } else {
-            currentMessage += number;
-          }
-        }
-        
-        // Send remaining numbers
-        if (currentMessage.trim()) {
-          try {
-            await bot.sendMessage(chatId, currentMessage, { parse_mode: "Markdown" });
-          } catch (err) {
-            console.error("Send message error:", err);
-          }
-        }
-
-        // Send final success message
-        await bot.sendMessage(chatId, `✅ *Ekstrak Selesai!*\n\n📞 Total nomor: *${uniqueNumbers.length}*\n\nSemoga membantu ya Kak! 😊`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
         
         bot.incrementOperation(userId);
 
