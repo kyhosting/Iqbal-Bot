@@ -120,14 +120,35 @@ export default function (bot, db, saveDB) {
         // Send file
         await bot.sendDocument(chatId, outputFile);
 
-        // Send all numbers in one message
-        const numbersText = uniqueNumbers.join("\n");
+        // Send numbers in chunks to avoid message length limit
+        const maxChunkSize = 3500; // Stay under 4096 char limit
+        let currentMessage = "";
         
-        try {
-          await bot.sendMessage(chatId, numbersText);
-        } catch (err) {
-          console.error("Send message error:", err);
-          await bot.sendMessage(chatId, `Nomor terlalu banyak. File sudah dikirim.`);
+        for (let i = 0; i < uniqueNumbers.length; i++) {
+          const number = uniqueNumbers[i] + "\n";
+          
+          if ((currentMessage + number).length > maxChunkSize) {
+            // Send current chunk
+            try {
+              await bot.sendMessage(chatId, currentMessage);
+            } catch (err) {
+              console.error("Send message error:", err);
+            }
+            currentMessage = number;
+            // Small delay between messages
+            await new Promise(resolve => setTimeout(resolve, 100));
+          } else {
+            currentMessage += number;
+          }
+        }
+        
+        // Send remaining numbers
+        if (currentMessage.trim()) {
+          try {
+            await bot.sendMessage(chatId, currentMessage);
+          } catch (err) {
+            console.error("Send message error:", err);
+          }
         }
 
         // Send final success message
