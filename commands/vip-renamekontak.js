@@ -1,29 +1,13 @@
 import fs from "fs";
 import path from "path";
 
-// Fungsi pembuat file VCF
-function createVcfEntry(phone, name) {
-  return [
-    "BEGIN:VCARD",
-    "VERSION:3.0",
-    `FN:${name}`,
-    `TEL;TYPE=CELL:+${phone.replace(/\D/g, "")}`,
-    "END:VCARD",
-  ].join("\n");
-}
-
 export default function (bot, db, saveDB) {
   const sessions = {};
 
   // Handle keyboard button
-  bot.onText(/^⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ$/i, async (msg) => {
+  bot.onText(/^⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ$/i, (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
-    
-    // Verify group membership first
-    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
-    if (!hasAccess) return;
-    
     const role = bot.getRole(userId);
 
     if (!["owner", "admin", "vip"].includes(role)) {
@@ -42,8 +26,8 @@ export default function (bot, db, saveDB) {
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `📄 *TXT to VCF Converter*\n\n` +
-      `Silakan kirim file TXT yang mau diubah jadi VCF ya Kak ✨\n\n` +
+      `✏️ *Rename Kontak dalam VCF*\n\n` +
+      `Silakan kirim file VCF yang mau direname kontaknya ya Kak ✨\n\n` +
       `Ketik \`batal\` untuk membatalkan.`,
       { 
         parse_mode: "Markdown",
@@ -52,14 +36,10 @@ export default function (bot, db, saveDB) {
     );
   });
 
-  bot.onText(/^\/txttovcf$/, async (msg) => {
+  // Handle /renamekontak command
+  bot.onText(/^\/renamekontak$/, (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
-    
-    // Verify group membership first
-    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
-    if (!hasAccess) return;
-    
     const role = bot.getRole(userId);
 
     if (!["owner", "admin", "vip"].includes(role)) {
@@ -78,8 +58,8 @@ export default function (bot, db, saveDB) {
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `📄 *TXT to VCF Converter*\n\n` +
-      `Silakan kirim file TXT yang mau diubah jadi VCF ya Kak ✨\n\n` +
+      `✏️ *Rename Kontak dalam VCF*\n\n` +
+      `Silakan kirim file VCF yang mau direname kontaknya ya Kak ✨\n\n` +
       `Ketik \`batal\` untuk membatalkan.`,
       { 
         parse_mode: "Markdown",
@@ -93,10 +73,9 @@ export default function (bot, db, saveDB) {
     const userId = msg.from.id;
     const text = msg.text?.trim();
     const session = sessions[userId];
-
     if (!session) return;
 
-    // Step 1 → Kirim file txt
+    // Step 1 → kirim file .vcf
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
@@ -107,10 +86,10 @@ export default function (bot, db, saveDB) {
         );
       }
 
-      if (!msg.document || !msg.document.file_name.endsWith(".txt")) {
+      if (!msg.document || !msg.document.file_name.endsWith(".vcf")) {
         return bot.sendMessage(
-          chatId, 
-          "⚠️ *Harus file TXT ya Kak* 😊\n\nCoba kirim file dengan ekstensi .txt",
+          chatId,
+          "⚠️ *Harus file VCF ya Kak* 😊\n\nCoba kirim file dengan ekstensi .vcf",
           { 
             parse_mode: "Markdown",
             reply_markup: bot.getMainKeyboard()
@@ -121,22 +100,20 @@ export default function (bot, db, saveDB) {
       const fileId = msg.document.file_id;
       const file = await bot.getFile(fileId);
       const filePath = `https://api.telegram.org/file/bot${bot.token}/${file.file_path}`;
-
-      // Unduh file txt
       const res = await fetch(filePath);
       const buffer = await res.arrayBuffer();
       const localPath = path.join(process.cwd(), msg.document.file_name);
       fs.writeFileSync(localPath, Buffer.from(buffer));
 
       session.file = localPath;
-      session.originalName = msg.document.file_name.replace(".txt", "");
+      session.originalName = msg.document.file_name.replace(".vcf", "");
       session.step = 2;
 
       return bot.sendMessage(
         chatId,
-        `📝 *Masukkan nama file baru ya Kak*\n\n` +
-        `Ketik nama tanpa ekstensi .vcf\n` +
-        `Ketik \`skip\` untuk gunakan nama sama.\n` +
+        `📝 *Masukkan nama kontak baru ya Kak*\n\n` +
+        `Semua kontak di file ini akan diganti namanya dengan nama yang kamu masukkan.\n\n` +
+        `Contoh: Iqbal CV, Teman Iqbal, dll\n\n` +
         `Ketik \`batal\` untuk membatalkan.`,
         { 
           parse_mode: "Markdown",
@@ -145,7 +122,7 @@ export default function (bot, db, saveDB) {
       );
     }
 
-    // Step 2 → Input nama file output
+    // Step 2 → input nama kontak baru
     if (session.step === 2) {
       if (/^batal$/i.test(text)) {
         fs.unlinkSync(session.file);
@@ -157,77 +134,28 @@ export default function (bot, db, saveDB) {
         );
       }
 
-      session.newFileName = /^skip$/i.test(text)
-        ? session.originalName
-        : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
+      const newContactName = text.trim();
 
-      session.step = 3;
-      return bot.sendMessage(
-        chatId,
-        `👤 *Masukkan nama kontak ya Kak*\n\n` +
-        `Nama ini akan jadi prefix untuk semua kontak.\n` +
-        `Ketik \`skip\` untuk gunakan nama file.\n` +
-        `Ketik \`batal\` untuk membatalkan.`,
-        { 
-          parse_mode: "Markdown",
-          reply_markup: bot.getMainKeyboard()
-        }
-      );
-    }
-
-    // Step 3 → Input nama kontak
-    if (session.step === 3) {
-      if (/^batal$/i.test(text)) {
-        fs.unlinkSync(session.file);
-        delete sessions[userId];
-        return bot.sendMessage(
-          chatId, 
-          "❌ Proses dibatalkan ya Kak 😊",
-          { reply_markup: bot.getMainKeyboard() }
-        );
-      }
-
-      session.contactName = /^skip$/i.test(text)
-        ? session.newFileName
-        : text.trim();
-
-      // Proses konversi
       try {
         const content = fs.readFileSync(session.file, "utf8");
-        const numbers = content
-          .split(/\s+/)
-          .map((x) => x.replace(/[^\d+]/g, ""))
-          .filter((x) => x && /^\+?\d+$/.test(x));
-
-        if (numbers.length === 0) {
-          fs.unlinkSync(session.file);
-          delete sessions[userId];
-          return bot.sendMessage(
-            chatId, 
-            "⚠️ *Tidak ditemukan nomor valid di file Kak* 😔",
-            { 
-              parse_mode: "Markdown",
-              reply_markup: bot.getMainKeyboard()
-            }
-          );
-        }
-
-        const outputFile = `${session.newFileName}.vcf`;
+        
+        // Ganti semua FN: dengan nama baru
+        const updatedContent = content.replace(/FN:[^\r\n]*/g, `FN:${newContactName}`);
+        
+        const outputFile = `${session.originalName}_renamed.vcf`;
         const outputPath = path.join(process.cwd(), outputFile);
-        const vcfData = numbers
-          .map((num, i) =>
-            createVcfEntry(num, `${session.contactName}-${String(i + 1).padStart(4, "0")}`)
-          )
-          .join("\n");
-        fs.writeFileSync(outputPath, vcfData);
+        fs.writeFileSync(outputPath, updatedContent);
+
+        // Hitung total kontak
+        const contactCount = (content.match(/BEGIN:VCARD/g) || []).length;
 
         await bot.sendDocument(chatId, outputPath);
         await bot.sendMessage(
           chatId,
-          `✅ *File VCF berhasil dibuat Kak!* 🎉\n\n` +
-          `📂 *Nama file:* \`${outputFile}\`\n` +
-          `📊 *Total kontak:* ${numbers.length}\n` +
-          `👤 *Prefix nama:* ${session.contactName}\n\n` +
+          `✅ *Semua kontak berhasil direname Kak!* 🎉\n\n` +
+          `👤 *Nama baru:* ${newContactName}\n` +
+          `📊 *Total kontak:* ${contactCount}\n` +
+          `📂 *File baru:* \`${outputFile}\`\n\n` +
           `Semoga membantu ya! 😊`,
           { 
             parse_mode: "Markdown",
@@ -239,10 +167,10 @@ export default function (bot, db, saveDB) {
         fs.unlinkSync(outputPath);
         fs.unlinkSync(session.file);
       } catch (err) {
-        console.error("Gagal convert:", err);
+        console.error("Gagal rename kontak:", err);
         bot.sendMessage(
-          chatId, 
-          "⚠️ *Yah… ada masalah saat konversi file* 😔\n\nCoba lagi ya Kak!",
+          chatId,
+          "⚠️ *Yah… ada masalah saat rename kontak* 😔\n\nCoba lagi ya Kak!",
           { 
             parse_mode: "Markdown",
             reply_markup: bot.getMainKeyboard()

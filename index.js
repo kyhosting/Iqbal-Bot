@@ -131,6 +131,34 @@ bot.getRole = (userId) => {
   return user.role || "user";
 };
 
+// ===== HELPER: VERIFY GROUP MEMBERSHIP FOR VIP COMMANDS =====
+bot.verifyGroupAccess = async (userId, chatId) => {
+  // Skip check for owner
+  if (config.owner.includes(userId)) return true;
+  
+  // Check group membership
+  const groupCheck = await bot.checkGroupMembership(userId);
+  
+  if (!groupCheck.verified) {
+    const missingGroups = [];
+    if (!groupCheck.inGroup1) missingGroups.push(`@agentviber12`);
+    if (!groupCheck.inGroup2) missingGroups.push(`@channelviber`);
+    
+    await bot.sendMessage(
+      chatId,
+      `⚠️ *Akses Ditolak Kak!*\n\n` +
+      `Kamu harus tetap join grup ini ya:\n` +
+      `${missingGroups.map(g => `• ${g}`).join('\n')}\n\n` +
+      `Setelah join, coba lagi 😊`,
+      { parse_mode: "Markdown" }
+    );
+    
+    return false;
+  }
+  
+  return true;
+};
+
 bot.incrementOperation = (userId) => {
   if (db.users[userId]) {
     db.users[userId].total_operation = (db.users[userId].total_operation || 0) + 1;

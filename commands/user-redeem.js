@@ -128,9 +128,9 @@ export default function (bot, db, saveDB) {
         db.users[userId].status = "active";
       }
 
-      // Mark redeem as used
-      redeemData.used_by = userId;
-      redeemData.used_at = new Date().toISOString();
+      // Mark redeem as used and save immediately
+      bot.redeemDB[code].used_by = userId;
+      bot.redeemDB[code].used_at = new Date().toISOString();
 
       saveDB();
       bot.saveRedeemDB();

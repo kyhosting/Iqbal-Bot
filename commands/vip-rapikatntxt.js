@@ -5,14 +5,9 @@ export default function (bot, db, saveDB) {
   const sessions = {};
 
   // Handle keyboard button
-  bot.onText(/^⛓️ ᴠᴄꜱ ᴛᴏ ᴛxᴛ$/i, async (msg) => {
+  bot.onText(/^⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ$/i, (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
-    
-    // Verify group membership first
-    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
-    if (!hasAccess) return;
-    
     const role = bot.getRole(userId);
 
     if (!["owner", "admin", "vip"].includes(role)) {
@@ -31,8 +26,12 @@ export default function (bot, db, saveDB) {
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `📇 *VCF to TXT Converter*\n\n` +
-      `Silakan kirim file VCF yang mau diubah jadi TXT ya Kak ✨\n\n` +
+      `🧹 *Rapikan File TXT*\n\n` +
+      `Silakan kirim file TXT yang mau dirapikan ya Kak ✨\n\n` +
+      `Fitur ini akan:\n` +
+      `• Hapus nomor duplikat\n` +
+      `• Hapus baris kosong\n` +
+      `• Urutkan nomor (A-Z)\n\n` +
       `Ketik \`batal\` untuk membatalkan.`,
       { 
         parse_mode: "Markdown",
@@ -41,14 +40,10 @@ export default function (bot, db, saveDB) {
     );
   });
 
-  bot.onText(/^\/vcftotxt$/, async (msg) => {
+  // Handle /rapikatntxt command
+  bot.onText(/^\/rapikatntxt$/, (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
-    
-    // Verify group membership first
-    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
-    if (!hasAccess) return;
-    
     const role = bot.getRole(userId);
 
     if (!["owner", "admin", "vip"].includes(role)) {
@@ -67,8 +62,12 @@ export default function (bot, db, saveDB) {
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `📇 *VCF to TXT Converter*\n\n` +
-      `Silakan kirim file VCF yang mau diubah jadi TXT ya Kak ✨\n\n` +
+      `🧹 *Rapikan File TXT*\n\n` +
+      `Silakan kirim file TXT yang mau dirapikan ya Kak ✨\n\n` +
+      `Fitur ini akan:\n` +
+      `• Hapus nomor duplikat\n` +
+      `• Hapus baris kosong\n` +
+      `• Urutkan nomor (A-Z)\n\n` +
       `Ketik \`batal\` untuk membatalkan.`,
       { 
         parse_mode: "Markdown",
@@ -84,7 +83,7 @@ export default function (bot, db, saveDB) {
     const session = sessions[userId];
     if (!session) return;
 
-    // Step 1 → kirim file .vcf
+    // Step 1 → kirim file .txt
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
@@ -95,10 +94,10 @@ export default function (bot, db, saveDB) {
         );
       }
 
-      if (!msg.document || !msg.document.file_name.endsWith(".vcf")) {
+      if (!msg.document || !msg.document.file_name.endsWith(".txt")) {
         return bot.sendMessage(
           chatId, 
-          "⚠️ *Harus file VCF ya Kak* 😊\n\nCoba kirim file dengan ekstensi .vcf",
+          "⚠️ *Harus file TXT ya Kak* 😊\n\nCoba kirim file dengan ekstensi .txt",
           { 
             parse_mode: "Markdown",
             reply_markup: bot.getMainKeyboard()
@@ -114,68 +113,38 @@ export default function (bot, db, saveDB) {
       const localPath = path.join(process.cwd(), msg.document.file_name);
       fs.writeFileSync(localPath, Buffer.from(buffer));
 
-      session.file = localPath;
-      session.originalName = msg.document.file_name.replace(".vcf", "");
-      session.step = 2;
-
-      return bot.sendMessage(
-        chatId,
-        `📝 *Masukkan nama file baru ya Kak*\n\n` +
-        `Ketik nama tanpa ekstensi .txt\n` +
-        `Ketik \`skip\` untuk gunakan nama sama.\n` +
-        `Ketik \`batal\` untuk membatalkan.`,
-        { 
-          parse_mode: "Markdown",
-          reply_markup: bot.getMainKeyboard()
-        }
-      );
-    }
-
-    // Step 2 → input nama file output
-    if (session.step === 2) {
-      if (/^batal$/i.test(text)) {
-        fs.unlinkSync(session.file);
-        delete sessions[userId];
-        return bot.sendMessage(
-          chatId, 
-          "❌ Proses dibatalkan ya Kak 😊",
-          { reply_markup: bot.getMainKeyboard() }
-        );
-      }
-
-      const outputName = /^skip$/i.test(text)
-        ? session.originalName
-        : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
-
       try {
-        const content = fs.readFileSync(session.file, "utf8");
-        const matches = content.match(/TEL;[^:]*:(\+?\d+)/g) || [];
-        const numbers = matches.map((m) => m.replace(/.*:/, ""));
-
-        if (numbers.length === 0) {
-          fs.unlinkSync(session.file);
-          delete sessions[userId];
-          return bot.sendMessage(
-            chatId, 
-            "⚠️ *Tidak ditemukan nomor telepon di file Kak* 😔",
-            { 
-              parse_mode: "Markdown",
-              reply_markup: bot.getMainKeyboard()
-            }
-          );
-        }
-
-        const outputFile = `${outputName}.txt`;
-        const outputPath = path.join(process.cwd(), outputFile);
-        fs.writeFileSync(outputPath, numbers.join("\n"));
+        const content = fs.readFileSync(localPath, "utf8");
+        const lines = content.split("\n");
+        
+        // Filter: hapus baris kosong, trim whitespace
+        const filtered = lines
+          .map(line => line.trim())
+          .filter(line => line.length > 0);
+        
+        // Hapus duplikat menggunakan Set
+        const unique = [...new Set(filtered)];
+        
+        // Urutkan
+        unique.sort();
+        
+        const originalCount = filtered.length;
+        const cleanCount = unique.length;
+        const duplicateRemoved = originalCount - cleanCount;
+        
+        const outputName = msg.document.file_name.replace(".txt", "_bersih.txt");
+        const outputPath = path.join(process.cwd(), outputName);
+        fs.writeFileSync(outputPath, unique.join("\n"));
 
         await bot.sendDocument(chatId, outputPath);
         await bot.sendMessage(
           chatId,
-          `✅ *File TXT berhasil dibuat Kak!* 🎉\n\n` +
-          `📂 *Nama file:* \`${outputFile}\`\n` +
-          `📊 *Total nomor:* ${numbers.length}\n\n` +
-          `Semoga membantu ya! 😊`,
+          `✅ *File berhasil dirapikan Kak!* 🎉\n\n` +
+          `📊 *Statistik:*\n` +
+          `• Total awal: ${originalCount} nomor\n` +
+          `• Setelah dibersihkan: ${cleanCount} nomor\n` +
+          `• Duplikat dihapus: ${duplicateRemoved} nomor\n\n` +
+          `File baru: \`${outputName}\``,
           { 
             parse_mode: "Markdown",
             reply_markup: bot.getMainKeyboard()
@@ -184,12 +153,12 @@ export default function (bot, db, saveDB) {
 
         bot.incrementOperation(userId);
         fs.unlinkSync(outputPath);
-        fs.unlinkSync(session.file);
+        fs.unlinkSync(localPath);
       } catch (err) {
-        console.error("Gagal convert:", err);
+        console.error("Gagal rapikan txt:", err);
         bot.sendMessage(
           chatId, 
-          "⚠️ *Yah… ada masalah saat konversi file* 😔\n\nCoba lagi ya Kak!",
+          "⚠️ *Yah… ada masalah saat rapikan file* 😔\n\nCoba lagi ya Kak!",
           { 
             parse_mode: "Markdown",
             reply_markup: bot.getMainKeyboard()
