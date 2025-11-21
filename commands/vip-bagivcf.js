@@ -1,29 +1,39 @@
 import fs from "fs";
 import path from "path";
 
-export default function (bot) {
+export default function (bot, db, saveDB) {
   const sessions = {};
 
-  bot.onText(/^\/bagivcf$/, (msg) => {
+  bot.onText(/^⛓️ ʙᴀɢɪ ᴠᴄꜰ$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
+    
+    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
+    if (!hasAccess) return;
+    
     const role = bot.getRole(userId);
-
-    // Hanya bisa digunakan oleh owner, admin, vip
     if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(
-        chatId,
-        "❌ Kamu tidak punya akses ke fitur ini.\n\nHubungi @oktodev untuk upgrade ke VIP.",
-        { parse_mode: "HTML" }
-      );
+      return bot.sendMessage(chatId, `❌ *Yah… fitur ini khusus VIP nih Kak* 😔`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(
-      chatId,
-      "📤 <b>Kirim file .vcf yang ingin kamu bagi</b>\n\nKetik <code>batal</code> untuk membatalkan.",
-      { parse_mode: "HTML" }
-    );
+    bot.sendMessage(chatId, `📤 *Bagi File VCF*\n\nSilakan kirim file VCF yang mau dibagi ya Kak ✨\n\nKetik \`batal\` untuk membatalkan.`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+  });
+
+  bot.onText(/^\/bagivcf$/, async (msg) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+    
+    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
+    if (!hasAccess) return;
+    
+    const role = bot.getRole(userId);
+    if (!["owner", "admin", "vip"].includes(role)) {
+      return bot.sendMessage(chatId, `❌ *Yah… fitur ini khusus VIP nih Kak* 😔`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    }
+
+    sessions[userId] = { step: 1 };
+    bot.sendMessage(chatId, `📤 *Bagi File VCF*\n\nSilakan kirim file VCF yang mau dibagi ya Kak ✨\n\nKetik \`batal\` untuk membatalkan.`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", async (msg) => {
@@ -33,15 +43,14 @@ export default function (bot) {
     const session = sessions[userId];
     if (!session) return;
 
-    // Step 1 → Kirim file
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, "❌ Proses dibatalkan.");
+        return bot.sendMessage(chatId, "❌ Proses dibatalkan ya Kak 😊", { reply_markup: bot.getMainKeyboard() });
       }
 
       if (!msg.document || !msg.document.file_name.endsWith(".vcf")) {
-        return bot.sendMessage(chatId, "⚠️ Kirim file dengan ekstensi .vcf!");
+        return bot.sendMessage(chatId, "⚠️ *Harus file VCF ya Kak* 😊", { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       }
 
       const fileId = msg.document.file_id;
@@ -56,42 +65,31 @@ export default function (bot) {
       session.originalName = msg.document.file_name.replace(".vcf", "");
       session.step = 2;
 
-      return bot.sendMessage(
-        chatId,
-        "📎 <b>Masukkan nama file baru (tanpa .vcf)</b>\nKetik <code>skip</code> untuk pakai nama lama.",
-        { parse_mode: "HTML" }
-      );
+      return bot.sendMessage(chatId, `📎 *Masukkan nama file output ya Kak*\n\nTanpa ekstensi .vcf\n\nKetik \`skip\` untuk gunakan nama sama`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
-    // Step 2 → Input nama file output
     if (session.step === 2) {
       if (/^batal$/i.test(text)) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
-        return bot.sendMessage(chatId, "❌ Proses dibatalkan.");
+        return bot.sendMessage(chatId, "❌ Proses dibatalkan ya Kak 😊", { reply_markup: bot.getMainKeyboard() });
       }
 
-      session.newFileName = /^skip$/i.test(text)
-        ? session.originalName
-        : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
-
+      session.newFileName = /^skip$/i.test(text) ? session.originalName : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
       session.step = 3;
-      return bot.sendMessage(chatId, "🔢 <b>Masukkan berapa jumlah file hasil potongan</b>:", {
-        parse_mode: "HTML",
-      });
+      return bot.sendMessage(chatId, `🔢 *Berapa jumlah file hasil potongan ya Kak?*`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
-    // Step 3 → Input jumlah file hasil
     if (session.step === 3) {
       if (/^batal$/i.test(text)) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
-        return bot.sendMessage(chatId, "❌ Proses dibatalkan.");
+        return bot.sendMessage(chatId, "❌ Proses dibatalkan ya Kak 😊", { reply_markup: bot.getMainKeyboard() });
       }
 
       const jumlahFile = parseInt(text);
       if (isNaN(jumlahFile) || jumlahFile <= 0) {
-        return bot.sendMessage(chatId, "⚠️ Masukkan angka yang valid!");
+        return bot.sendMessage(chatId, "⚠️ *Masukkan angka yang valid ya Kak* 😊", { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       }
 
       try {
@@ -103,15 +101,11 @@ export default function (bot) {
         }
 
         fs.unlinkSync(session.file);
-
-        bot.sendMessage(
-          chatId,
-          `✅ <b>File berhasil dibagi menjadi ${hasil.length} bagian.</b>`,
-          { parse_mode: "HTML" }
-        );
+        bot.sendMessage(chatId, `✅ *File berhasil dibagi Kak!* 🎉\n\n📊 Total: ${hasil.length} bagian\n\nSemoga membantu ya! 😊`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        bot.incrementOperation(userId);
       } catch (err) {
         console.error("Gagal membagi file:", err);
-        bot.sendMessage(chatId, "⚠️ Terjadi kesalahan saat membagi file.");
+        bot.sendMessage(chatId, "⚠️ *Yah… ada masalah saat membagi file* 😔", { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       }
 
       delete sessions[userId];
@@ -119,24 +113,16 @@ export default function (bot) {
   });
 }
 
-// ===== Fungsi Pendukung =====
-
-// Membaca isi VCF dan pisahkan menjadi array kontak
 function readVcf(filePath) {
   const data = fs.readFileSync(filePath, "utf8");
-  const contacts = data
-    .split(/END:VCARD\s*/i)
-    .filter(Boolean)
-    .map((x) => x.trim() + "\nEND:VCARD");
+  const contacts = data.split(/END:VCARD\s*/i).filter(Boolean).map((x) => x.trim() + "\nEND:VCARD");
   return contacts;
 }
 
-// Tulis ulang VCF dengan array kontak
 function writeVcf(contacts, filePath) {
   fs.writeFileSync(filePath, contacts.join("\n"));
 }
 
-// Membagi VCF berdasarkan jumlah file yang diinginkan
 function splitCutVcf(inputFile, baseName, totalFiles = 2) {
   const contacts = readVcf(inputFile);
   const totalContacts = contacts.length;

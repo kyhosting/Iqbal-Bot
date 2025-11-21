@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 
-// Fungsi pembuat format VCF
 function createVcfEntry(phone, name) {
   return [
     "BEGIN:VCARD",
@@ -12,30 +11,39 @@ function createVcfEntry(phone, name) {
   ].join("\n");
 }
 
-export default function (bot) {
+export default function (bot, db, saveDB) {
   const sessions = {};
 
-  bot.onText(/^\/createadmin$/, (msg) => {
+  bot.onText(/^⛓️ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
+    
+    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
+    if (!hasAccess) return;
+    
     const role = bot.getRole(userId);
-
-    // Hanya VIP, Admin, Owner yang boleh
     if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(
-        chatId,
-        "❌ Kamu tidak punya akses ke fitur ini.\n\nHubungi @oktodev untuk mendapatkan akses VIP.",
-        { parse_mode: "HTML" }
-      );
+      return bot.sendMessage(chatId, `❌ *Yah… fitur ini khusus VIP nih Kak* 😔`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
     }
 
-    // Mulai sesi input nomor
     sessions[userId] = { step: 1 };
-    bot.sendMessage(
-      chatId,
-      "📨 <b>Masukkan daftar nomor admin</b> (pisahkan dengan spasi jika lebih dari satu)\n\nKetik <code>batal</code> untuk membatalkan.",
-      { parse_mode: "HTML" }
-    );
+    bot.sendMessage(chatId, `📨 *Buat File Admin*\n\nMasukkan daftar nomor admin ya Kak ✨\n\nPisahkan dengan spasi jika lebih dari satu\n\nKetik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+  });
+
+  bot.onText(/^\/createadmin$/, async (msg) => {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+    
+    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
+    if (!hasAccess) return;
+    
+    const role = bot.getRole(userId);
+    if (!["owner", "admin", "vip"].includes(role)) {
+      return bot.sendMessage(chatId, `❌ *Yah… fitur ini khusus VIP nih Kak* 😔`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    }
+
+    sessions[userId] = { step: 1 };
+    bot.sendMessage(chatId, `📨 *Buat File Admin*\n\nMasukkan daftar nomor admin ya Kak ✨\n\nPisahkan dengan spasi jika lebih dari satu\n\nKetik \`batal\` untuk membatalkan`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", (msg) => {
@@ -46,47 +54,36 @@ export default function (bot) {
     if (!sessions[userId]) return;
     const session = sessions[userId];
 
-    // Step 1: Input nomor admin
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, "❌ Proses dibatalkan.");
+        return bot.sendMessage(chatId, "❌ Proses dibatalkan ya Kak 😊", { reply_markup: bot.getMainKeyboard() });
       }
 
       const numbers = text.split(/\s+/).filter(Boolean);
       if (numbers.length === 0) {
-        return bot.sendMessage(chatId, "⚠️ Nomor tidak boleh kosong. Coba lagi.");
+        return bot.sendMessage(chatId, "⚠️ *Nomor tidak boleh kosong Kak* 😊\n\nCoba lagi ya!", { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       }
 
       const filename = "ADMIN.vcf";
       const filepath = path.join(process.cwd(), filename);
 
       try {
-        const content = numbers
-          .map((num, i) => createVcfEntry(num, `ADMIN-${String(i + 1).padStart(4, "0")}`))
-          .join("\n");
+        const content = numbers.map((num, i) => createVcfEntry(num, `ADMIN-${String(i + 1).padStart(4, "0")}`)).join("\n");
         fs.writeFileSync(filepath, content);
 
-        bot
-          .sendDocument(chatId, filepath)
-          .then(() => {
-            bot.sendMessage(
-              chatId,
-              `✅ <b>Hai ${msg.from.first_name}!</b>\n\nFile <b>ADMIN.vcf</b> berhasil dibuat.`,
-              { parse_mode: "HTML" }
-            );
-            fs.unlinkSync(filepath); // hapus setelah dikirim
-          })
-          .catch((err) => {
-            console.error("Gagal mengirim file:", err);
-            bot.sendMessage(chatId, "⚠️ Gagal mengirim file.");
-            try {
-              fs.unlinkSync(filepath);
-            } catch {}
-          });
+        bot.sendDocument(chatId, filepath).then(() => {
+          bot.sendMessage(chatId, `✅ *File ADMIN.vcf berhasil dibuat Kak!* 🎉\n\n👤 *Total admin:* ${numbers.length}\n\nSemoga membantu ya! 😊`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+          bot.incrementOperation(userId);
+          fs.unlinkSync(filepath);
+        }).catch((err) => {
+          console.error("Gagal mengirim file:", err);
+          bot.sendMessage(chatId, "⚠️ *Yah… gagal kirim file* 😔", { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+          try { fs.unlinkSync(filepath); } catch {}
+        });
       } catch (err) {
         console.error("Gagal membuat file:", err);
-        bot.sendMessage(chatId, "⚠️ Terjadi kesalahan saat membuat file VCF.");
+        bot.sendMessage(chatId, "⚠️ *Yah… gagal buat file VCF* 😔", { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
       }
 
       delete sessions[userId];
