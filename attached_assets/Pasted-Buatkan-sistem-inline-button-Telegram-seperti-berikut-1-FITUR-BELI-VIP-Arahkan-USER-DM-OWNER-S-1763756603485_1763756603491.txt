@@ -1,0 +1,74 @@
+Buatkan sistem inline button Telegram seperti berikut:
+1. FITUR BELI VIP (Arahkan USER → DM OWNER)
+Saat user klik menu Beli VIP, munculkan daftar harga dengan inline button:
+VIP 7 Hari — 15K
+VIP 30 Hari — 35K
+VIP 1 Tahun — 100K
+Cara kerja:
+Ketika user klik salah satu harga, maka:
+Bot TIDAK mengirim pesan ke owner.
+Bot hanya membuka langsung chat pribadi ke OWNER (deep-link tg://user?id=OWNER_ID).
+Saat user sudah masuk DM owner, bot otomatis mengirim pesan awal (auto message):
+Format auto-message:
+Salin kode
+
+Halo Owner, saya ingin membeli VIP.
+
+• Harga yang saya pilih: <nama_paket>
+• User ID saya: <user_id>
+
+Mohon diproses ya 🙏
+WAJIB:
+Harga <nama_paket> diambil dari button yang diklik user.
+<user_id> diambil otomatis dari data user.
+User tidak perlu cek ID sendiri.
+Bot akan memformat pesan ini otomatis ketika user membuka DM Owner.
+2. FITUR BANTUAN (Arahkan USER → DM OWNER)
+Dalam menu Bantuan tampilkan:
+Lapor Bug
+Bot Error
+Request Fitur
+Cara kerja:
+Saat user klik salah satu menu ini → diarahkan DM owner (deep-link).
+Begitu user masuk DM owner, bot mengirim auto-message sesuai tombol:
+Format auto-message:
+Lapor Bug
+Salin kode
+
+Halo Owner, saya ingin melaporkan BUG.
+
+• User ID: <user_id>
+• Tulis bug nya disini:
+Bot Error
+Salin kode
+
+Owner, BOT nya ERROR.
+
+• User ID: <user_id>
+• Error yang terjadi:
+Request Fitur
+Salin kode
+
+Halo Owner, saya ingin request fitur baru.
+
+• User ID: <user_id>
+• Fitur yang saya inginkan:
+3. Ketentuan Teknis untuk Replit AI
+Minta Replit AI membuat:
+Inline Button Format
+Button harus berisi URL deep-link:
+Salin kode
+
+tg://user?id=OWNER_ID
+Namun tambahkan juga callback_data untuk menyimpan konteks:
+vip_7h, vip_30h, vip_1y, lapor_bug, dll.
+Saat tombol ditekan:
+Bot simpan jenis pesan → user diarahkan DM owner via URL.
+Ketika bot mendeteksi user membuka DM owner (melalui /start atau deep-link start), bot kirim auto-message sesuai callback sebelumnya.
+4. Behavior yang Harus Dibuat Replit AI
+Tidak boleh pakai command manual user.
+Semua pesan auto muncul ketika user masuk DM owner.
+Harga VIP dan ID user harus muncul otomatis.
+Berlaku untuk semua tombol yang mengarah ke owner.
+PROMPT PENUTUP
+Buatkan seluruh sistem di atas menggunakan python-telegram-bot v20+, struktur rapi, fungsi terpisah (handlers). Pastikan fitur deep-link + auto-message berjalan sempurna.
