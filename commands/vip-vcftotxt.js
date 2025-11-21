@@ -13,11 +13,11 @@ export default function (bot, db, saveDB) {
     
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      return bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1, files: [] };
-    bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n(Batch Conversion)\n\n▸ Kirim file VCF (bisa multiple)\n▸ Ketik 'selesai' ketika sudah\n\nKetik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n(Batch Conversion)\n\n▸ Kirim file VCF (bisa multiple)\n▸ Ketik 'selesai' ketika sudah\n\nKetik 'batal' untuk membatalkan\n\n◆`, { reply_markup: bot.getMainKeyboard() });
   });
 
   bot.onText(/^\/vcftotxt$/, async (msg) => {
@@ -29,11 +29,11 @@ export default function (bot, db, saveDB) {
     
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      return bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1, files: [] };
-    bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n(Batch Conversion)\n\n▸ Kirim file VCF (bisa multiple)\n▸ Ketik 'selesai' ketika sudah\n\nKetik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n(Batch Conversion)\n\n▸ Kirim file VCF (bisa multiple)\n▸ Ketik 'selesai' ketika sudah\n\nKetik 'batal' untuk membatalkan\n\n◆`, { reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", async (msg) => {
@@ -51,22 +51,22 @@ export default function (bot, db, saveDB) {
           try { fs.unlinkSync(file); } catch {}
         });
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ❌ Proses Dibatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ❌ Proses Dibatalkan\n\n◆`, { reply_markup: bot.getMainKeyboard() });
       }
 
       // Done processing
       if (/^selesai$/i.test(text)) {
         if (session.files.length === 0) {
-          return bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ⚠️ Belum ada file VCF\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+          return bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ⚠️ Belum ada file VCF\n\n◆`, { reply_markup: bot.getMainKeyboard() });
         }
 
         session.step = 2;
-        return bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ Nama File Output\n\nMasukkan nama prefix (tanpa ekstensi)\nAtau ketik 'skip' untuk pakai nama otomatis\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ Nama File Output\n\nMasukkan nama prefix (tanpa ekstensi)\nAtau ketik 'skip' untuk pakai nama otomatis\n\n◆`, { reply_markup: bot.getMainKeyboard() });
       }
 
       // Check if it's a VCF file
       if (!msg.document || !msg.document.file_name.endsWith(".vcf")) {
-        return bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ⚠️ File Harus VCF\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ⚠️ File Harus VCF\n\n◆`, { reply_markup: bot.getMainKeyboard() });
       }
 
       try {
@@ -79,10 +79,10 @@ export default function (bot, db, saveDB) {
         fs.writeFileSync(localPath, Buffer.from(buffer));
 
         session.files.push({ path: localPath, name: msg.document.file_name.replace(".vcf", "") });
-        bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ✅ File Diterima: ${msg.document.file_name}\n▸ Total: ${session.files.length} file\n\n▸ Kirim file lagi atau ketik 'selesai'\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ✅ File Diterima: ${msg.document.file_name}\n▸ Total: ${session.files.length} file\n\n▸ Kirim file lagi atau ketik 'selesai'\n\n◆`, { reply_markup: bot.getMainKeyboard() });
       } catch (err) {
         console.error("Download error:", err);
-        return bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ⚠️ Gagal Download\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ⚠️ Gagal Download\n\n◆`, { reply_markup: bot.getMainKeyboard() });
       }
     }
 
@@ -93,7 +93,7 @@ export default function (bot, db, saveDB) {
           try { fs.unlinkSync(file.path); } catch {}
         });
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ❌ Proses Dibatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ❌ Proses Dibatalkan\n\n◆`, { reply_markup: bot.getMainKeyboard() });
       }
 
       const prefix = /^skip$/i.test(text) ? "result" : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
@@ -124,7 +124,7 @@ export default function (bot, db, saveDB) {
             try { fs.unlinkSync(file.path); } catch {}
           });
           delete sessions[userId];
-          return bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ⚠️ Nomor Tidak Ditemukan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+          return bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ⚠️ Nomor Tidak Ditemukan\n\n◆`, { reply_markup: bot.getMainKeyboard() });
         }
 
         // Send all files
@@ -132,27 +132,24 @@ export default function (bot, db, saveDB) {
           await bot.sendDocument(chatId, result.path);
         }
 
-        // Send single success message
-        await bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ - ✅ SUKSES\n\n▸ Total File: ${results.length}\n▸ Total Nomor: ${totalNumbers}\n▸ Prefix: ${prefix}\n\n💎 Terima kasih sudah menggunakan bot ini 🙏\nJangan lupa support bot dengan subscribe channel 🤗\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        // Send summary message
+        await bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ - ✅ SUKSES\n\n▸ Total File: ${results.length}\n▸ Total Nomor: ${totalNumbers}\n\n💎 Terima kasih sudah menggunakan bot ini 🙏\nJangan lupa support bot dengan subscribe channel 🤗\n\n◆`, { reply_markup: bot.getMainKeyboard() });
 
         bot.incrementOperation(userId);
 
         // Cleanup
-        results.forEach(r => {
-          try { fs.unlinkSync(r.path); } catch {}
-        });
         session.files.forEach(file => {
           try { fs.unlinkSync(file.path); } catch {}
         });
+        results.forEach(result => {
+          try { fs.unlinkSync(result.path); } catch {}
+        });
+        delete sessions[userId];
       } catch (err) {
         console.error("Conversion error:", err);
-        bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ⚠️ Konversi Gagal\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
-        session.files.forEach(file => {
-          try { fs.unlinkSync(file.path); } catch {}
-        });
+        bot.sendMessage(chatId, `◆ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n\n▸ ⚠️ Konversi Gagal\n\n◆`, { reply_markup: bot.getMainKeyboard() });
+        delete sessions[userId];
       }
-
-      delete sessions[userId];
     }
   });
 }
