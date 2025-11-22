@@ -15,7 +15,7 @@ export default function (bot, db, saveDB) {
     
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(chatId, `◆ EKSTRAK NOMOR\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+      return bot.sendMessage(chatId, `◆ EKSTRAK NOMOR\n\n▸ ◆◆ AKSES DITOLAK ◆◆\n\n╭─❖\n│ ❌ <b>Akses Ditolak</b>\n│ ➤ Fitur khusus VIP\n╰───────────────❖\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
     }
 
     sessions[userId] = { step: 1 };

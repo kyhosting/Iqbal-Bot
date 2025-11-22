@@ -14,7 +14,7 @@ export default function (bot) {
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
-        `◆ VCF TO TXT\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
+        `◆ VCF TO TXT\n\n▸ ◆◆ AKSES DITOLAK ◆◆\n\n╭─❖\n│ ❌ <b>Akses Ditolak</b>\n│ ➤ Fitur khusus VIP\n╰───────────────❖\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
         { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
@@ -42,7 +42,7 @@ export default function (bot) {
     if (session.step === 1) {
       if (/^batal$/i.test(text) || /^done$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, "❌ Proses dibatalkan.", { parse_mode: "HTML" });
+        return bot.sendMessage(chatId, "◆◆ DIBATALKAN ◆◆\n\n╭─❖\n│ ❌ <b>Proses dibatalkan</b>\n╰───────────────❖.", { parse_mode: "HTML" });
       }
 
       if (!msg.document || !msg.document.file_name.endsWith(".vcf")) {
@@ -73,7 +73,7 @@ export default function (bot) {
       if (/^batal$/i.test(text)) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
-        return bot.sendMessage(chatId, "❌ Proses dibatalkan.", { parse_mode: "HTML" });
+        return bot.sendMessage(chatId, "◆◆ DIBATALKAN ◆◆\n\n╭─❖\n│ ❌ <b>Proses dibatalkan</b>\n╰───────────────❖.", { parse_mode: "HTML" });
       }
 
       const outputName = /^done$/i.test(text)

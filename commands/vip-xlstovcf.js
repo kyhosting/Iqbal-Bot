@@ -14,7 +14,7 @@ export default function (bot, db, saveDB) {
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
-        `◆ XLS TO VCF\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
+        `◆ XLS TO VCF\n\n▸ ◆◆ AKSES DITOLAK ◆◆\n\n╭─❖\n│ ❌ <b>Akses Ditolak</b>\n│ ➤ Fitur khusus VIP\n╰───────────────❖\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
         { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
@@ -44,7 +44,7 @@ export default function (bot, db, saveDB) {
         delete sessions[userId];
         return bot.sendMessage(
           chatId, 
-          "❌ Proses dibatalkan ya Kak 😊",
+          "◆◆ DIBATALKAN ◆◆\n\n╭─❖\n│ ❌ <b>Proses dibatalkan</b>\n╰───────────────❖ ya Kak 😊",
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
