@@ -57,7 +57,7 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId,
           "⚠️ <b>Kirim file dulu ya Kak</b> 😊",
-          { 
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboardUser(userId)
           }
@@ -87,7 +87,7 @@ export default function (bot, db, saveDB) {
         `Ketik \`skip\` untuk pakai nama yang sama.\n\n` +
         `✓ Ketik \`done\` setelah selesai\n` +
         `✗ Ketik \`batal\` untuk batalkan`,
-        { 
+        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
           parse_mode: "HTML",
           reply_markup: bot.getMainKeyboardUser(userId)
         }
@@ -136,7 +136,7 @@ export default function (bot, db, saveDB) {
           `📂 <b>Nama lama:</b> \`${session.originalName}\`\n` +
           `📂 <b>Nama baru:</b> \`${outputFile}\`\n\n` +
           `Semoga membantu ya! 😊`,
-          { 
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboardUser(userId)
           }
@@ -150,7 +150,7 @@ export default function (bot, db, saveDB) {
         bot.sendMessage(
           chatId,
           "⚠️ <b>Yah… ada masalah saat rename file</b> 😔\n\nCoba lagi ya Kak!",
-          { 
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboardUser(userId)
           }
