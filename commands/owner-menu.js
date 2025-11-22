@@ -139,7 +139,7 @@ export default function (bot, db, saveDB) {
         const r = bot.redeemDB[code];
         const status = r.used_by ? "✅ Terpakai" : "⏳ Aktif";
         const exp = r.expires_at ? new Date(r.expires_at).toLocaleDateString('id-ID') : "Permanent";
-        message += `${i + 1}. \`${code}\`\n`;
+        message += `${i + 1}. <code>${code}</code>\n`;
         message += `   Status: ${status}\n`;
         message += `   Durasi: ${r.duration} hari\n`;
         message += `   Expired: ${exp}\n\n`;
@@ -225,7 +225,7 @@ export default function (bot, db, saveDB) {
         chatId,
         `📢 <b>Kirim Broadcast Message</b>\n\n` +
         `Ketik pesan yang ingin dikirim ke semua user\n\n` +
-        `Ketik \`batal\` untuk membatalkan.`,
+        `Ketik <code>batal</code> untuk membatalkan.`,
         { parse_mode: "HTML" }
       );
     }
@@ -328,7 +328,7 @@ export default function (bot, db, saveDB) {
 
       bot.saveRedeemDB();
 
-      bot.sendMessage(chatId, `✅ <b>Kode Redeem Berhasil Dibuat</b>\n\n◆ ᴋᴏᴅᴇ ʀᴀɴᴅᴏᴍ\n\n▸ Kode: \`${randomCode}\`\n▸ Durasi: ${duration} hari\n▸ Expired: ${expiryDate.toLocaleDateString('id-ID')}\n\n◆`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+      bot.sendMessage(chatId, `✅ <b>Kode Redeem Berhasil Dibuat</b>\n\n◆ ᴋᴏᴅᴇ ʀᴀɴᴅᴏᴍ\n\n▸ Kode: <code>${randomCode}</code>\n▸ Durasi: ${duration} hari\n▸ Expired: ${expiryDate.toLocaleDateString('id-ID')}\n\n◆`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
       delete sessions[userId];
     }
 
@@ -388,7 +388,7 @@ export default function (bot, db, saveDB) {
 
     bot.saveRedeemDB();
 
-    bot.sendMessage(chatId, `✅ <b>Kode Redeem Berhasil Dibuat</b>\n\n◆ ᴋᴏᴅᴇ ᴍᴀɴᴜᴀʟ\n\n▸ Kode: \`${code}\`\n▸ Durasi: ${duration} hari\n▸ Expired: ${expiresAt}\n\n◆`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+    bot.sendMessage(chatId, `✅ <b>Kode Redeem Berhasil Dibuat</b>\n\n◆ ᴋᴏᴅᴇ ᴍᴀɴᴜᴀʟ\n\n▸ Kode: <code>${code}</code>\n▸ Durasi: ${duration} hari\n▸ Expired: ${expiresAt}\n\n◆`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
   });
 
   // Command: Delete redeem code
@@ -403,13 +403,13 @@ export default function (bot, db, saveDB) {
     const code = match[1].toUpperCase();
 
     if (!bot.redeemDB[code]) {
-      return bot.sendMessage(chatId, `⚠️ Kode \`${code}\` tidak ditemukan!`, { parse_mode: "HTML" });
+      return bot.sendMessage(chatId, `⚠️ Kode <code>${code}</code> tidak ditemukan!`, { parse_mode: "HTML" });
     }
 
     delete bot.redeemDB[code];
     bot.saveRedeemDB();
 
-    bot.sendMessage(chatId, `✅ <b>Kode Redeem Berhasil Dihapus</b>\n\n▸ Kode: \`${code}\` sudah tidak berlaku lagi.`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+    bot.sendMessage(chatId, `✅ <b>Kode Redeem Berhasil Dihapus</b>\n\n▸ Kode: <code>${code}</code> sudah tidak berlaku lagi.`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
   });
 
   // Command: Set VIP Manual
@@ -444,6 +444,6 @@ export default function (bot, db, saveDB) {
     saveDB();
 
     const expireDate = new Date(db.users[targetUserId].vip_expired).toLocaleDateString('id-ID');
-    bot.sendMessage(chatId, `✅ <b>VIP Manual Berhasil Diberikan</b>\n\n▸ User ID: \`${targetUserId}\`\n▸ Durasi: ${durationDays} hari\n▸ Expired: ${expireDate}`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+    bot.sendMessage(chatId, `✅ <b>VIP Manual Berhasil Diberikan</b>\n\n▸ User ID: <code>${targetUserId}</code>\n▸ Durasi: ${durationDays} hari\n▸ Expired: ${expireDate}`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
   });
 }
