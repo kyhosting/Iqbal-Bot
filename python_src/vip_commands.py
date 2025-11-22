@@ -104,7 +104,12 @@ async def handle_file_message(update: Update, context: ContextTypes.DEFAULT_TYPE
             await update.message.reply_text("📝 *Nama file output?*", parse_mode="Markdown")
         elif cmd in ['gabungfile', 'gabungtxt']:
             session['files'].append(file_path)
-            msg = f"✅ *File {len(session['files'])} OK*\n\nKirim file lagi atau ketik `done` untuk selesai"
+            # Single summary message - hanya update untuk tracking
+            msg = f"📦 *File Received: {len(session['files'])}*\n\n"
+            msg += f"Tipe: {file_name.split('.')[-1].upper()}\n\n"
+            msg += f"Total: {len(session['files'])} file\n\n"
+            msg += f"_Kirim file lagi atau ketik `done` untuk selesai_"
+            # Store message ID untuk update nanti jika perlu
             await update.message.reply_text(msg, parse_mode="Markdown")
         elif cmd == 'hitung':
             total = count_contacts_in_vcf(file_path) if file_name.endswith('.vcf') else count_contacts_in_txt(file_path)
