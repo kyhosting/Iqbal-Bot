@@ -109,9 +109,19 @@ Notifikasi: "Akses dipulihkan! Sisa X hari" ✅
 ```
 
 ### Keyboard System 🎹
-Keyboard buttons dengan 2 kolom layout:
+Keyboard buttons dengan 2 kolom layout yang rapi:
+```
+⛓️ TXT TO VCF ⛓️        ⛓️ VCF TO TXT ⛓️
+⛓️ XLS TO VCF ⛓️        ⛓️ MSG TO TXT ⛓️
+⛓️ BAGI LANJUT ⛓️       ⛓️ ESTRAK NOMOR ⛓️
+⛓️ GABUNG FILE ⛓️
+⛓️ POTONG LANJUT ⛓️     ⛓️ CREATE ADMIN ⛓️
+⛓️ CEK KONTAK ⛓️        ⛓️ HITUNG FILE ⛓️
+⛓️ RENAME KONTAK ⛓️     ⛓️ RENAME FILE ⛓️
+🎁 REDEEM CODE           ⛓️ MENU OWNER ⛓️
+```
 - Auto-display setelah setiap command selesai
-- Japanese-style naming (⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ)
+- Clean & professional naming
 - Friendly emoji indicators
 - Consistent across all features
 
@@ -129,7 +139,7 @@ Semua fitur bot di grup hanya bisa diakses oleh Owner dan VIP users:
 - Implementasi: Semua 8 user commands + owner menu
 - Commands terproteksi:
   - `/redeem`, `/bantuan`, `/cekid`, `/fitur`, `/clear`, `/viplist`
-  - `/owner`, `⛓️MENU OWNER`
+  - `/owner`, `⛓️ MENU OWNER ⛓️`
   - `/setwelcome`, `/setrules`, `/ban`, `/unban`, `/kick`
 
 **Flow:**
@@ -143,31 +153,29 @@ Semua fitur bot di grup hanya bisa diakses oleh Owner dan VIP users:
 
 #### User Commands (Group-Protected ⛓️)
 - `/start` - Welcome message dengan foto profil, status VIP, statistik
-- `🎁 Redeem Code` - Redeem VIP access code (DM only / VIP in group)
+- `🎁 REDEEM CODE` - Redeem VIP access code (DM only / VIP in group)
 
 #### VIP Commands (Conversion)
-- `⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ` - Convert VCF ke TXT
-- `⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ` - Convert TXT ke VCF dengan nama kontak
-- `⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ` - Convert Excel ke VCF
-- `⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ` - Extract nomor dari message
+- `⛓️ VCF TO TXT ⛓️` - Convert VCF ke TXT
+- `⛓️ TXT TO VCF ⛓️` - Convert TXT ke VCF dengan nama kontak
+- `⛓️ XLS TO VCF ⛓️` - Convert Excel ke VCF
+- `⛓️ MSG TO TXT ⛓️` - Extract nomor dari message
 
 #### VIP Commands (File Management)
-- `⛓️ ʙᴀɢɪ ᴠᴄꜰ` - Split VCF file
-- `⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ` - Continue split process
-- `⛓️ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛ` - Potong VCF lanjutan
-- `⛓️ ɢᴀʙᴜɴɢ ᴛxᴛ` - Gabung file TXT
-- `⛓️ ɢᴀʙᴜɴɢ ᴠᴄꜰ` - Gabung file VCF
+- `⛓️ BAGI LANJUT ⛓️` - Split VCF file advanced
+- `⛓️ POTONG LANJUT ⛓️` - Potong VCF lanjutan
+- `⛓️ GABUNG FILE ⛓️` - Gabung file TXT & VCF
 
 #### VIP Commands (Utilities) ✨ NEW
-- `⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ` - Hapus duplikat, rapikan, sort
-- `⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ` - Hitung kontak di TXT/VCF
-- `⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ` - Rename file
-- `⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ` - Rename semua kontak dalam VCF
-- `⛓️CEK KONTAK` - Cek detail kontak
-- `⛓️ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ` - Create admin (owner only)
+- `⛓️ ESTRAK NOMOR ⛓️` - Ekstrak nomor dari multiple file format
+- `⛓️ HITUNG FILE ⛓️` - Hitung kontak di TXT/VCF
+- `⛓️ RENAME FILE ⛓️` - Rename file
+- `⛓️ RENAME KONTAK ⛓️` - Rename semua kontak dalam VCF
+- `⛓️ CEK KONTAK ⛓️` - Cek detail kontak
+- `⛓️ CREATE ADMIN ⛓️` - Create admin VCF
 
 #### Owner Commands (Group-Protected ⛓️)
-- `⛓️MENU OWNER` - Panel management dengan inline keyboard
+- `⛓️ MENU OWNER ⛓️` - Panel management dengan inline keyboard
 - Command management untuk redeem codes dan user VIP
 - `/owner` - Slash command untuk owner menu (same as keyboard)
 

@@ -17,42 +17,7 @@ export default function (bot, db, saveDB) {
     return trackMessage(userId, chatId, text, options);
   }
 
-  bot.onText(/^🎁 Redeem Code$/i, async (msg) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-
-    const hasAccess = await bot.checkGroupOwnerVipAccess(userId, chatId);
-    if (!hasAccess) {
-      return trackMessage(
-        userId,
-        chatId,
-        `◆◆  AKSES DITOLAK  ◆◆
-
-┌─❖
-│  ❌ Fitur grup hanya untuk VIP users kak!
-└─❖`,
-        { parse_mode: "HTML" }
-      );
-    }
-
-    sessions[userId] = { step: 1 };
-    trackMessage(
-      userId,
-      chatId,
-      `◆◆  REDEEM CODE SYSTEM  ◆◆
-
-┌─❖
-│  🎁 Input Kode Redeem
-│
-│  Masukkan kode redeem kamu
-│
-│  Ketik 'batal' untuk membatalkan
-└─❖`,
-      { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-    );
-  });
-
-  bot.onText(/^\/redeem$/, async (msg) => {
+  bot.onText(/^🎁 REDEEM CODE$|^\/redeem$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
 

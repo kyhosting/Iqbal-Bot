@@ -65,14 +65,14 @@ function delay(ms) {
 bot.getMainKeyboard = () => {
   return {
     keyboard: [
-      ['⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ', '⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ'],
-      ['⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ', '⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ'],
-      ['⛓️ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ', '⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ'],
-      ['⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ', '⛓️ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛ'],
-      ['⛓️ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ', '⛓️CEK KONTAK'],
-      ['⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ', '⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ'],
-      ['⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ', '🎁 Redeem Code'],
-      ['⛓️MENU OWNER']
+      ['⛓️ TXT TO VCF ⛓️', '⛓️ VCF TO TXT ⛓️'],
+      ['⛓️ XLS TO VCF ⛓️', '⛓️ MSG TO TXT ⛓️'],
+      ['⛓️ BAGI LANJUT ⛓️', '⛓️ ESTRAK NOMOR ⛓️'],
+      ['⛓️ GABUNG FILE ⛓️'],
+      ['⛓️ POTONG LANJUT ⛓️', '⛓️ CREATE ADMIN ⛓️'],
+      ['⛓️ CEK KONTAK ⛓️', '⛓️ HITUNG FILE ⛓️'],
+      ['⛓️ RENAME KONTAK ⛓️', '⛓️ RENAME FILE ⛓️'],
+      ['🎁 REDEEM CODE', '⛓️ MENU OWNER ⛓️']
     ],
     resize_keyboard: true,
     one_time_keyboard: false
@@ -82,19 +82,15 @@ bot.getMainKeyboard = () => {
 // ===== KEYBOARD HELPER FOR USER (Filter berdasarkan role) =====
 bot.getMainKeyboardUser = (userId) => {
   const baseKeyboard = [
-    ['⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ', '⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ'],
-    ['⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ', '⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ'],
-    ['⛓️ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ', '⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ'],
-    ['⛓️ GABUNG FILE', '⛓️ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛ'],
-    ['⛓️ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ', '⛓️CEK KONTAK'],
-    ['⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ', '⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ'],
-    ['⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ', '🎁 Redeem Code']
+    ['⛓️ TXT TO VCF ⛓️', '⛓️ VCF TO TXT ⛓️'],
+    ['⛓️ XLS TO VCF ⛓️', '⛓️ MSG TO TXT ⛓️'],
+    ['⛓️ BAGI LANJUT ⛓️', '⛓️ ESTRAK NOMOR ⛓️'],
+    ['⛓️ GABUNG FILE ⛓️'],
+    ['⛓️ POTONG LANJUT ⛓️', '⛓️ CREATE ADMIN ⛓️'],
+    ['⛓️ CEK KONTAK ⛓️', '⛓️ HITUNG FILE ⛓️'],
+    ['⛓️ RENAME KONTAK ⛓️', '⛓️ RENAME FILE ⛓️'],
+    ['🎁 REDEEM CODE', '⛓️ MENU OWNER ⛓️']
   ];
-  
-  // Tambah MENU OWNER hanya untuk owner
-  if (config.owner.includes(userId)) {
-    baseKeyboard.push(['⛓️MENU OWNER']);
-  }
   
   return {
     keyboard: baseKeyboard,

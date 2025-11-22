@@ -20,7 +20,7 @@ export default function (bot, db, saveDB) {
     return trackMessage(userId, chatId, text, options);
   }
 
-  bot.onText(/^⛓️ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛ$|^\/potonglanjutan$/i, async (msg) => {
+  bot.onText(/^⛓️ POTONG LANJUT ⛓️$|^\/potonglanjutan$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     
