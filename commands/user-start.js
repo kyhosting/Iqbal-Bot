@@ -182,52 +182,47 @@ async function showDashboard(bot, userId, chatId, db, saveDB) {
   }
 
   // Ambil foto profil user
+  const caption =
+    `🎌 *iqbal ᴄᴠ ʙᴏᴛꜱ*\n(by iqbaldev)\n\n` +
+    `╭─❖\n` +
+    `│ こんにちは、私は Iqbalʙᴏᴛ です。\n` +
+    `│ 私はファイル変換と管理を担当します。\n` +
+    `│ ✦ Created by: @Iqbaldev\n` +
+    `╰───────────────❖\n\n` +
+    `╭─❖ ꜱᴛᴀᴛᴜꜱ ᴀᴋᴄᴇꜱ\n` +
+    `│ ➤ Nama: *${user.first_name || "User"}*\n` +
+    `│ ➤ ID: \`${userId}\`\n` +
+    `│ ➤ Username: @${user.username || "-"}\n` +
+    `│ ➤ Role: *${role.toUpperCase()}*\n` +
+    `│ ➤ Status: *${status === "active" ? "✅ Aktif" : "❌ Tidak Aktif"}*\n` +
+    `│ ➤ Masa Aktif: *${expired}*\n` +
+    `│ ➤ Hari Tersisa: *${remaining}*\n` +
+    `│ ➤ Total Operasi: *${user.total_operation || 0}*\n` +
+    `╰───────────────❖\n\n` +
+    `╭─❖ ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ\n` +
+    `│ ➤ 📄 TXT 📇 VCF 📊 XLSX\n` +
+    `│ ➤ 他の形式も順次対応予定です。\n` +
+    `╰───────────────❖\n\n` +
+    `╭─❖ ᴍᴇɴᴜ ʙᴏᴛ\n` +
+    `│ ➤ ⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ\n` +
+    `│ ➤ ⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ\n` +
+    `│ ➤ ⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n` +
+    `│ ➤ ⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ\n` +
+    `│ ➤ ⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n` +
+    `│ ➤ ⛓️ ꜱᴘʟɪᴛ ꜰɪʟᴇ\n` +
+    `│ ➤ ⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ\n` +
+    `│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ\n` +
+    `│ ➤ ⛓️ ᴀᴍʙɪʟ ɴᴀᴍᴀ ꜰɪʟᴇ\n` +
+    `│ ➤ ⛓️ ʙᴜᴀᴛ ɴᴀᴍᴀ\n` +
+    `│ ➤ ⛓️ ᴀᴅᴍ & ɴᴀᴠʏ\n` +
+    `│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ\n` +
+    `│ ➤ ⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ\n` +
+    `╰───────────────❖\n\n` +
+    `💎 ご利用ありがとうございます。\n` +
+    `このボットは常に進化しています ⚙️`;
+
   try {
     const photos = await bot.getUserProfilePhotos(userId, { limit: 1 });
-
-    const caption =
-      `🎌 *iqbal ᴄᴠ ʙᴏᴛꜱ*\n(by iqbaldev)\n\n` +
-      `╭─❖\n` +
-      `│ こんにちは、私は Iqbalʙᴏᴛ です。\n` +
-      `│ 私はファイル変換と管理を担当します。\n` +
-      `│ ✦ Created by: @Iqbaldev\n` +
-      `╰───────────────❖\n\n` +
-      `╭─❖ ꜱᴛᴀᴛᴜꜱ ᴀᴋᴄᴇꜱ\n` +
-      `│ ➤ Nama: *${(await bot.getChat(userId)).first_name}*\n` +
-      `│ ➤ ID: \`${userId}\`\n` +
-      `│ ➤ Username: ${
-        (await bot.getChat(userId)).username
-          ? "@" + (await bot.getChat(userId)).username
-          : "-"
-      }\n` +
-      `│ ➤ Role: *${role.toUpperCase()}*\n` +
-      `│ ➤ Status: *${status === "active" ? "✅ Aktif" : "❌ Tidak Aktif"}*\n` +
-      `│ ➤ Masa Aktif: *${expired}*\n` +
-      `│ ➤ Hari Tersisa: *${remaining}*\n` +
-      `│ ➤ Total Operasi: *${user.total_operation || 0}*\n` +
-      `╰───────────────❖\n\n` +
-      `╭─❖ ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ\n` +
-      `│ ➤ 📄 TXT 📇 VCF 📊 XLSX\n` +
-      `│ ➤ 他の形式も順次対応予定です。\n` +
-      `╰───────────────❖\n\n` +
-      `╭─❖ ᴍᴇɴᴜ ʙᴏᴛ\n` +
-      `│ ➤ ⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ\n` +
-      `│ ➤ ⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ\n` +
-      `│ ➤ ⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n` +
-      `│ ➤ ⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ\n` +
-      `│ ➤ ⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n` +
-      `│ ➤ ⛓️ ꜱᴘʟɪᴛ ꜰɪʟᴇ\n` +
-      `│ ➤ ⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ\n` +
-      `│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ\n` +
-      `│ ➤ ⛓️ ᴀᴍʙɪʟ ɴᴀᴍᴀ ꜰɪʟᴇ\n` +
-      `│ ➤ ⛓️ ʙᴜᴀᴛ ɴᴀᴍᴀ\n` +
-      `│ ➤ ⛓️ ᴀᴅᴍ & ɴᴀᴠʏ\n` +
-      `│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ\n` +
-      `│ ➤ ⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ\n` +
-      `╰───────────────❖\n\n` +
-      `💎 ご利用ありがとうございます。\n` +
-      `このボットは常に進化しています ⚙️`;
-
     if (photos.total_count > 0) {
       const fileId = photos.photos[0][0].file_id;
       await bot.sendPhoto(chatId, fileId, {
@@ -243,22 +238,6 @@ async function showDashboard(bot, userId, chatId, db, saveDB) {
     }
   } catch (err) {
     console.error("Error getting profile photo:", err);
-    const caption =
-      `🎌 *iqbal ᴄᴠ ʙᴏᴛꜱ*\n(by iqbaldev)\n\n` +
-      `╭─❖\n` +
-      `│ こんにちは、私は Iqbalʙᴏᴛ です。\n` +
-      `│ 私はファイル変換と管理を担当します。\n` +
-      `│ ✦ Created by: @Iqbaldev\n` +
-      `╰───────────────❖\n\n` +
-      `╭─❖ ꜱᴛᴀᴛᴜꜱ ᴀᴋᴄᴇꜱ\n` +
-      `│ ➤ Role: *${role.toUpperCase()}*\n` +
-      `│ ➤ Status: *${status === "active" ? "✅ Aktif" : "❌ Tidak Aktif"}*\n` +
-      `│ ➤ Masa Aktif: *${expired}*\n` +
-      `│ ➤ Hari Tersisa: *${remaining}*\n` +
-      `│ ➤ Total Operasi: *${user.total_operation || 0}*\n` +
-      `╰───────────────❖\n\n` +
-      `💎 ご利用ありがとうございます。`;
-
     await bot.sendMessage(chatId, caption, {
       parse_mode: "Markdown",
       reply_markup: bot.getMainKeyboard()
