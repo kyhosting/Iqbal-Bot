@@ -7,14 +7,14 @@ export default function (bot, db, saveDB) {
 
     // ===== OWNER BYPASS - Go straight to dashboard =====
     if (config.owner.includes(userId)) {
-      return showDashboard(bot, userId, chatId, db, saveDB);
+      return bot.showDashboard(userId, chatId);
     }
 
     const user = db.users[userId];
 
     // ===== USER YANG SUDAH AKTIF - No verification needed =====
     if (user && !user.suspended && user.status === "active") {
-      return showDashboard(bot, userId, chatId, db, saveDB);
+      return bot.showDashboard(userId, chatId);
     }
 
     // ===== USER YANG SUSPENDED - Must rejoin =====
@@ -90,7 +90,7 @@ export default function (bot, db, saveDB) {
         // User sudah join - delete message & proceed to dashboard
         try {
           await bot.deleteMessage(chatId, messageId).catch(() => {});
-          await showDashboard(bot, userId, chatId, db, saveDB);
+          await bot.showDashboard(userId, chatId);
         } catch (err) {
           console.error("Error di verify_join (already joined):", err);
         }
@@ -100,147 +100,4 @@ export default function (bot, db, saveDB) {
     // ===== CALLBACK: Verify Join Button (dari /start) =====
     // Note: verify_again callback sudah di handle global di index.js
   });
-}
-
-// ===== HELPER: Show Dashboard =====
-async function showDashboard(bot, userId, chatId, db, saveDB) {
-  let user = db.users[userId];
-
-  // Jika user belum ada, tambahkan ke database + kasih trial 1 hari
-  if (!user) {
-    const trialExpired = Date.now() + 1 * 24 * 60 * 60 * 1000; // 1 hari
-    db.users[userId] = {
-      id: userId,
-      username: (await bot.getChat(userId)).username || "",
-      first_name: (await bot.getChat(userId)).first_name || "",
-      last_name: (await bot.getChat(userId)).last_name || "",
-      role: config.owner.includes(userId) ? "owner" : "trial",
-      vip_expired: config.owner.includes(userId) ? 0 : trialExpired,
-      status: "active",
-      total_operation: 0,
-      notified_expiry: false,
-      trial_start: Date.now(),
-      suspended: false
-    };
-    saveDB();
-
-    // Notif trial diberikan (hanya untuk non-owner)
-    if (!config.owner.includes(userId)) {
-      await bot.sendMessage(
-        userId,
-        `🎁 *TRIAL 1 HARI GRATIS!*\n\n` +
-          `Selamat! Kamu sudah verifikasi grup 🎉\n\n` +
-          `✅ Akses trial selama 1 hari sudah aktif!\n` +
-          `⏰ Berlaku sampai: ${new Date(trialExpired).toLocaleDateString("id-ID")}\n\n` +
-          `Nikmati semua fitur premium dulu ya Kak! 💎\n` +
-          `Setelah trial habis, beli VIP untuk terus akses 😊`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
-      ).catch(() => {});
-    }
-  } else {
-    // User sudah ada - restore jika suspended
-    if (user.suspended && user.vip_expired && user.vip_expired > Date.now()) {
-      user.suspended = false;
-      user.status = "active";
-      if (!user.role || user.role === "user") {
-        user.role = user.trial_start ? "trial" : "vip";
-      }
-      saveDB();
-
-      const daysLeft = Math.ceil(
-        (user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24)
-      );
-      await bot.sendMessage(
-        userId,
-        `✅ *Akses Dipulihkan Kak!*\n\n` +
-          `Kamu sudah join kedua grup 🎉\n\n` +
-          `✨ Trial/VIP kamu aktif kembali!\n` +
-          `⏰ Sisa: *${daysLeft} hari*\n\n` +
-          `Lanjut nikmati fitur premium ya 😊`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
-      ).catch(() => {});
-    }
-  }
-
-  // Get user data (refresh)
-  user = db.users[userId];
-  const role = bot.getRole(userId);
-
-  // Hitung sisa hari VIP
-  let expired = "Tidak Aktif";
-  let remaining = "0 hari";
-  let status = user.status || "inactive";
-
-  if (user.vip_expired && user.vip_expired > Date.now()) {
-    const expDate = new Date(user.vip_expired);
-    expired = expDate.toLocaleDateString("id-ID");
-    const daysLeft = Math.ceil(
-      (user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24)
-    );
-    remaining = `${daysLeft} hari`;
-    status = "active";
-  }
-
-  // Ambil foto profil user
-  const caption =
-    `🎌 *iqbal ᴄᴠ ʙᴏᴛꜱ*\n(by iqbaldev)\n\n` +
-    `╭─❖\n` +
-    `│ こんにちは、私は Iqbalʙᴏᴛ です。\n` +
-    `│ 私はファイル変換と管理を担当します。\n` +
-    `│ ✦ Created by: @Iqbaldev\n` +
-    `╰───────────────❖\n\n` +
-    `╭─❖ ꜱᴛᴀᴛᴜꜱ ᴀᴋᴄᴇꜱ\n` +
-    `│ ➤ Nama: *${user.first_name || "User"}*\n` +
-    `│ ➤ ID: \`${userId}\`\n` +
-    `│ ➤ Username: @${user.username || "-"}\n` +
-    `│ ➤ Role: *${role.toUpperCase()}*\n` +
-    `│ ➤ Status: *${status === "active" ? "✅ Aktif" : "❌ Tidak Aktif"}*\n` +
-    `│ ➤ Masa Aktif: *${expired}*\n` +
-    `│ ➤ Hari Tersisa: *${remaining}*\n` +
-    `│ ➤ Total Operasi: *${user.total_operation || 0}*\n` +
-    `╰───────────────❖\n\n` +
-    `╭─❖ ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ\n` +
-    `│ ➤ 📄 TXT 📇 VCF 📊 XLSX\n` +
-    `│ ➤ 他の形式も順次対応予定です。\n` +
-    `╰───────────────❖\n\n` +
-    `╭─❖ ᴍᴇɴᴜ ʙᴏᴛ\n` +
-    `│ ➤ ⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ\n` +
-    `│ ➤ ⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ\n` +
-    `│ ➤ ⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n` +
-    `│ ➤ ⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ\n` +
-    `│ ➤ ⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n` +
-    `│ ➤ ⛓️ ꜱᴘʟɪᴛ ꜰɪʟᴇ\n` +
-    `│ ➤ ⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ\n` +
-    `│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ\n` +
-    `│ ➤ ⛓️ ᴀᴍʙɪʟ ɴᴀᴍᴀ ꜰɪʟᴇ\n` +
-    `│ ➤ ⛓️ ʙᴜᴀᴛ ɴᴀᴍᴀ\n` +
-    `│ ➤ ⛓️ ᴀᴅᴍ & ɴᴀᴠʏ\n` +
-    `│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ\n` +
-    `│ ➤ ⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ\n` +
-    `╰───────────────❖\n\n` +
-    `💎 ご利用ありがとうございます。\n` +
-    `このボットは常に進化しています ⚙️`;
-
-  try {
-    const photos = await bot.getUserProfilePhotos(userId, { limit: 1 });
-    if (photos.total_count > 0) {
-      const fileId = photos.photos[0][0].file_id;
-      await bot.sendPhoto(chatId, fileId, {
-        caption: caption,
-        parse_mode: "Markdown",
-        reply_markup: bot.getMainKeyboardUser(userId)
-      });
-    } else {
-      await bot.sendMessage(chatId, caption, {
-        parse_mode: "Markdown",
-        reply_markup: bot.getMainKeyboardUser(userId)
-      });
-    }
-  } catch (err) {
-    console.error("Error getting profile photo:", err);
-    await bot.sendMessage(chatId, caption, {
-      parse_mode: "Markdown",
-      reply_markup: bot.getMainKeyboardUser(userId)
-    });
-  }
 }
