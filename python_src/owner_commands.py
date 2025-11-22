@@ -34,7 +34,8 @@ async def owner_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
             InlineKeyboardButton("👥 Lihat User", callback_data="owner_list_users")
         ],
         [
-            InlineKeyboardButton("🎁 Set VIP Manual", callback_data="owner_set_vip")
+            InlineKeyboardButton("🎁 Set VIP Manual", callback_data="owner_set_vip"),
+            InlineKeyboardButton("📢 Broadcast", callback_data="owner_broadcast")
         ]
     ])
     
@@ -80,18 +81,31 @@ async def owner_list_codes(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.edit_message_text(text, parse_mode="Markdown")
 
 async def owner_list_users(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """List all users"""
+    """List all users dengan pagination"""
     query = update.callback_query
     await query.answer()
     
     users = load_users()
     
-    text = "👥 *Daftar User*\n\n"
-    for uid, user in list(users.items())[:10]:
-        role = user.get('role', 'user').upper()
-        text += f"• {user.get('first_name', 'User')} (ID: {uid}) - {role}\n"
+    text = "👥 *DAFTAR SEMUA USER*\n\n"
+    text += f"📊 Total: {len(users)} user\n\n"
     
-    text += f"\n📊 Total: {len(users)} user"
+    vip_count = sum(1 for u in users.values() if u.get('role') in ['vip', 'trial'])
+    owner_count = sum(1 for u in users.values() if u.get('role') == 'owner')
+    active_count = sum(1 for u in users.values() if u.get('status') == 'active')
+    
+    text += f"🟢 Active: {active_count}\n"
+    text += f"💎 VIP/Trial: {vip_count}\n"
+    text += f"👑 Owner: {owner_count}\n\n"
+    text += f"*Daftar User (50 teratas):*\n\n"
+    
+    for i, (uid, user) in enumerate(list(users.items())[:50], 1):
+        role = user.get('role', 'user').upper()
+        status = '🟢' if user.get('status') == 'active' else '⭕'
+        text += f"{i}. {status} {user.get('first_name', 'User')} (ID: {uid}) - {role}\n"
+    
+    if len(users) > 50:
+        text += f"\n... dan {len(users) - 50} user lainnya"
     
     await query.edit_message_text(text, parse_mode="Markdown")
 
@@ -110,6 +124,20 @@ async def owner_set_vip(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown"
     )
 
+async def owner_broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Start broadcast feature"""
+    query = update.callback_query
+    await query.answer()
+    
+    context.user_data['owner_action'] = 'broadcast'
+    
+    await query.edit_message_text(
+        "📢 *BROADCAST MESSAGE*\n\n"
+        "Ketik pesan yang ingin dikirim ke semua user:\n\n"
+        "_Pesan akan dikirim ke semua user yang terdaftar_",
+        parse_mode="Markdown"
+    )
+
 async def handle_owner_input(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle owner inputs"""
     text = update.message.text.strip()
@@ -120,7 +148,31 @@ async def handle_owner_input(update: Update, context: ContextTypes.DEFAULT_TYPE)
     
     action = context.user_data.get('owner_action')
     
-    if action == 'create_code':
+    if action == 'broadcast':
+        users = load_users()
+        sent = 0
+        failed = 0
+        
+        for uid in users.keys():
+            try:
+                await context.bot.send_message(
+                    chat_id=int(uid),
+                    text=f"📢 *BROADCAST dari OWNER*\n\n{text}",
+                    parse_mode="Markdown"
+                )
+                sent += 1
+            except:
+                failed += 1
+        
+        await update.message.reply_text(
+            f"✅ *Broadcast Selesai*\n\n"
+            f"Terkirim: {sent} user\n"
+            f"Gagal: {failed} user",
+            parse_mode="Markdown"
+        )
+        context.user_data.pop('owner_action', None)
+    
+    elif action == 'create_code':
         try:
             duration = int(text)
             code = generate_random_code()
