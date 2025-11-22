@@ -1,0 +1,54 @@
+{
+  "users": {
+    "1788551869": {
+      "id": 1788551869,
+      "username": "Frayle1264",
+      "first_name": "( MFA 1) 王二",
+      "last_name": "",
+      "role": "vip",
+      "vip_expired": 1763917431741,
+      "status": "active",
+      "total_operation": 4
+    },
+    "8317563450": {
+      "id": 8317563450,
+      "username": "markzurkberg2",
+      "first_name": "왕린",
+      "last_name": "",
+      "role": "user",
+      "vip_expired": 0,
+      "status": "inactive",
+      "total_operation": 27
+    },
+    "8583927964": {
+      "id": 8583927964,
+      "username": "Iqbaldev",
+      "first_name": "얀시오",
+      "last_name": "",
+      "role": "vip",
+      "vip_expired": 1763838463469,
+      "status": "active",
+      "total_operation": 0
+    },
+    "8496196553": {
+      "id": 8496196553,
+      "username": "YUKALASTERA",
+      "first_name": "—𝒀𝑼𝑲𝑨𝑳𝑨𝑺𝑻",
+      "last_name": "",
+      "role": "vip",
+      "vip_expired": 1766340321205,
+      "status": "active",
+      "total_operation": 2
+    },
+    "8559314607": {
+      "id": 8559314607,
+      "username": "Huangtiang1",
+      "first_name": "都田 WS/TG/VB",
+      "last_name": "",
+      "role": "user",
+      "vip_expired": 0,
+      "status": "inactive",
+      "total_operation": 0
+    }
+  }
+}
