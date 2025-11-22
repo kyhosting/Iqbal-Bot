@@ -416,6 +416,108 @@ bot.on("my_chat_member", async (update) => {
   }
 });
 
+// ===== MESSAGE MONITORING: ANTI-LINK, ANTI-SPAM, ANTI-TOXSI =====
+bot.on("message", async (msg) => {
+  try {
+    const chatId = msg.chat.id;
+    const userId = msg.from.id;
+    const text = msg.text || msg.caption || "";
+    const messageId = msg.message_id;
+    
+    // Skip private messages dan skip bot commands
+    if (msg.chat.type === "private" || /^\//.test(text)) return;
+    
+    // Get group settings
+    const groupsDB = JSON.parse(fs.readFileSync("groups.json"));
+    const groupSettings = groupsDB.groups[chatId] || {};
+    
+    // ANTI-LINK: Delete messages with links
+    const hasLink = /(http|https|t\.me|telegram)/gi.test(text);
+    if (hasLink && groupSettings.antiLink !== false) {
+      try {
+        await bot.deleteMessage(chatId, messageId).catch(() => {});
+        await bot.sendMessage(
+          chatId,
+          `⛔ <b>Link dilarang di grup ini!</b>\n\n@${msg.from.username || "user"}, link tidak boleh di-share di sini.`,
+          { parse_mode: "HTML" }
+        ).then(m => {
+          setTimeout(() => bot.deleteMessage(chatId, m.message_id).catch(() => {}), 3000);
+        });
+        return;
+      } catch (e) {}
+    }
+    
+    // ANTI-SPAM: Detect rapid messages (more than 5 messages in 10 seconds)
+    if (!bot.userMessageCount) bot.userMessageCount = {};
+    if (!bot.userMessageCount[userId]) {
+      bot.userMessageCount[userId] = [];
+    }
+    
+    const now = Date.now();
+    bot.userMessageCount[userId].push(now);
+    bot.userMessageCount[userId] = bot.userMessageCount[userId].filter(t => now - t < 10000);
+    
+    if (bot.userMessageCount[userId].length > 5 && groupSettings.antiSpam !== false) {
+      try {
+        await bot.deleteMessage(chatId, messageId).catch(() => {});
+        await bot.sendMessage(
+          chatId,
+          `⛔ <b>Spam terdeteksi!</b>\n\n@${msg.from.username || "user"}, jangan spam pesan!`,
+          { parse_mode: "HTML" }
+        ).then(m => {
+          setTimeout(() => bot.deleteMessage(chatId, m.message_id).catch(() => {}), 3000);
+        });
+        return;
+      } catch (e) {}
+    }
+    
+    // ANTI-TOXSI: Detect offensive words
+    const toxsiWords = ["anjing", "babi", "kontol", "goblok", "tolol", "kacau", "bangsat"];
+    const hasToxsi = toxsiWords.some(word => text.toLowerCase().includes(word));
+    
+    if (hasToxsi && groupSettings.antiToxsi !== false) {
+      try {
+        await bot.deleteMessage(chatId, messageId).catch(() => {});
+        await bot.sendMessage(
+          chatId,
+          `⛔ <b>Bahasa tidak sopan!</b>\n\n@${msg.from.username || "user"}, jaga bahasa kamu di grup ini!`,
+          { parse_mode: "HTML" }
+        ).then(m => {
+          setTimeout(() => bot.deleteMessage(chatId, m.message_id).catch(() => {}), 3000);
+        });
+        return;
+      } catch (e) {}
+    }
+  } catch (err) {
+    console.error("Error in message monitoring:", err);
+  }
+});
+
+// ===== NEW MEMBER GREETING =====
+bot.on("new_chat_members", async (msg) => {
+  try {
+    const chatId = msg.chat.id;
+    
+    // Get group settings and welcome message
+    const groupsDB = JSON.parse(fs.readFileSync("groups.json"));
+    const groupSettings = groupsDB.groups[chatId] || {};
+    
+    if (!groupSettings.welcome) return;
+    
+    // Send welcome message for each new member
+    for (const member of msg.new_chat_members) {
+      let welcomeMsg = groupSettings.welcome;
+      welcomeMsg = welcomeMsg.replace(/{user}/g, `@${member.username || member.first_name}`);
+      welcomeMsg = welcomeMsg.replace(/{name}/g, member.first_name);
+      welcomeMsg = welcomeMsg.replace(/{group}/g, msg.chat.title);
+      
+      await bot.sendMessage(chatId, welcomeMsg, { parse_mode: "HTML" });
+    }
+  } catch (err) {
+    console.error("Error in new member greeting:", err);
+  }
+});
+
 // ===== GLOBAL CALLBACK: Verify Again (dari inline button join) =====
 bot.on("callback_query", async (query) => {
   if (query.data === "verify_again") {
