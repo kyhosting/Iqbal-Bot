@@ -1,5 +1,4 @@
-python-telegram-bot==21.5
-python-dotenv==1.0.1
-openpyxl==3.11.5
-vobject==0.9.6.1
-requests==2.31.0
+python-telegram-bot>=21.0
+python-dotenv>=1.0
+openpyxl>=3.0
+requests>=2.25
