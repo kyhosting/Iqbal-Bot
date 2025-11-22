@@ -103,9 +103,14 @@ async def handle_file_message(update: Update, context: ContextTypes.DEFAULT_TYPE
             session['step'] = 2
             await update.message.reply_text("📝 *Nama file output?*", parse_mode="Markdown")
         elif cmd in ['gabungfile', 'gabungtxt']:
-            session['files'].append(file_path)
-            session['file_type'] = file_name.split('.')[-1]
-            # Silently store file, no message
+            # Check if we're waiting for output name (step 2)
+            if session.get('step') == 2:
+                await update.message.reply_text(f"⏳ *Ketik nama file output dulu ya!*\n\nSudah menerima {len(session.get('files', []))} file", parse_mode="Markdown")
+                os.remove(file_path) if os.path.exists(file_path) else None
+            else:
+                session['files'].append(file_path)
+                session['file_type'] = file_name.split('.')[-1]
+                # Silently store file, no message
         elif cmd == 'hitung':
             total = count_contacts_in_vcf(file_path) if file_name.endswith('.vcf') else count_contacts_in_txt(file_path)
             await update.message.reply_text(f"📊 *Total: {total} kontak*", parse_mode="Markdown")
