@@ -104,13 +104,8 @@ async def handle_file_message(update: Update, context: ContextTypes.DEFAULT_TYPE
             await update.message.reply_text("📝 *Nama file output?*", parse_mode="Markdown")
         elif cmd in ['gabungfile', 'gabungtxt']:
             session['files'].append(file_path)
-            # Single summary message - hanya update untuk tracking
-            msg = f"📦 *File Received: {len(session['files'])}*\n\n"
-            msg += f"Tipe: {file_name.split('.')[-1].upper()}\n\n"
-            msg += f"Total: {len(session['files'])} file\n\n"
-            msg += f"_Kirim file lagi atau ketik `done` untuk selesai_"
-            # Store message ID untuk update nanti jika perlu
-            await update.message.reply_text(msg, parse_mode="Markdown")
+            session['file_type'] = file_name.split('.')[-1]
+            # Silently store file, no message
         elif cmd == 'hitung':
             total = count_contacts_in_vcf(file_path) if file_name.endswith('.vcf') else count_contacts_in_txt(file_path)
             await update.message.reply_text(f"📊 *Total: {total} kontak*", parse_mode="Markdown")
@@ -232,9 +227,8 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         elif cmd in ['gabungfile', 'gabungtxt']:
             if text.lower() == 'done':
                 if len(files) >= 2:
+                    await update.message.reply_text(f"📝 *Nama file output untuk {len(files)} file?*", parse_mode="Markdown")
                     session['step'] = 2
-                    await update.message.reply_text("📝 *Nama file output?*", parse_mode="Markdown")
-                else:
                     await update.message.reply_text("⚠️ *Minimal 2 file diperlukan!*", parse_mode="Markdown")
             else:
                 fname = f"/tmp/{text}.vcf" if cmd == 'gabungfile' and files[0].endswith('.vcf') else f"/tmp/{text}.txt"
