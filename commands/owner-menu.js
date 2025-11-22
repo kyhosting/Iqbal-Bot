@@ -346,7 +346,7 @@ export default function (bot, db, saveDB) {
 
       for (const user of users) {
         try {
-          await bot.sendMessage(user.id, `📢 <b>Broadcast dari Owner</b>\n\n${text}`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+          await bot.sendMessage(user.id, `📢 Broadcast dari Owner\n\n${text}`, { reply_markup: bot.getMainKeyboardUser(userId) });
           success++;
         } catch (err) {
           failed++;
@@ -444,6 +444,6 @@ export default function (bot, db, saveDB) {
     saveDB();
 
     const expireDate = new Date(db.users[targetUserId].vip_expired).toLocaleDateString('id-ID');
-    bot.sendMessage(chatId, `✅ <b>VIP Manual Berhasil Diberikan</b>\n\n▸ User ID: <code>${targetUserId}</code>\n▸ Durasi: ${durationDays} hari\n▸ Expired: ${expireDate}`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+    bot.sendMessage(chatId, `✅ <b>VIP Manual Berhasil Diberikan</b>\n\n▸ User: ${targetUserId}\n▸ Durasi: ${durationDays} hari\n▸ Expired: ${expireDate}`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
   });
 }
