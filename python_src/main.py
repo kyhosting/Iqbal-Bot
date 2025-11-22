@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
-"""Iqbal CV Bot - Python Version Main Entry Point"""
+"""Iqbal CV Bot - Python Version (COMPLETE dengan semua 18 features)"""
 import asyncio
 import logging
-from telegram import Update, ReplyKeyboardMarkup
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+from telegram import Update, ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import (
+    Application, CommandHandler, MessageHandler, filters, 
+    ContextTypes, ConversationHandler, CallbackQueryHandler
+)
 from config_py import CONFIG
 from helpers import *
+from verification import check_group_membership, verify_group_access, handle_verify_again
 from commands.user_commands import cmd_me, cmd_bantuan, cmd_fitur
-from commands.vip_commands import (
-    vip_txttovcf, vip_vcftotxt, vip_xlstovcf, vip_msgtotxt, vip_rapikatntxt,
-    vip_bagivcf, vip_gabungfile, vip_renamefile, vip_renamekontak, vip_hitungfile, vip_cekkontak
-)
+from redeem_system import redeem_start, redeem_input, REDEEM_INPUT
+from owner_commands import owner_menu, handle_owner_input, owner_list_codes, owner_list_users
+from vip_commands import handle_vip_command, handle_file_message, handle_text_message
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -26,7 +29,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Get or create user
     db_user = get_user(user_id)
     if not db_user:
-        db_user = create_user(user_id, user.first_name, user.username, is_owner(user_id))
+        db_user = create_user(
+            user_id,
+            user.first_name,
+            user.username,
+            user_id in CONFIG["owner"]
+        )
     
     # Get dashboard
     dashboard = format_dashboard(db_user)
@@ -61,31 +69,46 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle text messages (button presses)"""
-    text = update.message.text
+    """Handle all message types"""
+    text = update.message.text or ""
+    user_id = update.effective_user.id
     
-    # Map tombol ke command handler
-    button_map = {
-        "⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ": vip_rapikatntxt,
-        "⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ": vip_msgtotxt,
-        "⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ": vip_txttovcf,
-        "⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ": vip_xlstovcf,
-        "⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ": vip_vcftotxt,
-        "⛓️ ꜱᴘʟɪᴛ ꜰɪʟᴇ": vip_bagivcf,
-        "⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ": vip_gabungfile,
-        "⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ": vip_renamekontak,
-        "⛓️ ᴀᴍʙɪʟ ɴᴀᴍᴀ ꜰɪʟᴇ": vip_cekkontak,
-        "⛓️ ʙᴜᴀᴛ ɴᴀᴍᴀ": cmd_fitur,
-        "⛓️ ᴀᴅᴍ & ɴᴀᴠʏ": cmd_bantuan,
-        "⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ": vip_renamefile,
-        "⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ": vip_hitungfile,
-        "🎁 Redeem Code": cmd_bantuan
+    # Check if it's a button press
+    button_commands = {
+        "⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ": lambda u, c: handle_vip_command(u, c, 'rapikatntxt'),
+        "⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ": lambda u, c: handle_vip_command(u, c, 'msgtotxt'),
+        "⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ": lambda u, c: handle_vip_command(u, c, 'txttovcf'),
+        "⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ": lambda u, c: handle_vip_command(u, c, 'xlstovcf'),
+        "⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ": lambda u, c: handle_vip_command(u, c, 'vcftotxt'),
+        "⛓️ ꜱᴘʟɪᴛ ꜰɪʟᴇ": lambda u, c: handle_vip_command(u, c, 'splitfile'),
+        "⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ": lambda u, c: handle_vip_command(u, c, 'gabungfile'),
+        "⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ": lambda u, c: handle_vip_command(u, c, 'renamekontak'),
+        "⛓️ ᴀᴍʙɪʟ ɴᴀᴍᴀ ꜰɪʟᴇ": lambda u, c: handle_vip_command(u, c, 'cekkontak'),
+        "⛓️ ʙᴜᴀᴛ ɴᴀᴍᴀ": lambda u, c: cmd_fitur(u, c),
+        "⛓️ ᴀᴅᴍ & ɴᴀᴠʏ": lambda u, c: cmd_bantuan(u, c),
+        "⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ": lambda u, c: handle_vip_command(u, c, 'renamefile'),
+        "⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ": lambda u, c: handle_vip_command(u, c, 'hitungfile'),
+        "🎁 Redeem Code": lambda u, c: redeem_start(u, c),
+        "⛓️ ɢᴀʙᴜɴɢ ᴛxᴛ": lambda u, c: handle_vip_command(u, c, 'gabungtxt'),
+        "⛓️ ɢᴀʙᴜɴɢ ᴠᴄꜰ": lambda u, c: handle_vip_command(u, c, 'gabungvcf'),
     }
     
-    if text in button_map:
-        await button_map[text](update, context)
+    if text in button_commands:
+        await button_commands[text](update, context)
+        return
+    
+    # Check if handling VIP command
+    if update.message.document:
+        await handle_file_message(update, context)
     else:
-        await update.message.reply_text("Gunakan tombol dibawah ya Kak! 😊")
+        # Could be text input for VIP command or redeem
+        from vip_commands import vip_sessions
+        if user_id in vip_sessions and 'command' in vip_sessions[user_id]:
+            await handle_text_message(update, context)
+        elif text.lower() == 'batal':
+            await update.message.reply_text("❌ *Dibatalkan ya Kak* 😊", parse_mode="Markdown")
+        else:
+            await update.message.reply_text("Gunakan tombol dibawah ya Kak! 😊")
 
 async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Log errors"""
@@ -101,8 +124,26 @@ def main():
     app.add_handler(CommandHandler("bantuan", cmd_bantuan))
     app.add_handler(CommandHandler("fitur", cmd_fitur))
     app.add_handler(CommandHandler("help", cmd_bantuan))
+    app.add_handler(CommandHandler("owner", owner_menu))
     
-    # Message handler untuk button presses
+    # Redeem flow
+    app.add_handler(ConversationHandler(
+        entry_points=[
+            CommandHandler("redeem", redeem_start),
+            MessageHandler(filters.TEXT & filters.Regex(r"^🎁 Redeem Code$"), redeem_start)
+        ],
+        states={
+            REDEEM_INPUT: [MessageHandler(filters.TEXT, redeem_input)]
+        },
+        fallbacks=[]
+    ))
+    
+    # Callback queries
+    app.add_handler(CallbackQueryHandler(handle_verify_again, pattern="^verify_again$"))
+    app.add_handler(CallbackQueryHandler(owner_menu, pattern="^owner_"))
+    
+    # Message handlers
+    app.add_handler(MessageHandler(filters.Document, handle_file_message))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     
     # Error handler
