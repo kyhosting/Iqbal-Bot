@@ -2,7 +2,7 @@
 """Iqbal CV Bot - Python Version (COMPLETE dengan semua 18 features)"""
 import asyncio
 import logging
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
 from telegram.ext import (
     Application, CommandHandler, MessageHandler, filters, 
     ContextTypes, ConversationHandler, CallbackQueryHandler
@@ -38,6 +38,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # Get dashboard
     dashboard = format_dashboard(db_user)
+    keyboard = get_main_keyboard()
     
     try:
         # Try to get profile photo
@@ -48,20 +49,23 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 chat_id=user_id,
                 photo=photo.file_id,
                 caption=dashboard,
-                parse_mode="Markdown"
+                parse_mode="Markdown",
+                reply_markup=ReplyKeyboardMarkup(keyboard["keyboard"], resize_keyboard=True)
             )
         else:
             await context.bot.send_message(
                 chat_id=user_id,
                 text=dashboard,
-                parse_mode="Markdown"
+                parse_mode="Markdown",
+                reply_markup=ReplyKeyboardMarkup(keyboard["keyboard"], resize_keyboard=True)
             )
     except Exception as e:
         logger.error(f"Error sending start message: {e}")
         await context.bot.send_message(
             chat_id=user_id,
             text=dashboard,
-            parse_mode="Markdown"
+            parse_mode="Markdown",
+            reply_markup=ReplyKeyboardMarkup(keyboard["keyboard"], resize_keyboard=True)
         )
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
