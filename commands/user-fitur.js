@@ -2,78 +2,86 @@ export default function (bot) {
   bot.onText(/^\/fitur$/, async (msg) => {
     const chatId = msg.chat.id;
 
-    const message = `🎌 FITUR BOT IQBAL CV
-==============================
+    const message = `◆◆  FITUR BOT IQBAL CV  ◆◆
 
-📄 KONVERSI FILE
-• ⛓️ TXT TO VCF
-  Ubah file TXT menjadi format VCF
+┌─❖
+│  📄 KONVERSI FILE
+│
+│  ⛓️ TXT TO VCF
+│  Ubah TXT jadi VCF
+│
+│  ⛓️ VCF TO TXT
+│  Ubah VCF jadi TXT
+│
+│  ⛓️ XLS TO VCF
+│  Ubah Excel jadi VCF
+│
+│  ⛓️ MSG TO TXT
+│  Ekstrak nomor dari pesan
+└─❖
 
-• ⛓️ VCF TO TXT
-  Ubah file VCF menjadi format TXT
+┌─❖
+│  📞 EKSTRAK & NOMOR
+│
+│  ⛓️ EKSTRAK NOMOR
+│  Ambil semua nomor dari file
+└─❖
 
-• ⛓️ XLS TO VCF
-  Ubah file Excel/XLSX menjadi VCF
+┌─❖
+│  📦 GABUNG FILE
+│
+│  ⛓️ GABUNG FILE
+│  Gabung multiple file
+└─❖
 
-• ⛓️ MSG TO TXT
-  Ekstrak nomor dari pesan Telegram
+┌─❖
+│  🔧 UTILITAS FILE
+│
+│  ⛓️ RAPIKAN TXT
+│  Hapus duplikat & sort
+│
+│  ⛓️ HITUNG FILE
+│  Hitung total kontak
+│
+│  ⛓️ RENAME FILE
+│  Ganti nama file
+│
+│  ⛓️ RENAME KONTAK
+│  Ganti nama semua kontak
+│
+│  ⛓️ CEK KONTAK
+│  Lihat detail kontak
+└─❖
 
-==============================
+┌─❖
+│  👑 ADMIN COMMANDS
+│
+│  ⛓️ CREATE ADMIN
+│  Buat admin baru (owner only)
+│
+│  ⛓️ MENU OWNER
+│  Panel management
+└─❖
 
-📞 EKSTRAK & NOMOR
-• ⛓️ EKSTRAK NOMOR
-  Ambil semua nomor dari file VCF/TXT/XLSX/CSV
+┌─❖
+│  🎮 COMMAND LAINNYA
+│
+│  /start → Mulai & profil
+│  /me → Lihat profil
+│  /fitur → Semua fitur
+│  /cekid → Cek ID
+│  /bantuan → Hubungi owner
+│  /clear → Bersihkan chat
+└─❖
 
-==============================
-
-📦 GABUNG FILE
-• ⛓️ GABUNGKAN
-  Gabung multiple file TXT atau VCF jadi satu
-
-==============================
-
-🔧 UTILITAS FILE
-• ⛓️ RAPIKAN TXT
-  Hapus duplikat & sort nomor
-
-• ⛓️ HITUNG FILE
-  Hitung total kontak di file
-
-• ⛓️ RENAME FILE
-  Ganti nama file
-
-• ⛓️ RENAME KONTAK
-  Ganti nama semua kontak dalam file
-
-• ⛓️ CEK KONTAK
-  Lihat detail kontak dari file
-
-==============================
-
-👑 ADMIN COMMANDS
-• ⛓️ CREATE ADMIN
-  Buat admin baru (owner only)
-
-• ⛓️ MENU OWNER
-  Panel management untuk owner
-
-==============================
-
-🎮 COMMAND LAINNYA
-• /start → Mulai & lihat profil
-• /me → Lihat profil user
-• /fitur → Lihat semua fitur (saat ini)
-• /cekid → Cek ID grup/channel/user
-• /bantuan → Hubungi owner
-• /clear → Bersihkan chat
-
-==============================
-
-💎 SISTEM VIP
-Semua fitur premium butuh akses VIP.
-Gunakan kode redeem untuk VIP access! 🎁
-
-Selamat menggunakan bot! 😊`;
+┌─❖
+│  💎 SISTEM VIP
+│
+│  Semua fitur premium butuh VIP
+│  Gunakan redeem code untuk akses!
+│
+│  Selamat menggunakan! 😊
+└─❖`;
 
     await bot.sendMessage(chatId, message);
   });

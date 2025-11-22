@@ -6,9 +6,14 @@ export default function (bot, db, saveDB) {
     const chatId = msg.chat.id;
 
     if (!config.owner.includes(userId)) {
-      return bot.sendMessage(
-        chatId,
-        `◆◆ VIP LIST ◆◆\n\n┌─❖\n├ ❌ <b>Akses Ditolak</b>\n├ ➤ Command khusus owner\n└─❖`,
+      return bot.sendMessage(chatId,
+        `◆◆  VIP LIST  ◆◆
+
+┌─❖
+│  ❌ Akses Ditolak
+│
+│  Command khusus owner
+└─❖`,
         { parse_mode: "HTML" }
       );
     }
@@ -18,21 +23,26 @@ export default function (bot, db, saveDB) {
     );
 
     if (vipUsers.length === 0) {
-      return bot.sendMessage(
-        chatId,
-        `◆◆ DAFTAR VIP USER ◆◆\n\n┌─❖\n├ ℹ️ <b>Status</b>\n├ ➤ Belum ada user VIP\n└─❖`,
+      return bot.sendMessage(chatId,
+        `◆◆  DAFTAR VIP USER  ◆◆
+
+┌─❖
+│  ℹ️ Status
+│
+│  Belum ada user VIP
+└─❖`,
         { parse_mode: "HTML" }
       );
     }
 
-    let message = `◆◆ DAFTAR VIP USER (${vipUsers.length}) ◆◆\n\n`;
+    let message = `◆◆  DAFTAR VIP USER (${vipUsers.length})  ◆◆\n\n`;
     vipUsers.forEach((user, i) => {
       const exp = new Date(user.vip_expired).toLocaleDateString("id-ID");
       message += `┌─❖ ${i + 1}\n`;
-      message += `├ ➤ Nama: ${user.first_name}\n`;
-      message += `├ ➤ ID: <code>${user.id}</code>\n`;
-      message += `├ ➤ Username: @${user.username || "-"}\n`;
-      message += `├ ➤ Expired: ${exp}\n`;
+      message += `│  Nama: ${user.first_name}\n`;
+      message += `│  ID: ${user.id}\n`;
+      message += `│  Username: @${user.username || "-"}\n`;
+      message += `│  Expired: ${exp}\n`;
       message += `└─❖\n`;
     });
 
