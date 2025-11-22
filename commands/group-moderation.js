@@ -37,9 +37,9 @@ export default function (bot, db, saveDB) {
       );
     }
 
-    // Check if user is VIP
+    // Check if user is VIP or Owner
     const user = db.users[userId];
-    if (!user || user.role !== "vip") {
+    if (!user || !["owner", "vip"].includes(user.role)) {
       return trackMessage(
         userId,
         chatId,
@@ -88,9 +88,9 @@ export default function (bot, db, saveDB) {
       );
     }
 
-    // Check if user is VIP
+    // Check if user is VIP or Owner
     const user = db.users[userId];
-    if (!user || user.role !== "vip") {
+    if (!user || !["owner", "vip"].includes(user.role)) {
       return trackMessage(
         userId,
         chatId,
@@ -138,9 +138,9 @@ export default function (bot, db, saveDB) {
       );
     }
 
-    // Check if user is VIP
+    // Check if user is VIP or Owner
     const user = db.users[userId];
-    if (!user || user.role !== "vip") {
+    if (!user || !["owner", "vip"].includes(user.role)) {
       return trackMessage(
         userId,
         chatId,
