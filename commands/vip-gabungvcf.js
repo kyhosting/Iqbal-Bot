@@ -4,7 +4,7 @@ import path from "path";
 export default function (bot) {
   const sessions = {};
 
-  bot.onText(/, (msg) => {
+  bot.onText(/^⛓️ ɢᴀʙᴜɴɢ ᴠᴄꜰ$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);
