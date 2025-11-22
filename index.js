@@ -182,8 +182,9 @@ bot.verifyGroupAccess = async (userId, chatId) => {
   // Skip check for owner
   if (config.owner.includes(userId)) return true;
   
-  // Check if user is suspended
   const user = db.users[userId];
+  
+  // Check if user is suspended (keluar dari grup)
   if (user && user.suspended) {
     const groupMainDeeplink = `https://t.me/agentviber12?join`;
     const groupCvDeeplink = `https://t.me/channelviber?join`;
@@ -211,7 +212,13 @@ bot.verifyGroupAccess = async (userId, chatId) => {
     return false;
   }
   
-  // Check group membership
+  // ===== VERIFICATION CACHING =====
+  // Jika user sudah pernah verify dan tidak suspended → skip check, langsung allow
+  if (user && user.group_verified) {
+    return true;
+  }
+  
+  // Jika belum verify → check group membership
   const groupCheck = await bot.checkGroupMembership(userId);
   
   if (!groupCheck.verified) {
@@ -233,6 +240,12 @@ bot.verifyGroupAccess = async (userId, chatId) => {
     );
     
     return false;
+  }
+  
+  // Verified! Mark flag untuk tidak perlu verify lagi
+  if (user) {
+    user.group_verified = true;
+    saveDB();
   }
   
   return true;
@@ -308,7 +321,8 @@ bot.showDashboard = async (userId, chatId) => {
       total_operation: 0,
       notified_expiry: false,
       trial_start: Date.now(),
-      suspended: false
+      suspended: false,
+      group_verified: true // Mark as verified setelah /start
     };
     saveDB();
 
@@ -325,6 +339,7 @@ bot.showDashboard = async (userId, chatId) => {
     if (user.suspended && user.vip_expired && user.vip_expired > Date.now()) {
       user.suspended = false;
       user.status = "active";
+      user.group_verified = true; // Restore verification flag
       if (!user.role || user.role === "user") {
         user.role = user.trial_start ? "trial" : "vip";
       }
@@ -407,6 +422,7 @@ bot.on("my_chat_member", async (update) => {
           // SUSPEND: Set flag but PRESERVE vip_expired
           user.suspended = true;
           user.status = "suspended";
+          user.group_verified = false; // Reset verification flag - wajib verify ulang
           // vip_expired TIDAK direset - tetap tersimpan!
           saveDB();
           

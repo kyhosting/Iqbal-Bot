@@ -27,12 +27,15 @@ Bot memerlukan user join 2 grup mandatory:
 - **@agentviber12** (grup utama)
 - **@channelviber** (channel CV)
 
-Sistem verifikasi:
+Sistem verifikasi (dengan caching):
 - Check membership via `bot.verifyGroupAccess()` helper
 - Dipanggil di setiap VIP command (keyboard + slash)
 - Owner bypass verification check
+- **Caching**: Verify sekali saja, skip jika sudah verified
+- **Otomatis suspend** saat user keluar dari grup
+- **Wajib re-verify** jika user keluar dan join ulang
 
-#### Auto-Suspend Access System 🚫 (Preserve Trial Duration)
+#### Auto-Suspend Access System 🚫 (with Verification Caching)
 **Fitur Keamanan - Trial/VIP duration TETAP, hanya akses yang di-suspend:**
 1. Bot otomatis detect event `my_chat_member` (user/bot left group)
 2. System check membership status di kedua grup
@@ -42,15 +45,34 @@ Sistem verifikasi:
 6. User terima notifikasi: "❌ *Akses Dicabut Sementara Kak!*" dengan info trial masih ada
 7. User join kedua grup → ketik `/start` → Akses otomatis DIPULIHKAN + notif ✅
 
-**Flow Detail - Suspend & Restore:**
+**Flow Detail - Suspend & Restore dengan Verification Caching:**
 ```
+Kondisi 1 - USER PERTAMA KALI AKSES FITUR:
+User invoke command
+    ↓
+Check: group_verified flag?
+    ↓
+NO (belum pernah verify) → Full verification check
+    ↓
+Verified → Set group_verified=true, ALLOW access
+    ↓
+Akses ALLOWED ✅
+
+Kondisi 2 - USER AKSES FITUR LAGI HARI SAMA:
+User invoke command
+    ↓
+Check: group_verified flag?
+    ↓
+YES (sudah verify) → SKIP check, langsung ALLOW
+    ↓
+Akses ALLOWED (tanpa re-verify) ✅
+
+Kondisi 3 - USER KELUAR DARI GRUP:
 User keluar @agentviber12 atau @channelviber
     ↓
 my_chat_member event trigger
     ↓
-checkGroupMembership() verify status
-    ↓
-Status != verified → Set suspended=true (vip_expired TETAP)
+Set: suspended=true, group_verified=false (reset flag)
     ↓
 Database update: suspended=true, status="suspended"
     ↓
@@ -60,17 +82,19 @@ User join BOTH groups + /start
     ↓
 Command detects: suspended=true && vip_expired > now()
     ↓
-Auto-restore: suspended=false, status="active", role restored
+Auto-restore: suspended=false, group_verified=true, status="active"
     ↓
 Notifikasi: "Akses dipulihkan! Sisa X hari" ✅
+    ↓
+User akses fitur lagi → Bypass check (caching active) ✅
 ```
 
 **Komponen Code:**
 - Suspend Event: `bot.on("my_chat_member", async (update) => {...})`
-- Lokasi suspend: index.js line 224-254
-- Restore Logic: commands/user-start.js line 71-90
+- Lokasi: index.js line 403-456
+- Verify Method: `bot.verifyGroupAccess(userId, chatId)` line 184-255
 - Check method: `bot.checkGroupMembership(userId)`
-- DB fields: `suspended`, `status`, `vip_expired` (preserved!)
+- DB fields: `suspended`, `status`, `group_verified` (caching), `vip_expired` (preserved!)
 
 ### VIP & Redeem System 💎
 **Redeem Code Features**:
@@ -101,8 +125,12 @@ Notifikasi: "Akses dipulihkan! Sisa X hari" ✅
       "last_name": "Belakang",
       "role": "vip|user|owner",
       "vip_expired": timestamp,
-      "status": "active|inactive",
-      "total_operation": 0
+      "status": "active|inactive|suspended",
+      "total_operation": 0,
+      "suspended": false,              // Auto-suspend saat keluar grup
+      "group_verified": true,          // Verification caching flag
+      "notified_expiry": false,        // Reminder flag
+      "trial_start": timestamp         // Track trial start time
     }
   }
 }
@@ -225,14 +253,36 @@ Characteristics:
 
 ### Technical Implementation
 
-#### Group Verification Flow
-```javascript
-// Di setiap VIP command:
-const hasAccess = await bot.verifyGroupAccess(userId, chatId);
-if (!hasAccess) return; // Stop execution
+#### Group Verification Flow (Caching System) ✨
+**Verify Sekali Saja - Tidak Perlu Verify Lagi**
 
-// Lanjut role check dan processing...
+Sistem baru menggunakan **verification caching**:
+```javascript
+// Verification Flow:
+1. User pertama kali akses fitur
+   → Check group membership
+   → Set flag: group_verified = true
+   → Save ke database
+
+2. User akses fitur lagi (SAMA HARI)
+   → Cek flag: group_verified = true?
+   → YES → Skip check, langsung ALLOW ✅
+   → NO → Full verification check
+
+3. User keluar dari grup
+   → Detect via my_chat_member event
+   → Set: suspended = true, group_verified = false
+   → Notification: "Akses dicabut sementara"
+
+4. User join ulang + /start
+   → Restore: suspended = false, group_verified = true
+   → Notification: "Akses dipulihkan!"
 ```
+
+**Database Fields:**
+- `group_verified` - Flag caching (true/false)
+- `suspended` - Auto-suspend saat keluar grup
+- `vip_expired` - Preserved saat suspend
 
 #### Operation Tracking
 ```javascript
