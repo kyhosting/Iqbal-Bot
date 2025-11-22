@@ -120,23 +120,22 @@ export default function (bot, db, saveDB) {
         message += `└─❖`;
       }
 
+      const backKeyboard = {
+        inline_keyboard: [
+          [{ text: "◀️ Kembali ke Menu", callback_data: "owner_back_menu" }]
+        ]
+      };
+
       await bot.answerCallbackQuery(query.id);
-      await bot.sendMessage(chatId, message, { parse_mode: "HTML" });
+      await bot.sendMessage(chatId, message, { parse_mode: "HTML", reply_markup: backKeyboard });
     }
 
     // CREATE CODE
     else if (data === "owner_create_code") {
       sessions[userId] = { step: "create_code_name" };
       await bot.answerCallbackQuery(query.id);
-      
-      // Delete old message
-      if (userMessages[userId]) {
-        try {
-          await bot.deleteMessage(chatId, userMessages[userId]);
-        } catch (e) {}
-      }
 
-      const msg = await bot.sendMessage(
+      await bot.sendMessage(
         chatId,
         `◆◆  BUAT KODE  ◆◆
 
@@ -149,22 +148,14 @@ export default function (bot, db, saveDB) {
 └─❖`,
         { parse_mode: "HTML" }
       );
-      userMessages[userId] = msg.message_id;
     }
 
     // DELETE CODE
     else if (data === "owner_delete_code") {
       sessions[userId] = { step: "delete_code" };
       await bot.answerCallbackQuery(query.id);
-      
-      // Delete old message
-      if (userMessages[userId]) {
-        try {
-          await bot.deleteMessage(chatId, userMessages[userId]);
-        } catch (e) {}
-      }
 
-      const msg = await bot.sendMessage(
+      await bot.sendMessage(
         chatId,
         `◆◆  HAPUS KODE  ◆◆
 
@@ -175,7 +166,6 @@ export default function (bot, db, saveDB) {
 └─❖`,
         { parse_mode: "HTML" }
       );
-      userMessages[userId] = msg.message_id;
     }
 
     // LIST USERS
@@ -196,23 +186,22 @@ export default function (bot, db, saveDB) {
         message += `└─❖`;
       }
 
+      const backKeyboard = {
+        inline_keyboard: [
+          [{ text: "◀️ Kembali ke Menu", callback_data: "owner_back_menu" }]
+        ]
+      };
+
       await bot.answerCallbackQuery(query.id);
-      await bot.sendMessage(chatId, message, { parse_mode: "HTML" });
+      await bot.sendMessage(chatId, message, { parse_mode: "HTML", reply_markup: backKeyboard });
     }
 
     // BROADCAST
     else if (data === "owner_broadcast") {
       sessions[userId] = { step: "broadcast_message" };
       await bot.answerCallbackQuery(query.id);
-      
-      // Delete old message
-      if (userMessages[userId]) {
-        try {
-          await bot.deleteMessage(chatId, userMessages[userId]);
-        } catch (e) {}
-      }
 
-      const msg = await bot.sendMessage(
+      await bot.sendMessage(
         chatId,
         `◆◆  BROADCAST KE SEMUA USER  ◆◆
 
@@ -226,22 +215,14 @@ export default function (bot, db, saveDB) {
 └─❖`,
         { parse_mode: "HTML" }
       );
-      userMessages[userId] = msg.message_id;
     }
 
     // SET VIP MANUAL
     else if (data === "owner_set_vip") {
       sessions[userId] = { step: "setvip_userid" };
       await bot.answerCallbackQuery(query.id);
-      
-      // Delete old message
-      if (userMessages[userId]) {
-        try {
-          await bot.deleteMessage(chatId, userMessages[userId]);
-        } catch (e) {}
-      }
 
-      const msg = await bot.sendMessage(
+      await bot.sendMessage(
         chatId,
         `◆◆  SET VIP MANUAL  ◆◆
 
@@ -252,7 +233,6 @@ export default function (bot, db, saveDB) {
 └─❖`,
         { parse_mode: "HTML" }
       );
-      userMessages[userId] = msg.message_id;
     }
 
     // BACK TO MENU
