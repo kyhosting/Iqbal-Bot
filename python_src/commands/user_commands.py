@@ -33,7 +33,6 @@ Bot konversi & management file contact.
 • TXT ↔ VCF conversion
 • XLS to VCF
 • Merge files
-• Split contacts
 • Extract numbers
 • Rename files/contacts
 • Count contacts
@@ -62,7 +61,6 @@ async def cmd_fitur(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 📁 *File Management:*
 • Gabung File (VCF/TXT/XLS)
-• Split Contacts
 • Extract Numbers
 • Clean TXT
 
@@ -82,7 +80,7 @@ Gunakan kode untuk akses VIP"""
     await update.message.reply_text(features, parse_mode="Markdown")
 
 async def cmd_cekid(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Check user ID"""
+    """Check user ID - COMMAND ONLY"""
     user = update.effective_user
     chat = update.effective_chat
     
