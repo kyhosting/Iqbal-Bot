@@ -82,7 +82,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ ⛓️": lambda u, c: handle_vip_command(u, c, 'txttovcf'),
         "⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ ⛓️": lambda u, c: handle_vip_command(u, c, 'vcftotxt'),
         "⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ ⛓️": lambda u, c: handle_vip_command(u, c, 'rapikatntxt'),
-        "⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ ⛓️": lambda u, c: handle_vip_command(u, c, 'gabungfile'),
         "⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ ⛓️": lambda u, c: handle_vip_command(u, c, 'xlstovcf'),
         "⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ ⛓️": lambda u, c: handle_vip_command(u, c, 'rename_file'),
         "⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ ⛓️": lambda u, c: handle_vip_command(u, c, 'rename_kontak'),
