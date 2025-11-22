@@ -6,7 +6,7 @@ export default function (bot, db, saveDB) {
   const sessions = {};
   const userMessages = {};
 
-  async function sendWithDelete(userId, chatId, text, options = {}) {
+  async function trackMessage(userId, chatId, text, options = {}) {
     if (userMessages[userId]) {
       try {
         await bot.deleteMessage(chatId, userMessages[userId]);
@@ -15,6 +15,10 @@ export default function (bot, db, saveDB) {
     const msg = await bot.sendMessage(chatId, text, options);
     userMessages[userId] = msg.message_id;
     return msg;
+  }
+
+  async function sendWithDelete(userId, chatId, text, options = {}) {
+    return trackMessage(userId, chatId, text, options);
   }
 
   bot.onText(/^⛓️CEK KONTAK$|^\/cekkontak$|^\/ceknamakontak$/i, async (msg) => {
@@ -26,7 +30,7 @@ export default function (bot, db, saveDB) {
     
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(chatId, `◆◆  CEK KONTAK  ◆◆
+      return trackMessage(userId, chatId, `◆◆  CEK KONTAK  ◆◆
 
 ┌─❖
 │  ❌ Akses Ditolak
@@ -36,7 +40,7 @@ export default function (bot, db, saveDB) {
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `◆◆  CEK KONTAK  ◆◆
+    trackMessage(userId, chatId, `◆◆  CEK KONTAK  ◆◆
 
 ┌─❖
 │  Detail Kontak
@@ -66,7 +70,7 @@ export default function (bot, db, saveDB) {
       }
 
       if (!msg.document || !msg.document.file_name.endsWith(".vcf")) {
-        return bot.sendMessage(chatId, `◆◆  CEK KONTAK  ◆◆
+        return trackMessage(userId, chatId, `◆◆  CEK KONTAK  ◆◆
 
 ┌─❖
 │  ⚠️ Kirim file VCF
@@ -95,7 +99,7 @@ export default function (bot, db, saveDB) {
         if (total === 0) {
           fs.unlinkSync(localPath);
           delete sessions[userId];
-          return bot.sendMessage(chatId, "⚠️ Tidak ditemukan nama kontak di file ini Kak 😔",  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+          return trackMessage(userId, chatId, "⚠️ Tidak ditemukan nama kontak di file ini Kak 😔",  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
         }
 
         let hasil = `📋 Daftar Kontak:\n\n📊 <b>Total: ${total} kontak</b>\n\n`;

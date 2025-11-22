@@ -6,7 +6,7 @@ export default function (bot, db, saveDB) {
   const sessions = {};
   const userMessages = {};
 
-  async function sendWithDelete(userId, chatId, text, options = {}) {
+  async function trackMessage(userId, chatId, text, options = {}) {
     if (userMessages[userId]) {
       try {
         await bot.deleteMessage(chatId, userMessages[userId]);
@@ -15,6 +15,10 @@ export default function (bot, db, saveDB) {
     const msg = await bot.sendMessage(chatId, text, options);
     userMessages[userId] = msg.message_id;
     return msg;
+  }
+
+  async function sendWithDelete(userId, chatId, text, options = {}) {
+    return trackMessage(userId, chatId, text, options);
   }
 
   bot.onText(/^⛓️ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ$|^\/extractnomor$/i, async (msg) => {
@@ -26,7 +30,7 @@ export default function (bot, db, saveDB) {
     
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(chatId, `◆◆  EKSTRAK NOMOR  ◆◆
+      return trackMessage(userId, chatId, `◆◆  EKSTRAK NOMOR  ◆◆
 
 ┌─❖
 │  ❌ Akses Ditolak
@@ -36,7 +40,7 @@ export default function (bot, db, saveDB) {
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `◆◆  EKSTRAK NOMOR  ◆◆
+    trackMessage(userId, chatId, `◆◆  EKSTRAK NOMOR  ◆◆
 
 ┌─❖
 │  Extract Phone Numbers
@@ -70,7 +74,7 @@ export default function (bot, db, saveDB) {
       }
 
       if (!msg.document) {
-        return bot.sendMessage(chatId, `◆◆  EKSTRAK NOMOR  ◆◆
+        return trackMessage(userId, chatId, `◆◆  EKSTRAK NOMOR  ◆◆
 
 ┌─❖
 │  ⚠️ Kirim file dulu
@@ -86,7 +90,7 @@ export default function (bot, db, saveDB) {
       const isCsv = fileName.endsWith(".csv");
 
       if (!isVcf && !isTxt && !isXls && !isCsv) {
-        return bot.sendMessage(chatId, `◆◆  EKSTRAK NOMOR  ◆◆
+        return trackMessage(userId, chatId, `◆◆  EKSTRAK NOMOR  ◆◆
 
 ┌─❖
 │  ⚠️ Format tidak didukung
@@ -109,7 +113,7 @@ export default function (bot, db, saveDB) {
         session.fileName = fileName;
         session.fileType = isVcf ? "vcf" : isTxt ? "txt" : isCsv ? "csv" : "xls";
 
-        return bot.sendMessage(chatId, `◆◆  EKSTRAK NOMOR  ◆◆
+        return trackMessage(userId, chatId, `◆◆  EKSTRAK NOMOR  ◆◆
 
 ┌─❖
 │  ✅ File diterima
@@ -121,7 +125,7 @@ export default function (bot, db, saveDB) {
       } catch (err) {
         console.error("Download error:", err);
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆◆  EKSTRAK NOMOR  ◆◆
+        return trackMessage(userId, chatId, `◆◆  EKSTRAK NOMOR  ◆◆
 
 ┌─❖
 │  ⚠️ Download gagal
@@ -159,7 +163,7 @@ export default function (bot, db, saveDB) {
         const uniqueNumbers = [...new Set(numbers)].sort();
         fs.writeFileSync(outputFile, uniqueNumbers.join("\n"));
 
-        await bot.sendMessage(chatId, `◆◆  EKSTRAK SUKSES  ◆◆
+        await trackMessage(userId, chatId, `◆◆  EKSTRAK SUKSES  ◆◆
 
 ┌─❖
 │  ✅ Nomor berhasil ekstrak
@@ -180,7 +184,7 @@ export default function (bot, db, saveDB) {
         console.error("Extract error:", err);
         try { fs.unlinkSync(session.localPath); } catch {}
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆◆  EKSTRAK NOMOR  ◆◆
+        return trackMessage(userId, chatId, `◆◆  EKSTRAK NOMOR  ◆◆
 
 ┌─❖
 │  ⚠️ Ekstrak gagal
