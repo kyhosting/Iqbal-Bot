@@ -28,7 +28,7 @@ export default function (bot, db, saveDB) {
       return bot.sendMessage(
         chatId,
         `⚠️ Wajib join 2 grup untuk akses`,
-        { reply_markup: verifyKeyboard }
+        { parse_mode: "HTML", reply_markup: verifyKeyboard }
       );
     }
 
@@ -42,7 +42,7 @@ export default function (bot, db, saveDB) {
     return bot.sendMessage(
       chatId,
       `⚠️ Wajib join 2 grup untuk akses`,
-      { reply_markup: verifyKeyboard }
+      { parse_mode: "HTML", reply_markup: verifyKeyboard }
     );
   });
 
@@ -81,7 +81,7 @@ export default function (bot, db, saveDB) {
           await bot.sendMessage(
             chatId,
             `⚠️ Wajib join 2 grup terlebih dahulu`,
-            { reply_markup: joinKeyboard }
+            { parse_mode: "HTML", reply_markup: joinKeyboard }
           );
         } catch (err) {
           console.error("Error di verify_join:", err);
