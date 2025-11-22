@@ -38,7 +38,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd python_src && pip install -q python-telegram-bot python-dotenv requests openpyxl && python3 main.py"
+args = "cd python_src && python3 main.py"
 
 [workflows.workflow.metadata]
 outputType = "console"

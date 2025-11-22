@@ -2,7 +2,6 @@
 import os
 import re
 from openpyxl import load_workbook
-import vobject
 
 def create_vcf_entry(phone: str, name: str) -> str:
     """Create VCF contact entry"""
