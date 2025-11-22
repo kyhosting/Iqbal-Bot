@@ -11,7 +11,7 @@ export default function (bot, db, saveDB) {
       chatId,
       `🎁 <b>Redeem Code System</b>\n\n` +
       `Silakan masukkan kode redeem kamu ya Kak ✨\n\n` +
-      `Ketik \`batal\` untuk membatalkan.`,
+      `Ketik <code>batal</code> untuk membatalkan.`,
       { 
         parse_mode: "HTML",
         reply_markup: bot.getMainKeyboardUser(userId)
@@ -29,7 +29,7 @@ export default function (bot, db, saveDB) {
       chatId,
       `🎁 <b>Redeem Code System</b>\n\n` +
       `Silakan masukkan kode redeem kamu ya Kak ✨\n\n` +
-      `Ketik \`batal\` untuk membatalkan.`,
+      `Ketik <code>batal</code> untuk membatalkan.`,
       { 
         parse_mode: "HTML",
         reply_markup: bot.getMainKeyboardUser(userId)
@@ -64,7 +64,7 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId,
           `❌ <b>Yah… kode redeem tidak valid</b>\n\n` +
-          `Kode \`${code}\` tidak ditemukan Kak.\n` +
+          `Kode <code>${code}</code> tidak ditemukan Kak.\n` +
           `Coba cek lagi ya 🙏`,
           { 
             parse_mode: "HTML",

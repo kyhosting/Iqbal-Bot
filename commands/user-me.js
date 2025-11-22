@@ -50,7 +50,7 @@ export default function (bot, db, saveDB) {
       `╭─❖\n` +
       `│ 🎌 <b>Informasi Dasar</b>\n` +
       `│ Nama: <b>${msg.from.first_name}${msg.from.last_name ? ' ' + msg.from.last_name : ''}</b>\n` +
-      `│ ID: \`${userId}\`\n` +
+      `│ ID: <code>${userId}</code>\n` +
       `│ Username: ${msg.from.username ? '@' + msg.from.username : '-'}\n` +
       `╰───────────────❖\n\n` +
       `╭─❖\n` +
@@ -66,7 +66,7 @@ export default function (bot, db, saveDB) {
       `│ Member Sejak: <b>${new Date().toLocaleDateString('id-ID')}</b>\n` +
       `╰───────────────❖\n\n` +
       `💡 Untuk upgrade VIP, gunakan kode redeem dengan command:\n` +
-      `\`/redeem KODE\` atau klik tombol "🎁 Redeem Code"`;
+      `<code>/redeem KODE</code> atau klik tombol "🎁 Redeem Code"`;
 
     await bot.sendMessage(chatId, profileMessage, {
       parse_mode: "HTML",
