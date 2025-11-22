@@ -8,12 +8,25 @@ export default function (bot, db, saveDB) {
   async function trackMessage(userId, chatId, text, options = {}) {
     if (userMessages[userId]) {
       try {
-        await bot.deleteMessage(chatId, userMessages[userId]);
-      } catch (e) {}
+        await bot.editMessageText(text, {
+          chat_id: chatId,
+          message_id: userMessages[userId],
+          ...options
+        }).catch(() => {
+          bot.sendMessage(chatId, text, options).then(msg => {
+            userMessages[userId] = msg.message_id;
+          });
+        });
+      } catch (e) {
+        bot.sendMessage(chatId, text, options).then(msg => {
+          userMessages[userId] = msg.message_id;
+        });
+      }
+    } else {
+      bot.sendMessage(chatId, text, options).then(msg => {
+        userMessages[userId] = msg.message_id;
+      });
     }
-    const msg = await bot.sendMessage(chatId, text, options);
-    userMessages[userId] = msg.message_id;
-    return msg;
   }
 
   async function sendWithDelete(userId, chatId, text, options = {}) {
