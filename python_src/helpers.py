@@ -146,17 +146,19 @@ def format_dashboard(user):
     return dashboard
 
 def get_main_keyboard():
-    """Get main keyboard buttons"""
+    """Get main keyboard buttons - merged dari attached file"""
     return {
         "keyboard": [
-            [{"text": "🎁 Redeem Code"}],
-            [{"text": "⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ"}, {"text": "⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ"}],
-            [{"text": "⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ"}, {"text": "⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ"}],
-            [{"text": "⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ"}, {"text": "⛓️ ꜱᴘʟɪᴛ ꜰɪʟᴇ"}],
-            [{"text": "⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ"}, {"text": "⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ"}],
-            [{"text": "⛓️ ᴀᴍʙɪʟ ɴᴀᴍᴀ ꜰɪʟᴇ"}, {"text": "⛓️ ʙᴜᴀᴛ ɴᴀᴍᴀ"}],
-            [{"text": "⛓️ ᴀᴅᴍ & ɴᴀᴠʏ"}, {"text": "⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ"}],
-            [{"text": "⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ"}]
+            [{"text": "💎 Status 💎"}],
+            [{"text": "📨 ADMIN 📨"}, {"text": "🚧 RAPIKAN TXT 🚧"}],
+            [{"text": "📊 POTONG VCF 📊"}, {"text": "📊 POTONG LANJUTAN 📊"}],
+            [{"text": "🪓 BAGI VCF 🪓"}, {"text": "🪓 BAGI LANJUTAN 🪓"}],
+            [{"text": "📨 MSG to TXT 📨"}],
+            [{"text": "🏷️ TXT to VCF 🏷️"}, {"text": "🚀 XLS to VCF 🚀"}],
+            [{"text": "♻️ VCF to TXT ♻️"}, {"text": "🗄️ Gabung TXT 🗄️"}],
+            [{"text": "🗄️ Gabung VCF 🗄️"}, {"text": "🔢 Hitung Kontak 🔢"}],
+            [{"text": "🔍 Cek Nama Kontak 🔍"}],
+            [{"text": "🎁 Redeem Code"}]
         ],
         "resize_keyboard": True,
         "one_time_keyboard": False
