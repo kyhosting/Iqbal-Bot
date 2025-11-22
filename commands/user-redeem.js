@@ -107,7 +107,7 @@ export default function (bot, db, saveDB) {
 
       // Redeem sukses!
       let duration = redeemData.duration || 30; // default 30 hari
-      let vipExpired = Date.now() + (duration <b> 24 </b> 60 <b> 60 </b> 1000);
+      let vipExpired = Date.now() + (duration * 24 * 60 * 60 * 1000);
       let expiredDate = new Date(vipExpired);
 
       // Update user

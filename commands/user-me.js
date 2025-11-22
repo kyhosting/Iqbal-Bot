@@ -40,7 +40,7 @@ export default function (bot, db, saveDB) {
     if (user.vip_expired && user.vip_expired > Date.now()) {
       const expDate = new Date(user.vip_expired);
       expired = expDate.toLocaleDateString('id-ID');
-      const daysLeft = Math.ceil((user.vip_expired - Date.now()) / (1000 <b> 60 </b> 60 * 24));
+      const daysLeft = Math.ceil((user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24));
       remaining = `${daysLeft} hari`;
       status = "active";
       vipBadge = `✅ Aktif - ${daysLeft} hari lagi`;
