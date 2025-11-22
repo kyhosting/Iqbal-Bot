@@ -53,6 +53,9 @@ export default function (bot, db, saveDB) {
 │  💎 Beli VIP
 │
 │  💬 Chat Owner
+│
+│  Ketik 'bantuan' untuk menu
+│  Ketik 'batal' untuk batal
 └─❖`;
 
     await bot.sendMessage(chatId, message, {
@@ -150,6 +153,9 @@ export default function (bot, db, saveDB) {
 │  💎 Beli VIP
 │
 │  💬 Chat Owner
+│
+│  Ketik 'bantuan' untuk menu
+│  Ketik 'batal' untuk batal
 └─❖`;
 
       await bot.deleteMessage(chatId, query.message.message_id).catch(() => {});
