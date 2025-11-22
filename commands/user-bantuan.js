@@ -2,6 +2,18 @@ import config from "../config.js";
 
 export default function (bot, db, saveDB) {
   const OWNER_USERNAME = config.ownerUsername;
+  const userMessages = {};
+
+  async function trackMessage(userId, chatId, text, options = {}) {
+    if (userMessages[userId]) {
+      try {
+        await bot.deleteMessage(chatId, userMessages[userId]);
+      } catch (e) {}
+    }
+    const msg = await bot.sendMessage(chatId, text, options);
+    userMessages[userId] = msg.message_id;
+    return msg;
+  }
 
   bot.onText(/^\/bantuan$/, async (msg) => {
     const chatId = msg.chat.id;
@@ -9,7 +21,9 @@ export default function (bot, db, saveDB) {
 
     const groupCheck = await bot.checkGroupMembership(userId);
     if (!groupCheck.verified) {
-      return bot.sendMessage(chatId,
+      return trackMessage(
+        userId,
+        chatId,
         `◆◆  BANTUAN  ◆◆
 
 ┌─❖
@@ -58,7 +72,7 @@ export default function (bot, db, saveDB) {
 │  Ketik 'batal' untuk batal
 └─❖`;
 
-    await bot.sendMessage(chatId, message, {
+    await trackMessage(userId, chatId, message, {
       parse_mode: "HTML",
       reply_markup: keyboard
     });
@@ -113,8 +127,7 @@ export default function (bot, db, saveDB) {
 │  ✓ Rename & manage file
 └─❖`;
 
-      await bot.deleteMessage(chatId, query.message.message_id).catch(() => {});
-      await bot.sendMessage(chatId, message, {
+      await trackMessage(userId, chatId, message, {
         parse_mode: "HTML",
         reply_markup: keyboard
       });
@@ -158,8 +171,7 @@ export default function (bot, db, saveDB) {
 │  Ketik 'batal' untuk batal
 └─❖`;
 
-      await bot.deleteMessage(chatId, query.message.message_id).catch(() => {});
-      await bot.sendMessage(chatId, message, {
+      await trackMessage(userId, chatId, message, {
         parse_mode: "HTML",
         reply_markup: keyboard
       });

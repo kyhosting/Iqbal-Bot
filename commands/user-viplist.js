@@ -1,12 +1,27 @@
 import config from "../config.js";
 
 export default function (bot, db, saveDB) {
+  const userMessages = {};
+
+  async function trackMessage(userId, chatId, text, options = {}) {
+    if (userMessages[userId]) {
+      try {
+        await bot.deleteMessage(chatId, userMessages[userId]);
+      } catch (e) {}
+    }
+    const msg = await bot.sendMessage(chatId, text, options);
+    userMessages[userId] = msg.message_id;
+    return msg;
+  }
+
   bot.onText(/^\/viplist$|^VIPLIST$/i, async (msg) => {
     const userId = msg.from.id;
     const chatId = msg.chat.id;
 
     if (!config.owner.includes(userId)) {
-      return bot.sendMessage(chatId,
+      return trackMessage(
+        userId,
+        chatId,
         `◆◆  VIP LIST  ◆◆
 
 ┌─❖
@@ -23,7 +38,9 @@ export default function (bot, db, saveDB) {
     );
 
     if (vipUsers.length === 0) {
-      return bot.sendMessage(chatId,
+      return trackMessage(
+        userId,
+        chatId,
         `◆◆  DAFTAR VIP USER  ◆◆
 
 ┌─❖
@@ -48,6 +65,6 @@ export default function (bot, db, saveDB) {
 
     message += `\n┌─❖\n│  Ketik 'done' untuk selesai\n│  Ketik 'batal' untuk batal\n└─❖`;
 
-    await bot.sendMessage(chatId, message, { parse_mode: "HTML" });
+    await trackMessage(userId, chatId, message, { parse_mode: "HTML" });
   });
 }
