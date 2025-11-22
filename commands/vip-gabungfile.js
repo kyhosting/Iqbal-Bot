@@ -15,28 +15,34 @@ export default function (bot, db, saveDB) {
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip"].includes(role)) {
       return bot.sendMessage(chatId, 
-        `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n` +
-        `<b>❖ GABUNG FILE</b>\n` +
-        `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n` +
-        `<code>✦ ❌ Akses Ditolak</code>\n` +
-        `<code>✦ Fitur khusus VIP</code>\n\n` +
-        `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`, 
+        `◆◆  GABUNG FILE  ◆◆
+
+┌─❖
+│  ❌ Akses Ditolak
+│
+│  Fitur khusus VIP
+└─❖`, 
         { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
 
     sessions[userId] = { step: 1, files: [], fileType: null };
     bot.sendMessage(chatId, 
-      `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n` +
-      `<b>❖ GABUNG FILE</b>\n` +
-      `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n` +
-      `<code>▶ 📂 Gabung Multiple File</code>\n` +
-      `<code>▶ Support: VCF, TXT, XLSX</code>\n` +
-      `<code>▶ Minimal 2 file</code>\n` +
-      `<code>▶ Tipe file harus sama</code>\n` +
-      `<code>▶ Ketik 'done' selesai</code>\n` +
-      `<code>▶ Ketik 'batal' batalkan</code>\n\n` +
-      `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`, 
+      `◆◆  GABUNG FILE  ◆◆
+
+┌─❖
+│  📂 Gabung Multiple File
+│
+│  Support: VCF, TXT, XLSX
+│
+│  Minimal 2 file
+│
+│  Tipe file harus sama
+│
+│  Ketik 'done' selesai
+│
+│  Ketik 'batal' batalkan
+└─❖`, 
       { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
     );
   });
@@ -51,28 +57,34 @@ export default function (bot, db, saveDB) {
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip"].includes(role)) {
       return bot.sendMessage(chatId, 
-        `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n` +
-        `<b>❖ GABUNG FILE</b>\n` +
-        `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n` +
-        `<code>✦ ❌ Akses Ditolak</code>\n` +
-        `<code>✦ Fitur khusus VIP</code>\n\n` +
-        `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`, 
+        `◆◆  GABUNG FILE  ◆◆
+
+┌─❖
+│  ❌ Akses Ditolak
+│
+│  Fitur khusus VIP
+└─❖`, 
         { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
 
     sessions[userId] = { step: 1, files: [], fileType: null };
     bot.sendMessage(chatId, 
-      `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n` +
-      `<b>❖ GABUNG FILE</b>\n` +
-      `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n` +
-      `<code>▶ 📂 Gabung Multiple File</code>\n` +
-      `<code>▶ Support: VCF, TXT, XLSX</code>\n` +
-      `<code>▶ Minimal 2 file</code>\n` +
-      `<code>▶ Tipe file harus sama</code>\n` +
-      `<code>▶ Ketik 'done' selesai</code>\n` +
-      `<code>▶ Ketik 'batal' batalkan</code>\n\n` +
-      `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`, 
+      `◆◆  GABUNG FILE  ◆◆
+
+┌─❖
+│  📂 Gabung Multiple File
+│
+│  Support: VCF, TXT, XLSX
+│
+│  Minimal 2 file
+│
+│  Tipe file harus sama
+│
+│  Ketik 'done' selesai
+│
+│  Ketik 'batal' batalkan
+└─❖`, 
       { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
     );
   });
@@ -89,11 +101,11 @@ export default function (bot, db, saveDB) {
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
         return bot.sendMessage(chatId, 
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n` +
-          `<b>❖ DIBATALKAN</b>\n` +
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n` +
-          `<code>✦ ❌ Proses Dibatalkan</code>\n\n` +
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`, 
+          `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Proses Dibatalkan
+└─❖`, 
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
@@ -101,36 +113,40 @@ export default function (bot, db, saveDB) {
       if (/^done$/i.test(text)) {
         if (session.files.length < 2) {
           return bot.sendMessage(chatId, 
-            `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n` +
-            `<b>❖ GABUNG FILE</b>\n` +
-            `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n` +
-            `<code>▶ ⚠️ File Kurang</code>\n` +
-            `<code>▶ Minimal 2 file untuk digabung</code>\n\n` +
-            `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`, 
+            `◆◆  GABUNG FILE  ◆◆
+
+┌─❖
+│  ⚠️ File Kurang
+│
+│  Minimal 2 file untuk digabung
+└─❖`, 
             { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
           );
         }
         session.step = 2;
         return bot.sendMessage(chatId, 
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n` +
-          `<b>❖ GABUNG FILE</b>\n` +
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n` +
-          `<code>▶ 📝 Nama File Output</code>\n` +
-          `<code>▶ Masukkan nama file hasil</code>\n` +
-          `<code>▶ (Tanpa ekstensi)</code>\n\n` +
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`, 
+          `◆◆  GABUNG FILE  ◆◆
+
+┌─❖
+│  📝 Nama File Output
+│
+│  Masukkan nama file hasil
+│
+│  (Tanpa ekstensi)
+└─❖`, 
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
       if (!msg.document) {
         return bot.sendMessage(chatId, 
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n` +
-          `<b>❖ GABUNG FILE</b>\n` +
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n` +
-          `<code>▶ ⚠️ Bukan File</code>\n` +
-          `<code>▶ Kirim file VCF/TXT/XLS</code>\n\n` +
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`, 
+          `◆◆  GABUNG FILE  ◆◆
+
+┌─❖
+│  ⚠️ Bukan File
+│
+│  Kirim file VCF/TXT/XLS
+└─❖`, 
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
@@ -142,12 +158,13 @@ export default function (bot, db, saveDB) {
 
       if (!isVcf && !isTxt && !isXls) {
         return bot.sendMessage(chatId, 
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n` +
-          `<b>❖ GABUNG FILE</b>\n` +
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n` +
-          `<code>▶ ⚠️ Tipe File Salah</code>\n` +
-          `<code>▶ Hanya VCF, TXT, XLSX</code>\n\n` +
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`, 
+          `◆◆  GABUNG FILE  ◆◆
+
+┌─❖
+│  ⚠️ Tipe File Salah
+│
+│  Hanya VCF, TXT, XLSX
+└─❖`, 
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
@@ -155,14 +172,17 @@ export default function (bot, db, saveDB) {
       const currentType = isVcf ? "vcf" : isTxt ? "txt" : "xls";
       if (session.fileType && session.fileType !== currentType) {
         return bot.sendMessage(chatId, 
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n` +
-          `<b>❖ GABUNG FILE</b>\n` +
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n` +
-          `<code>▶ ⚠️ Tipe File Berbeda</code>\n` +
-          `<code>▶ Semua file harus tipe sama</code>\n` +
-          `<code>▶ Sebelum: <b>${session.fileType.toUpperCase()}</b></code>\n` +
-          `<code>▶ Sekarang: <b>${currentType.toUpperCase()}</b></code>\n\n` +
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`, 
+          `◆◆  GABUNG FILE  ◆◆
+
+┌─❖
+│  ⚠️ Tipe File Berbeda
+│
+│  Semua file harus tipe sama
+│
+│  Sebelum: ${session.fileType.toUpperCase()}
+│
+│  Sekarang: ${currentType.toUpperCase()}
+└─❖`, 
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
@@ -180,24 +200,27 @@ export default function (bot, db, saveDB) {
 
         session.files.push(localPath);
         return bot.sendMessage(chatId, 
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n` +
-          `<b>❖ GABUNG FILE</b>\n` +
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n` +
-          `<code>▶ ✅ File Diterima</code>\n` +
-          `<code>▶ File: ${fileName}</code>\n` +
-          `<code>▶ Total: ${session.files.length}</code>\n` +
-          `<code>▶ Kirim lagi atau ketik 'done'</code>\n\n` +
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`, 
+          `◆◆  GABUNG FILE  ◆◆
+
+┌─❖
+│  ✅ File Diterima
+│
+│  File: ${fileName}
+│
+│  Total: ${session.files.length}
+│
+│  Kirim lagi atau ketik 'done'
+└─❖`, 
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       } catch (err) {
         console.error("Download error:", err);
         return bot.sendMessage(chatId, 
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n` +
-          `<b>❖ GABUNG FILE</b>\n` +
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n` +
-          `<code>▶ ⚠️ Download Gagal</code>\n\n` +
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`, 
+          `◆◆  GABUNG FILE  ◆◆
+
+┌─❖
+│  ⚠️ Download Gagal
+└─❖`, 
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
@@ -208,11 +231,11 @@ export default function (bot, db, saveDB) {
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
         return bot.sendMessage(chatId, 
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n` +
-          `<b>❖ DIBATALKAN</b>\n` +
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n` +
-          `<code>✦ ❌ Proses Dibatalkan</code>\n\n` +
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`, 
+          `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Proses Dibatalkan
+└─❖`, 
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
@@ -232,15 +255,19 @@ export default function (bot, db, saveDB) {
 
         await bot.sendDocument(chatId, outputFile);
         await bot.sendMessage(chatId, 
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n` +
-          `<b>❖ GABUNG FILE ✅ SUKSES</b>\n` +
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n` +
-          `<code>▶ 📂 Hasil Gabung</code>\n` +
-          `<code>▶ File: ${outputName}${ext}</code>\n` +
-          `<code>▶ Total: ${session.files.length} file</code>\n` +
-          `<code>▶ Tipe: ${session.fileType.toUpperCase()}</code>\n` +
-          `<code>▶ 💎 Terima kasih sudah pakai bot!</code>\n\n` +
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`, 
+          `◆◆  GABUNG FILE ✅ SUKSES  ◆◆
+
+┌─❖
+│  📂 Hasil Gabung
+│
+│  File: ${outputName}${ext}
+│
+│  Total: ${session.files.length} file
+│
+│  Tipe: ${session.fileType.toUpperCase()}
+│
+│  💎 Terima kasih!
+└─❖`, 
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
         
@@ -248,11 +275,11 @@ export default function (bot, db, saveDB) {
       } catch (err) {
         console.error("Merge error:", err);
         bot.sendMessage(chatId, 
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n` +
-          `<b>❖ GABUNG FILE</b>\n` +
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n` +
-          `<code>▶ ⚠️ Gabung Gagal</code>\n\n` +
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`, 
+          `◆◆  GABUNG FILE  ◆◆
+
+┌─❖
+│  ⚠️ Gabung Gagal
+└─❖`, 
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }

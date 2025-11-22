@@ -7,7 +7,11 @@ export default function (bot, db, saveDB) {
     if (!groupCheck.verified) {
       return bot.sendMessage(
         chatId,
-        `⚠️ <b>Akses Ditolak</b>\n\n┌─❖\n├ ➤ Harus join grup terlebih dahulu\n└─❖`,
+        `◆◆  AKSES DITOLAK  ◆◆
+
+┌─❖
+│  ⚠️ Harus join grup terlebih dahulu
+└─❖`,
         { parse_mode: "HTML" }
       );
     }
@@ -43,27 +47,39 @@ export default function (bot, db, saveDB) {
       vipBadge = `✅ Aktif - ${daysLeft} hari`;
     }
 
-    const profileMessage = `◆◆ PROFIL USER ◆◆\n\n` +
-      `┌─❖\n` +
-      `├ 🎌 <b>INFORMASI DASAR</b>\n` +
-      `├ ➤ Nama: <b>${msg.from.first_name}${msg.from.last_name ? ' ' + msg.from.last_name : ''}</b>\n` +
-      `├ ➤ ID: <code>${userId}</code>\n` +
-      `├ ➤ Username: @${msg.from.username || '-'}\n` +
-      `└─❖\n\n` +
-      `┌─❖\n` +
-      `├ 🎯 <b>STATUS AKSES</b>\n` +
-      `├ ➤ Role: <b>${role.toUpperCase()}</b>\n` +
-      `├ ➤ VIP: ${vipBadge}\n` +
-      `├ ➤ Masa Aktif: <b>${expired}</b>\n` +
-      `├ ➤ Sisa Hari: <b>${remaining}</b>\n` +
-      `└─❖\n\n` +
-      `┌─❖\n` +
-      `├ 📊 <b>STATISTIK</b>\n` +
-      `├ ➤ Total Operasi: <b>${user.total_operation || 0}</b>\n` +
-      `├ ➤ Member Sejak: ${new Date().toLocaleDateString('id-ID')}\n` +
-      `└─❖\n\n` +
-      `💡 Upgrade VIP:\n` +
-      `<code>/redeem KODE</code> atau klik 🎁 Redeem Code`;
+    const profileMessage = `◆◆  PROFIL USER  ◆◆
+
+┌─❖
+│  🎌 INFORMASI DASAR
+│
+│  Nama: ${msg.from.first_name}${msg.from.last_name ? ' ' + msg.from.last_name : ''}
+│
+│  ID: ${userId}
+│
+│  Username: @${msg.from.username || '-'}
+└─❖
+
+┌─❖
+│  🎯 STATUS AKSES
+│
+│  Role: ${role.toUpperCase()}
+│
+│  VIP: ${vipBadge}
+│
+│  Masa Aktif: ${expired}
+│
+│  Sisa Hari: ${remaining}
+└─❖
+
+┌─❖
+│  📊 STATISTIK
+│
+│  Total Operasi: ${user.total_operation || 0}
+│
+│  Member Sejak: ${new Date().toLocaleDateString('id-ID')}
+└─❖
+
+💡 Upgrade VIP: /redeem KODE`;
 
     await bot.sendMessage(chatId, profileMessage, {
       parse_mode: "HTML",
