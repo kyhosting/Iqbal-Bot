@@ -1,79 +1,162 @@
-"""User commands untuk Iqbal CV Bot"""
-from telegram import Update
+"""User Commands - /start, /me, /bantuan, /fitur, /cekid"""
+from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import ContextTypes
-from helpers import get_user, create_user, is_owner, format_dashboard, get_main_keyboard
+from helpers import get_user, format_dashboard, get_remaining_days, get_expire_date
 
 async def cmd_me(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Show user profile"""
+    """Show user status"""
     user_id = update.effective_user.id
-    db_user = get_user(user_id)
+    user = get_user(user_id)
+    if not user:
+        await update.message.reply_text("User tidak ditemukan")
+        return
     
-    if not db_user:
-        db_user = create_user(user_id, update.effective_user.first_name, update.effective_user.username)
-    
-    text = f"""👤 *Profil Kamu*
+    status_msg = f"""🎌 *STATUS KAM*
 
-📱 Nama: {db_user.get('first_name', 'User')}
-🆔 ID: `{user_id}`
-👤 Username: @{db_user.get('username', '-')}
-🎖️ Role: *{db_user['role'].upper()}*
-✅ Status: *{db_user['status']}*
-
-Semoga membantu! 😊"""
+👤 Nama: *{user.get('first_name', 'User')}*
+🆔 ID: `{user['id']}`
+📱 Username: @{user.get('username', '-')}
+🎯 Role: *{user['role'].upper()}*
+📅 Expire: *{get_expire_date(user_id)}*
+⏳ Tersisa: *{get_remaining_days(user_id)} hari*
+📊 Operasi: *{user.get('total_operation', 0)}*"""
     
-    await update.message.reply_text(text, parse_mode="Markdown")
+    await update.message.reply_text(status_msg, parse_mode="Markdown")
 
 async def cmd_bantuan(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Show help"""
-    text = """🎌 *Bantuan - Iqbal CV Bot*
+    help_msg = """🆘 *BANTUAN*
 
-✨ *FITUR VIP CONVERSION:*
-⛓️ ᴛxᴛ ↔ ᴠᴄꜰ - Convert kontak
-⛓️ xʟꜱ → ᴠᴄꜰ - Excel ke VCF
-⛓️ ᴍꜱɢ → ᴛxᴛ - Ekstrak nomor
+Bot konversi & management file contact.
 
-📦 *FITUR FILE MANAGEMENT:*
-⛓️ ꜱᴘʟɪᴛ - Potong VCF
-⛓️ ɢᴀʙᴜɴɢ - Merge files
-⛓️ ʀᴀᴘɪᴋᴀɴ - Clean & sort
+📋 *Fitur Utama:*
+• TXT ↔ VCF conversion
+• XLS to VCF
+• Merge files
+• Split contacts
+• Extract numbers
+• Rename files/contacts
+• Count contacts
+• Check contact names
+• Create admin VCF
 
-✨ *UTILITIES:*
-⛓️ ʀᴇɴᴀᴍᴇ - Rename files/kontak
-⛓️ ʜɪᴛᴜɴɢ - Count contacts
-⛓️ ᴄᴇᴋ ᴋᴏɴᴛᴀᴋ - Check details
+🎯 *Cara Pakai:*
+1. Ketik /start
+2. Pilih fitur
+3. Upload file
+4. Dapatkan hasil
 
-🎁 *CARA PAKAI:*
-1. /start - Dashboard
-2. /me - Profil kamu
-3. /fitur - Daftar fitur
-4. Click tombol untuk mulai!
-
-❓ *Masalah?*
-Hub @Iqbaldev 🎌"""
+📞 *Hubungi: @Iqbaldev*"""
     
-    await update.message.reply_text(text, parse_mode="Markdown")
+    await update.message.reply_text(help_msg, parse_mode="Markdown")
 
 async def cmd_fitur(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Show features list"""
-    text = """📋 *Daftar Fitur Lengkap*
+    """Show features"""
+    features = """✨ *FITUR BOT*
 
-⛓️ **Conversion**
-├─ TXT ↔ VCF
-├─ XLS → VCF
-└─ MSG → TXT
+🔧 *Konversi:*
+• TXT → VCF
+• VCF → TXT  
+• XLS → VCF
+• MSG → TXT
 
-⛓️ **File Management**
-├─ Split VCF
-├─ Merge Files (TXT/VCF)
-└─ Clean & Rapikan
+📁 *File Management:*
+• Gabung File (VCF/TXT/XLS)
+• Split Contacts
+• Extract Numbers
+• Clean TXT
 
-⛓️ **Utilities**  
-├─ Rename Kontak
-├─ Rename File
-├─ Count Kontak
-└─ Check Detail
+✏️ *Utilities:*
+• Rename File
+• Rename Contacts
+• Count Contacts
+• Check Contact Names
+• Create Admin VCF
 
-💎 *Semua fitur butuh VIP/Trial!*
-Dapatkan 1 hari trial gratis setelah verifikasi grup! 🎁"""
+🎁 *VIP Features:*
+Semua fitur di atas!
+
+💎 *Redeem:*
+Gunakan kode untuk akses VIP"""
     
-    await update.message.reply_text(text, parse_mode="Markdown")
+    await update.message.reply_text(features, parse_mode="Markdown")
+
+async def cmd_cekid(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Check user ID"""
+    user = update.effective_user
+    chat = update.effective_chat
+    
+    msg = f"""🆔 *CEK ID TELEGRAM*
+
+{'─' * 35}
+
+👤 *DATA TELEGRAM KAM:*
+├─ User ID: `{user.id}`
+├─ Nama: *{user.first_name}{ ' ' + user.last_name if user.last_name else ''}*
+├─ Username: {('@' + user.username) if user.username else '-'}
+└─ Chat ID: `{chat.id}`
+
+{'─' * 35}
+
+💡 Gunakan ID ini untuk setting dengan owner!"""
+    
+    await update.message.reply_text(msg, parse_mode="Markdown")
+
+async def cmd_viplist(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Show VIP pricing"""
+    vip_msg = """💎 *PAKET VIP*
+
+┌─ 7 HARI - 15K
+├─ Akses semua fitur
+├─ Unlimited operasi
+└─ Support 24/7
+
+┌─ 30 HARI - 50K
+├─ Akses semua fitur
+├─ Unlimited operasi
+├─ Priority support
+└─ Referral bonus
+
+┌─ 90 HARI - 120K
+├─ Akses semua fitur
+├─ Unlimited operasi
+├─ Priority support
+└─ Custom features
+
+┌─ 365 HARI - 300K
+├─ Seumur hidup access
+├─ Unlimited operasi
+├─ VIP badge
+└─ Free updates
+
+💬 Hubungi @Iqbaldev untuk membership!"""
+    
+    keyboard = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("7 Hari - 15K", callback_data="vip_7"),
+            InlineKeyboardButton("30 Hari - 50K", callback_data="vip_30")
+        ],
+        [
+            InlineKeyboardButton("90 Hari - 120K", callback_data="vip_90"),
+            InlineKeyboardButton("365 Hari - 300K", callback_data="vip_365")
+        ],
+        [InlineKeyboardButton("Hubungi Owner", url="https://t.me/Iqbaldev")]
+    ])
+    
+    await update.message.reply_text(vip_msg, parse_mode="Markdown", reply_markup=keyboard)
+
+async def cmd_clear(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Clear chat session"""
+    clear_msg = """🧹 *CLEAR CHAT*
+
+Apakah kamu ingin membersihkan chat history dengan bot?
+
+⚠️ *Catatan:*
+Ini hanya mengosongkan session lokal, bukan history Telegram."""
+    
+    keyboard = InlineKeyboardMarkup([
+        [InlineKeyboardButton("🗑️ Bersihkan", callback_data="clear_confirm")],
+        [InlineKeyboardButton("❌ Batal", callback_data="clear_cancel")]
+    ])
+    
+    await update.message.reply_text(clear_msg, parse_mode="Markdown", reply_markup=keyboard)
