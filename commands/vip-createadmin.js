@@ -15,7 +15,7 @@ export default function (bot, db, saveDB) {
   const sessions = {};
   const userMessages = {};
 
-  async function sendWithDelete(userId, chatId, text, options = {}) {
+  async function trackMessage(userId, chatId, text, options = {}) {
     if (userMessages[userId]) {
       try {
         await bot.deleteMessage(chatId, userMessages[userId]);
@@ -24,6 +24,10 @@ export default function (bot, db, saveDB) {
     const msg = await bot.sendMessage(chatId, text, options);
     userMessages[userId] = msg.message_id;
     return msg;
+  }
+
+  async function sendWithDelete(userId, chatId, text, options = {}) {
+    return trackMessage(userId, chatId, text, options);
   }
 
   bot.onText(/^⛓️ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ$|^\/createadmin$/i, async (msg) => {
@@ -35,7 +39,7 @@ export default function (bot, db, saveDB) {
     
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(chatId, `◆◆  CREATE ADMIN  ◆◆
+      return trackMessage(userId, chatId, `◆◆  CREATE ADMIN  ◆◆
 
 ┌─❖
 │  ❌ Akses Ditolak
@@ -45,7 +49,7 @@ export default function (bot, db, saveDB) {
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `◆◆  CREATE ADMIN  ◆◆
+    trackMessage(userId, chatId, `◆◆  CREATE ADMIN  ◆◆
 
 ┌─❖
 │  Buat File Admin
@@ -77,7 +81,7 @@ export default function (bot, db, saveDB) {
 
       const numbers = text.split(/\s+/).filter(Boolean);
       if (numbers.length === 0) {
-        return bot.sendMessage(chatId, `◆◆  CREATE ADMIN  ◆◆
+        return trackMessage(userId, chatId, `◆◆  CREATE ADMIN  ◆◆
 
 ┌─❖
 │  ⚠️ Nomor tidak kosong
@@ -92,7 +96,7 @@ export default function (bot, db, saveDB) {
         fs.writeFileSync(filepath, content);
 
         bot.sendDocument(chatId, filepath).then(() => {
-          bot.sendMessage(chatId, `✅ File ADMIN.vcf berhasil dibuat Kak! 🎉\n\n👤 <b>Total admin:</b> ${numbers.length}\n\nSemoga membantu ya! 😊`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+          trackMessage(userId, chatId, `✅ File ADMIN.vcf berhasil dibuat Kak! 🎉\n\n👤 <b>Total admin:</b> ${numbers.length}\n\nSemoga membantu ya! 😊`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
           bot.incrementOperation(userId);
           fs.unlinkSync(filepath);
         }).catch((err) => {

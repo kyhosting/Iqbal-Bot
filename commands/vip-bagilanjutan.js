@@ -5,7 +5,7 @@ export default function (bot, db, saveDB) {
   const sessions = {};
   const userMessages = {};
 
-  async function sendWithDelete(userId, chatId, text, options = {}) {
+  async function trackMessage(userId, chatId, text, options = {}) {
     if (userMessages[userId]) {
       try {
         await bot.deleteMessage(chatId, userMessages[userId]);
@@ -14,6 +14,10 @@ export default function (bot, db, saveDB) {
     const msg = await bot.sendMessage(chatId, text, options);
     userMessages[userId] = msg.message_id;
     return msg;
+  }
+
+  async function sendWithDelete(userId, chatId, text, options = {}) {
+    return trackMessage(userId, chatId, text, options);
   }
 
   bot.onText(/^⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ$|^\/bagilanjutan$/i, async (msg) => {
@@ -25,7 +29,7 @@ export default function (bot, db, saveDB) {
     
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(chatId, `◆◆  BAGI LANJUTAN  ◆◆
+      return trackMessage(userId, chatId, `◆◆  BAGI LANJUTAN  ◆◆
 
 ┌─❖
 │  ❌ Akses Ditolak
@@ -35,7 +39,7 @@ export default function (bot, db, saveDB) {
     }
 
     sessions[userId] = { step: 1, splitCounter: 1, fileCounter: 1 };
-    bot.sendMessage(chatId, `◆◆  BAGI LANJUTAN  ◆◆
+    trackMessage(userId, chatId, `◆◆  BAGI LANJUTAN  ◆◆
 
 ┌─❖
 │  Split VCF Advanced
@@ -65,7 +69,7 @@ export default function (bot, db, saveDB) {
       }
 
       if (!msg.document || !msg.document.file_name.endsWith(".vcf")) {
-        return bot.sendMessage(chatId, `◆◆  BAGI LANJUTAN  ◆◆
+        return trackMessage(userId, chatId, `◆◆  BAGI LANJUTAN  ◆◆
 
 ┌─❖
 │  ⚠️ Kirim file VCF
@@ -84,7 +88,7 @@ export default function (bot, db, saveDB) {
       session.originalName = msg.document.file_name.replace(".vcf", "");
       session.step = 2;
 
-      bot.sendMessage(chatId, `📎 Masukkan nama file output ya Kak\n\nKetik \`skip\` untuk pakai nama lama.`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+      trackMessage(userId, chatId, `📎 Masukkan nama file output ya Kak\n\nKetik \`skip\` untuk pakai nama lama.`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
       return;
     }
 
@@ -185,11 +189,11 @@ export default function (bot, db, saveDB) {
 
       if (/^done$/i.test(text) || /^selesai$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, "✅ Semua proses selesai ya Kak! 😊",  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+        return trackMessage(userId, chatId, "✅ Semua proses selesai ya Kak! 😊",  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       delete sessions[userId];
-      return bot.sendMessage(chatId, "✅ Semua proses selesai ya Kak! 😊",  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+      return trackMessage(userId, chatId, "✅ Semua proses selesai ya Kak! 😊",  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
     }
   });
 }
