@@ -26,20 +26,16 @@ async def verify_group_access(bot, user_id: int, chat_id: int, update: Update = 
     verified = await check_group_membership(bot, user_id)
     
     if not verified:
-        # Send inline button for joining
+        # Send inline button for joining - NO GROUP LINKS, JUST CHECK BUTTON
         keyboard = InlineKeyboardMarkup([
             [
-                InlineKeyboardButton("✅ Join Grup 1", url=f"https://t.me/{CONFIG['groups']['main']}"),
-                InlineKeyboardButton("✅ Join Grup 2", url=f"https://t.me/{CONFIG['groups']['cv']}")
-            ],
-            [
-                InlineKeyboardButton("✅ Sudah Join", callback_data="verify_again")
+                InlineKeyboardButton("✅ Cek Keanggotaan", callback_data="verify_again")
             ]
         ])
         
         await bot.send_message(
             chat_id=chat_id,
-            text="⚠️ *Wajib join 2 grup untuk akses*\n\nSilakan join kedua grup, kemudian klik 'Sudah Join'",
+            text="⚠️ *Wajib join 2 grup untuk akses*\n\nSudah join kedua grup?\n`@agentviber12` dan `@channelviber`\n\nKlik tombol di bawah untuk verifikasi ulang!",
             parse_mode="Markdown",
             reply_markup=keyboard
         )
@@ -47,7 +43,7 @@ async def verify_group_access(bot, user_id: int, chat_id: int, update: Update = 
     
     return True
 
-async def handle_verify_again(bot, update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_verify_again(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle verify again callback"""
     query = update.callback_query
     user_id = query.from_user.id
@@ -56,7 +52,7 @@ async def handle_verify_again(bot, update: Update, context: ContextTypes.DEFAULT
     
     await query.answer()
     
-    verified = await check_group_membership(bot, user_id)
+    verified = await check_group_membership(context.bot, user_id)
     
     if not verified:
         await query.answer("⚠️ Masih belum join kedua grup!", show_alert=True)
@@ -64,7 +60,7 @@ async def handle_verify_again(bot, update: Update, context: ContextTypes.DEFAULT
     
     # Delete old message
     try:
-        await bot.delete_message(chat_id, message_id)
+        await context.bot.delete_message(chat_id, message_id)
     except:
         pass
     
@@ -73,7 +69,7 @@ async def handle_verify_again(bot, update: Update, context: ContextTypes.DEFAULT
     # Get or create user
     db_user = get_user(user_id)
     if not db_user:
-        from helpers import format_dashboard, get_main_keyboard
+        from helpers import format_dashboard
         db_user = create_user(
             user_id,
             query.from_user.first_name,
@@ -81,32 +77,28 @@ async def handle_verify_again(bot, update: Update, context: ContextTypes.DEFAULT
             is_owner(user_id)
         )
         
-        # Show dashboard
+        # Show dashboard - MARKDOWN ONLY
         dashboard = format_dashboard(db_user)
-        keyboard = get_main_keyboard()
         
         try:
-            photos = await bot.get_user_profile_photos(user_id, limit=1)
+            photos = await context.bot.get_user_profile_photos(user_id, limit=1)
             if photos.total_count > 0:
                 photo = photos.photos[0][0]
-                await bot.send_photo(
+                await context.bot.send_photo(
                     chat_id=user_id,
                     photo=photo.file_id,
                     caption=dashboard,
-                    parse_mode="Markdown",
-                    reply_markup=keyboard
+                    parse_mode="Markdown"
                 )
             else:
-                await bot.send_message(
+                await context.bot.send_message(
                     chat_id=user_id,
                     text=dashboard,
-                    parse_mode="Markdown",
-                    reply_markup=keyboard
+                    parse_mode="Markdown"
                 )
         except:
-            await bot.send_message(
+            await context.bot.send_message(
                 chat_id=user_id,
                 text=dashboard,
-                parse_mode="Markdown",
-                reply_markup=keyboard
+                parse_mode="Markdown"
             )
