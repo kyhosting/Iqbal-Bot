@@ -73,24 +73,24 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text or ""
     user_id = update.effective_user.id
     
-    # Check if it's a button press
+    # Check if it's a button press - Updated keyboards
     button_commands = {
-        "⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ": lambda u, c: handle_vip_command(u, c, 'rapikatntxt'),
-        "⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ": lambda u, c: handle_vip_command(u, c, 'msgtotxt'),
-        "⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ": lambda u, c: handle_vip_command(u, c, 'txttovcf'),
-        "⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ": lambda u, c: handle_vip_command(u, c, 'xlstovcf'),
-        "⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ": lambda u, c: handle_vip_command(u, c, 'vcftotxt'),
-        "⛓️ ꜱᴘʟɪᴛ ꜰɪʟᴇ": lambda u, c: handle_vip_command(u, c, 'splitfile'),
-        "⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ": lambda u, c: handle_vip_command(u, c, 'gabungfile'),
-        "⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ": lambda u, c: handle_vip_command(u, c, 'renamekontak'),
-        "⛓️ ᴀᴍʙɪʟ ɴᴀᴍᴀ ꜰɪʟᴇ": lambda u, c: handle_vip_command(u, c, 'cekkontak'),
-        "⛓️ ʙᴜᴀᴛ ɴᴀᴍᴀ": lambda u, c: cmd_fitur(u, c),
-        "⛓️ ᴀᴅᴍ & ɴᴀᴠʏ": lambda u, c: cmd_bantuan(u, c),
-        "⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ": lambda u, c: handle_vip_command(u, c, 'renamefile'),
-        "⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ": lambda u, c: handle_vip_command(u, c, 'hitungfile'),
+        "💎 Status 💎": lambda u, c: cmd_me(u, c),
+        "📨 ADMIN 📨": lambda u, c: owner_menu(u, c),
+        "🚧 RAPIKAN TXT 🚧": lambda u, c: handle_vip_command(u, c, 'rapikatntxt'),
+        "📨 MSG to TXT 📨": lambda u, c: handle_vip_command(u, c, 'msgtotxt'),
+        "🏷️ TXT to VCF 🏷️": lambda u, c: handle_vip_command(u, c, 'txttovcf'),
+        "🚀 XLS to VCF 🚀": lambda u, c: handle_vip_command(u, c, 'xlstovcf'),
+        "♻️ VCF to TXT ♻️": lambda u, c: handle_vip_command(u, c, 'vcftotxt'),
+        "🪓 BAGI VCF 🪓": lambda u, c: handle_vip_command(u, c, 'splitfile'),
+        "🪓 BAGI LANJUTAN 🪓": lambda u, c: handle_vip_command(u, c, 'splitfile_lanjut'),
+        "🗄️ Gabung TXT 🗄️": lambda u, c: handle_vip_command(u, c, 'gabungtxt'),
+        "🗄️ Gabung VCF 🗄️": lambda u, c: handle_vip_command(u, c, 'gabungvcf'),
+        "📊 POTONG VCF 📊": lambda u, c: handle_vip_command(u, c, 'splitfile'),
+        "📊 POTONG LANJUTAN 📊": lambda u, c: handle_vip_command(u, c, 'splitfile_lanjut'),
+        "🔢 Hitung Kontak 🔢": lambda u, c: handle_vip_command(u, c, 'hitungfile'),
+        "🔍 Cek Nama Kontak 🔍": lambda u, c: handle_vip_command(u, c, 'cekkontak'),
         "🎁 Redeem Code": lambda u, c: redeem_start(u, c),
-        "⛓️ ɢᴀʙᴜɴɢ ᴛxᴛ": lambda u, c: handle_vip_command(u, c, 'gabungtxt'),
-        "⛓️ ɢᴀʙᴜɴɢ ᴠᴄꜰ": lambda u, c: handle_vip_command(u, c, 'gabungvcf'),
     }
     
     if text in button_commands:
@@ -143,7 +143,7 @@ def main():
     app.add_handler(CallbackQueryHandler(owner_menu, pattern="^owner_"))
     
     # Message handlers
-    app.add_handler(MessageHandler(filters.Document, handle_file_message))
+    app.add_handler(MessageHandler(filters.Document.ALL, handle_file_message))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     
     # Error handler
