@@ -146,19 +146,16 @@ def format_dashboard(user):
     return dashboard
 
 def get_main_keyboard():
-    """Get main keyboard buttons - merged dari attached file"""
+    """Get main keyboard buttons - Japanese aesthetic with small caps"""
     return {
         "keyboard": [
-            [{"text": "💎 Status 💎"}],
-            [{"text": "📨 ADMIN 📨"}, {"text": "🚧 RAPIKAN TXT 🚧"}],
-            [{"text": "📊 POTONG VCF 📊"}, {"text": "📊 POTONG LANJUTAN 📊"}],
-            [{"text": "🪓 BAGI VCF 🪓"}, {"text": "🪓 BAGI LANJUTAN 🪓"}],
-            [{"text": "📨 MSG to TXT 📨"}],
-            [{"text": "🏷️ TXT to VCF 🏷️"}, {"text": "🚀 XLS to VCF 🚀"}],
-            [{"text": "♻️ VCF to TXT ♻️"}, {"text": "🗄️ Gabung TXT 🗄️"}],
-            [{"text": "🗄️ Gabung VCF 🗄️"}, {"text": "🔢 Hitung Kontak 🔢"}],
-            [{"text": "🔍 Cek Nama Kontak 🔍"}],
-            [{"text": "🎁 Redeem Code"}]
+            [{"text": "⛓️ ꜱᴛᴀᴛᴜꜱ ⛓️"}],
+            [{"text": "⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ ⛓️"}, {"text": "⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ ⛓️"}],
+            [{"text": "⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛᴀɴ ⛓️"}, {"text": "⛓️ ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛᴀɴ ⛓️"}],
+            [{"text": "⛓️ ɢᴀʙᴜɴɢꜰɪʟᴇ ⛓️"}, {"text": "⛓️ ɢᴀʙᴜɴɢ ᴛxᴛ ⛓️"}],
+            [{"text": "⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ ⛓️"}, {"text": "⛓️ ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ ⛓️"}],
+            [{"text": "⛓️ ʜɪᴛᴜɴɢ ᴋᴏɴᴛᴀᴋ ⛓️"}, {"text": "⛓️ ᴄᴇᴋ ɴᴀᴍᴀ ᴋᴏɴᴛᴀᴋ ⛓️"}],
+            [{"text": "🎁 ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ ⛓️"}, {"text": "ᴍᴇɴᴜ ᴏᴡɴᴇʀ ⛓️"}]
         ],
         "resize_keyboard": True,
         "one_time_keyboard": False

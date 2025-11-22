@@ -73,24 +73,21 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text or ""
     user_id = update.effective_user.id
     
-    # Check if it's a button press - Updated keyboards
+    # Check if it's a button press - Updated keyboards with small caps
     button_commands = {
-        "💎 Status 💎": lambda u, c: cmd_me(u, c),
-        "📨 ADMIN 📨": lambda u, c: owner_menu(u, c),
-        "🚧 RAPIKAN TXT 🚧": lambda u, c: handle_vip_command(u, c, 'rapikatntxt'),
-        "📨 MSG to TXT 📨": lambda u, c: handle_vip_command(u, c, 'msgtotxt'),
-        "🏷️ TXT to VCF 🏷️": lambda u, c: handle_vip_command(u, c, 'txttovcf'),
-        "🚀 XLS to VCF 🚀": lambda u, c: handle_vip_command(u, c, 'xlstovcf'),
-        "♻️ VCF to TXT ♻️": lambda u, c: handle_vip_command(u, c, 'vcftotxt'),
-        "🪓 BAGI VCF 🪓": lambda u, c: handle_vip_command(u, c, 'splitfile'),
-        "🪓 BAGI LANJUTAN 🪓": lambda u, c: handle_vip_command(u, c, 'splitfile_lanjut'),
-        "🗄️ Gabung TXT 🗄️": lambda u, c: handle_vip_command(u, c, 'gabungtxt'),
-        "🗄️ Gabung VCF 🗄️": lambda u, c: handle_vip_command(u, c, 'gabungvcf'),
-        "📊 POTONG VCF 📊": lambda u, c: handle_vip_command(u, c, 'splitfile'),
-        "📊 POTONG LANJUTAN 📊": lambda u, c: handle_vip_command(u, c, 'splitfile_lanjut'),
-        "🔢 Hitung Kontak 🔢": lambda u, c: handle_vip_command(u, c, 'hitungfile'),
-        "🔍 Cek Nama Kontak 🔍": lambda u, c: handle_vip_command(u, c, 'cekkontak'),
-        "🎁 Redeem Code": lambda u, c: redeem_start(u, c),
+        "⛓️ ꜱᴛᴀᴛᴜꜱ ⛓️": lambda u, c: cmd_me(u, c),
+        "⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ ⛓️": lambda u, c: handle_vip_command(u, c, 'txttovcf'),
+        "⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ ⛓️": lambda u, c: handle_vip_command(u, c, 'vcftotxt'),
+        "⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛᴀɴ ⛓️": lambda u, c: handle_vip_command(u, c, 'bagi_vcf'),
+        "⛓️ ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛᴀɴ ⛓️": lambda u, c: handle_vip_command(u, c, 'potong_vcf'),
+        "⛓️ ɢᴀʙᴜɴɢꜰɪʟᴇ ⛓️": lambda u, c: handle_vip_command(u, c, 'gabungvcf'),
+        "⛓️ ɢᴀʙᴜɴɢ ᴛxᴛ ⛓️": lambda u, c: handle_vip_command(u, c, 'gabungtxt'),
+        "⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ ⛓️": lambda u, c: handle_vip_command(u, c, 'xlstovcf'),
+        "⛓️ ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ ⛓️": lambda u, c: handle_vip_command(u, c, 'admin'),
+        "⛓️ ʜɪᴛᴜɴɢ ᴋᴏɴᴛᴀᴋ ⛓️": lambda u, c: handle_vip_command(u, c, 'hitung'),
+        "⛓️ ᴄᴇᴋ ɴᴀᴍᴀ ᴋᴏɴᴛᴀᴋ ⛓️": lambda u, c: handle_vip_command(u, c, 'cek_nama'),
+        "🎁 ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ ⛓️": lambda u, c: redeem_start(u, c),
+        "ᴍᴇɴᴜ ᴏᴡɴᴇʀ ⛓️": lambda u, c: owner_menu(u, c),
     }
     
     if text in button_commands:

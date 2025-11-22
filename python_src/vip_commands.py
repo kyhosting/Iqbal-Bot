@@ -10,8 +10,8 @@ from file_converters import (
     count_contacts_in_vcf, count_contacts_in_txt,
     split_vcf_unlimited, merge_vcf_files_unlimited,
     create_vcf_file_unlimited, extract_phone_numbers_unlimited,
-    hapus_spasi_antar_nomor_unlimited, split_cut_vcf_unlimited,
-    read_vcf_unlimited, write_vcf_unlimited, remove_numbers, remove_emojis
+    hapus_spasi_antar_nomor_unlimited,
+    read_vcf_unlimited, write_vcf_unlimited
 )
 from helpers import get_user, increment_operation
 
@@ -541,7 +541,7 @@ async def bagi_vcf_count(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         processing = await update.message.reply_text("🔄 *Memproses...*", parse_mode="Markdown")
         
-        result_files = split_cut_vcf_unlimited(input_file, output_name, num_parts)
+        result_files = split_vcf_unlimited(input_file, output_name, num_parts)
         
         for file_path in result_files:
             if os.path.exists(file_path):
@@ -1093,7 +1093,7 @@ async def potong_vcf_count(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 lines = c.split('\n')
                 for idx, line in enumerate(lines):
                     if line.startswith('FN:'):
-                        clean_name = remove_emojis(line[3:])
+                        clean_name = str(line[3:])
                         lines[idx] = f'FN:{clean_name.strip()} {str(global_index + j).zfill(4)}'
                 chunk[j] = '\n'.join(lines)
             
