@@ -383,12 +383,21 @@ export default function (bot, db, saveDB) {
       type: "vip",
       duration: duration,
       expires_at: expiresAt,
+      used_by: null,
+      created_by: userId,
       created_at: new Date().toISOString()
     };
 
     bot.saveRedeemDB();
 
-    bot.sendMessage(chatId, `✅ *Kode Redeem Berhasil Dibuat*\n\n◆ ᴋᴏᴅᴇ ᴍᴀɴᴜᴀʟ\n\n▸ Kode: \`${code}\`\n▸ Durasi: ${duration} hari\n▸ Expired: ${expiresAt}\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(
+      chatId,
+      `✅ *Kode Berhasil Dibuat!*\n\n` +
+      `📝 Kode: \`${code}\`\n` +
+      `⏳ Durasi: ${duration} hari\n` +
+      `📅 Expired: ${expiresAt}`,
+      { parse_mode: "Markdown" }
+    );
   });
 
   // Command: Delete redeem code
@@ -409,41 +418,50 @@ export default function (bot, db, saveDB) {
     delete bot.redeemDB[code];
     bot.saveRedeemDB();
 
-    bot.sendMessage(chatId, `✅ *Kode Redeem Berhasil Dihapus*\n\n▸ Kode: \`${code}\` sudah tidak berlaku lagi.`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `✅ Kode \`${code}\` berhasil dihapus!`, { parse_mode: "Markdown" });
   });
 
-  // Command: Set VIP Manual
+  // Command: Set VIP manual
   bot.onText(/^\/setvip (\d+) (\d+)$/, (msg, match) => {
-    const userId = msg.from.id;
+    const executorId = msg.from.id;
     const chatId = msg.chat.id;
+    const targetId = parseInt(match[1]);
+    const days = parseInt(match[2]);
 
-    if (bot.getRole(userId) !== "owner") {
+    if (bot.getRole(executorId) !== "owner") {
       return bot.sendMessage(chatId, "❌ Khusus owner!", { parse_mode: "Markdown" });
     }
 
-    const targetUserId = parseInt(match[1]);
-    const durationDays = parseInt(match[2]);
-
-    if (!db.users[targetUserId]) {
-      db.users[targetUserId] = {
-        id: targetUserId,
-        username: "",
-        first_name: "User",
-        last_name: "",
-        role: "vip",
-        vip_expired: Date.now() + durationDays * 24 * 60 * 60 * 1000,
-        status: "active",
-        total_operation: 0
-      };
-    } else {
-      db.users[targetUserId].role = "vip";
-      db.users[targetUserId].vip_expired = Date.now() + durationDays * 24 * 60 * 60 * 1000;
-      db.users[targetUserId].status = "active";
+    if (!db.users[targetId]) {
+      return bot.sendMessage(chatId, `⚠️ User ${targetId} belum terdaftar di database.`);
     }
 
+    const vipExpired = Date.now() + (days * 24 * 60 * 60 * 1000);
+    db.users[targetId].role = "vip";
+    db.users[targetId].vip_expired = vipExpired;
+    db.users[targetId].status = "active";
     saveDB();
 
-    const expireDate = new Date(db.users[targetUserId].vip_expired).toLocaleDateString('id-ID');
-    bot.sendMessage(chatId, `✅ *VIP Manual Berhasil Diberikan*\n\n▸ User ID: \`${targetUserId}\`\n▸ Durasi: ${durationDays} hari\n▸ Expired: ${expireDate}`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    const expDate = new Date(vipExpired).toLocaleDateString('id-ID');
+
+    bot.sendMessage(
+      chatId,
+      `✅ *VIP Berhasil Diberikan!*\n\n` +
+      `👤 User: ${db.users[targetId].first_name}\n` +
+      `🆔 ID: ${targetId}\n` +
+      `⏳ Durasi: ${days} hari\n` +
+      `📅 Expired: ${expDate}`,
+      { parse_mode: "Markdown" }
+    );
+
+    // Notify user
+    bot.sendMessage(
+      targetId,
+      `🎉 *Selamat Kak!*\n\n` +
+      `Kamu mendapatkan VIP selama ${days} hari 💎\n` +
+      `Berlaku sampai: ${expDate}\n\n` +
+      `Nikmati semua fitur premium ya! 😊`,
+      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+    ).catch(() => {});
   });
 }
