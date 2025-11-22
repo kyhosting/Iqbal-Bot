@@ -31,7 +31,7 @@ export default function (bot, db, saveDB) {
     return trackMessage(userId, chatId, text, options);
   }
 
-  bot.onText(/^⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ$|^\/xlstovcf$/i, async (msg) => {
+  bot.onText(/^⛓️ XLS TO VCF ⛓️$|^\/xlstovcf$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);

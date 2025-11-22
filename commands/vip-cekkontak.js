@@ -21,7 +21,7 @@ export default function (bot, db, saveDB) {
     return trackMessage(userId, chatId, text, options);
   }
 
-  bot.onText(/^⛓️CEK KONTAK$|^\/cekkontak$|^\/ceknamakontak$/i, async (msg) => {
+  bot.onText(/^⛓️ CEK KONTAK ⛓️$|^\/cekkontak$|^\/ceknamakontak$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     
