@@ -117,4 +117,154 @@ export default function (bot, db, saveDB) {
       }
     }
   });
+
+  // DASHBOARD WITH AESTHETIC FORMAT
+  bot.showDashboard = async (userId, chatId) => {
+    try {
+      const user = db.users[userId];
+      if (!user) {
+        db.users[userId] = {
+          id: userId,
+          username: (await bot.getChat(userId)).username || "unknown",
+          first_name: (await bot.getChat(userId)).first_name || "User",
+          last_name: (await bot.getChat(userId)).last_name || "",
+          role: "user",
+          vip_expired: Date.now() + 7 * 24 * 60 * 60 * 1000,
+          status: "active",
+          total_operation: 0
+        };
+        saveDB();
+      }
+
+      const userData = db.users[userId];
+      const now = Date.now();
+      const isVip = userData.role === "vip" && userData.vip_expired > now;
+      const remainingMs = Math.max(0, userData.vip_expired - now);
+      const remainingDays = Math.ceil(remainingMs / (24 * 60 * 60 * 1000));
+      const expiredDate = new Date(userData.vip_expired).toLocaleDateString("id-ID", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+
+      const statusText = isVip ? "🔥 VIP ACTIVE" : "👤 Regular";
+      const roleText = userData.role === "owner" ? "👑 OWNER" : (userData.role === "vip" ? "💎 VIP" : "👤 USER");
+
+      // Get profile photo
+      let photoSent = false;
+      try {
+        const userPhotos = await bot.getUserProfilePhotos(userId, { limit: 1 });
+        if (userPhotos.total_count > 0) {
+          const photoId = userPhotos.photos[0][0].file_id;
+          const caption = `🎌 <b>iqbal ᴄᴠ ʙᴏᴛꜱ</b>
+(by iqbaldev)
+
+╭─❖
+│ こんにちは、私は Iqbalʙᴏᴛ です。
+│ 私はファイル変換と管理を担当します。
+│ ✦ Created by: @Iqbaldev
+╰───────────────❖
+
+╭─❖ <b>ꜱᴛᴀᴛᴜꜱ ᴀᴄᴄᴇꜱ</b>
+│ ➤ Nama: <b>${userData.first_name || "User"}</b>
+│ ➤ ID: <code>${userId}</code>
+│ ➤ Username: @${userData.username || "unknown"}
+│ ➤ Role: <b>${roleText}</b>
+│ ➤ Status: <b>${statusText}</b>
+│ ➤ Masa Aktif: <b>${expiredDate}</b>
+│ ➤ Hari Tersisa: <b>${remainingDays} hari</b>
+│ ➤ Total Operasi: <b>${userData.total_operation}</b>
+╰───────────────❖
+
+╭─❖ <b>ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ</b>
+│ ➤ 📄 TXT 📇 VCF 📊 XLSX
+│ ➤ 他の形式も順次対応予定です。
+╰───────────────❖
+
+╭─❖ <b>ᴍᴇɴᴜ ʙᴏᴛ</b>
+│ ➤ ⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ
+│ ➤ ⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ
+│ ➤ ⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ
+│ ➤ ⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ
+│ ➤ ⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ
+│ ➤ ⛓️ ꜱᴘʟɪᴛ ꜰɪʟᴇ
+│ ➤ ⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ
+│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ
+│ ➤ ⛓️ ᴀᴍʙɪʟ ɴᴀᴍᴀ ꜰɪʟᴇ
+│ ➤ ⛓️ ʙᴜᴀᴛ ɴᴀᴍᴀ
+│ ➤ ⛓️ ᴀᴅᴍ & ɴᴀᴠʏ
+│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ
+│ ➤ ⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ
+╰───────────────❖
+
+💎 ご利用ありがとうございます。
+このボットは常に進化しています ⚙️`;
+
+          await bot.sendPhoto(chatId, photoId, {
+            caption: caption,
+            parse_mode: "HTML",
+            reply_markup: bot.getMainKeyboardUser(userId)
+          });
+          photoSent = true;
+        }
+      } catch (e) {
+        // Foto tidak ada, lanjut tanpa foto
+      }
+
+      // Jika tidak ada foto, kirim text saja
+      if (!photoSent) {
+        const message = `🎌 <b>iqbal ᴄᴠ ʙᴏᴛꜱ</b>
+(by iqbaldev)
+
+╭─❖
+│ こんにちは、私は Iqbalʙᴏᴛ です。
+│ 私はファイル変換と管理を担当します。
+│ ✦ Created by: @Iqbaldev
+╰───────────────❖
+
+╭─❖ <b>ꜱᴛᴀᴛᴜꜱ ᴀᴄᴄᴇꜱ</b>
+│ ➤ Nama: <b>${userData.first_name || "User"}</b>
+│ ➤ ID: <code>${userId}</code>
+│ ➤ Username: @${userData.username || "unknown"}
+│ ➤ Role: <b>${roleText}</b>
+│ ➤ Status: <b>${statusText}</b>
+│ ➤ Masa Aktif: <b>${expiredDate}</b>
+│ ➤ Hari Tersisa: <b>${remainingDays} hari</b>
+│ ➤ Total Operasi: <b>${userData.total_operation}</b>
+╰───────────────❖
+
+╭─❖ <b>ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ</b>
+│ ➤ 📄 TXT 📇 VCF 📊 XLSX
+│ ➤ 他の形式も順次対応予定です。
+╰───────────────❖
+
+╭─❖ <b>ᴍᴇɴᴜ ʙᴏᴛ</b>
+│ ➤ ⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ
+│ ➤ ⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ
+│ ➤ ⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ
+│ ➤ ⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ
+│ ➤ ⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ
+│ ➤ ⛓️ ꜱᴘʟɪᴛ ꜰɪʟᴇ
+│ ➤ ⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ
+│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ
+│ ➤ ⛓️ ᴀᴍʙɪʟ ɴᴀᴍᴀ ꜰɪʟᴇ
+│ ➤ ⛓️ ʙᴜᴀᴛ ɴᴀᴍᴀ
+│ ➤ ⛓️ ᴀᴅᴍ & ɴᴀᴠʏ
+│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ
+│ ➤ ⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ
+╰───────────────❖
+
+💎 ご利用ありがとうございます。
+このボットは常に進化しています ⚙️`;
+
+        await bot.sendMessage(chatId, message, {
+          parse_mode: "HTML",
+          reply_markup: bot.getMainKeyboardUser(userId)
+        });
+      }
+    } catch (err) {
+      console.error("Error di showDashboard:", err);
+      await bot.sendMessage(chatId, "❌ Error loading dashboard", { parse_mode: "HTML" });
+    }
+  };
 }

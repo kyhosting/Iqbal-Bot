@@ -9,7 +9,7 @@ function generateRandomCode() {
 
 export default function (bot, db, saveDB) {
   const sessions = {};
-  const broadcastMessages = {}; // Track broadcast messages untuk auto-delete
+  const userMessages = {}; // Track last message untuk auto-delete
 
   bot.onText(/^⛓️MENU OWNER$/i, (msg) => {
     const userId = msg.from.id;
@@ -130,13 +130,13 @@ export default function (bot, db, saveDB) {
       await bot.answerCallbackQuery(query.id);
       
       // Delete old message
-      if (broadcastMessages[userId]) {
+      if (userMessages[userId]) {
         try {
-          await bot.deleteMessage(chatId, broadcastMessages[userId]);
+          await bot.deleteMessage(chatId, userMessages[userId]);
         } catch (e) {}
       }
 
-      await bot.sendMessage(
+      const msg = await bot.sendMessage(
         chatId,
         `◆◆  BUAT KODE  ◆◆
 
@@ -149,6 +149,7 @@ export default function (bot, db, saveDB) {
 └─❖`,
         { parse_mode: "HTML" }
       );
+      userMessages[userId] = msg.message_id;
     }
 
     // DELETE CODE
@@ -157,13 +158,13 @@ export default function (bot, db, saveDB) {
       await bot.answerCallbackQuery(query.id);
       
       // Delete old message
-      if (broadcastMessages[userId]) {
+      if (userMessages[userId]) {
         try {
-          await bot.deleteMessage(chatId, broadcastMessages[userId]);
+          await bot.deleteMessage(chatId, userMessages[userId]);
         } catch (e) {}
       }
 
-      await bot.sendMessage(
+      const msg = await bot.sendMessage(
         chatId,
         `◆◆  HAPUS KODE  ◆◆
 
@@ -174,6 +175,7 @@ export default function (bot, db, saveDB) {
 └─❖`,
         { parse_mode: "HTML" }
       );
+      userMessages[userId] = msg.message_id;
     }
 
     // LIST USERS
@@ -204,13 +206,13 @@ export default function (bot, db, saveDB) {
       await bot.answerCallbackQuery(query.id);
       
       // Delete old message
-      if (broadcastMessages[userId]) {
+      if (userMessages[userId]) {
         try {
-          await bot.deleteMessage(chatId, broadcastMessages[userId]);
+          await bot.deleteMessage(chatId, userMessages[userId]);
         } catch (e) {}
       }
 
-      await bot.sendMessage(
+      const msg = await bot.sendMessage(
         chatId,
         `◆◆  BROADCAST KE SEMUA USER  ◆◆
 
@@ -224,6 +226,7 @@ export default function (bot, db, saveDB) {
 └─❖`,
         { parse_mode: "HTML" }
       );
+      userMessages[userId] = msg.message_id;
     }
 
     // SET VIP MANUAL
@@ -232,13 +235,13 @@ export default function (bot, db, saveDB) {
       await bot.answerCallbackQuery(query.id);
       
       // Delete old message
-      if (broadcastMessages[userId]) {
+      if (userMessages[userId]) {
         try {
-          await bot.deleteMessage(chatId, broadcastMessages[userId]);
+          await bot.deleteMessage(chatId, userMessages[userId]);
         } catch (e) {}
       }
 
-      await bot.sendMessage(
+      const msg = await bot.sendMessage(
         chatId,
         `◆◆  SET VIP MANUAL  ◆◆
 
@@ -249,12 +252,20 @@ export default function (bot, db, saveDB) {
 └─❖`,
         { parse_mode: "HTML" }
       );
+      userMessages[userId] = msg.message_id;
     }
 
     // BACK TO MENU
     else if (data === "owner_back_menu") {
       await bot.answerCallbackQuery(query.id);
       delete sessions[userId];
+
+      // Delete old message
+      if (userMessages[userId]) {
+        try {
+          await bot.deleteMessage(chatId, userMessages[userId]);
+        } catch (e) {}
+      }
 
       const keyboard = {
         inline_keyboard: [
@@ -264,7 +275,7 @@ export default function (bot, db, saveDB) {
         ]
       };
 
-      await bot.sendMessage(
+      const msg = await bot.sendMessage(
         chatId,
         `◆◆  PANEL ADMIN AKTIF  ◆◆
 
@@ -275,6 +286,7 @@ export default function (bot, db, saveDB) {
 └─❖`,
         { parse_mode: "HTML", reply_markup: keyboard }
       );
+      userMessages[userId] = msg.message_id;
     }
   });
 
