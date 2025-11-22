@@ -148,7 +148,7 @@ bot.getRole = (userId) => {
     user.notified_expiry = false;
     saveDB();
     bot.sendMessage(userId, `⏰ *Masa Trial/VIP kamu sudah habis Kak*\nSekarang kembali jadi user biasa ya 😊`, {
-      parse_mode: "Markdown",
+      parse_mode: "HTML",
       reply_markup: bot.getMainKeyboard()
     }).catch(() => {});
   }
@@ -166,7 +166,7 @@ bot.deleteAndSend = async (query, newText, newMarkup = null) => {
     await delay(300);
     
     // Send new message
-    const options = { parse_mode: "Markdown" };
+    const options = { parse_mode: "HTML" };
     if (newMarkup) options.reply_markup = newMarkup;
     
     await bot.sendMessage(query.message.chat.id, newText, options);
@@ -261,7 +261,7 @@ bot.showDashboard = async (userId, chatId) => {
       await bot.sendMessage(
         userId,
         `🎁 *TRIAL 1 HARI GRATIS!*\n\nSelamat! Kamu sudah verifikasi grup 🎉\n\n✅ Akses trial selama 1 hari sudah aktif!\n⏰ Berlaku sampai: ${new Date(trialExpired).toLocaleDateString("id-ID")}\n\nNikmati semua fitur premium dulu ya Kak! 💎\nSetelah trial habis, beli VIP untuk terus akses 😊`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       ).catch(() => {});
     }
   } else {
@@ -278,7 +278,7 @@ bot.showDashboard = async (userId, chatId) => {
       await bot.sendMessage(
         userId,
         `✅ *Akses Dipulihkan Kak!*\n\nKamu sudah join kedua grup 🎉\n\n✨ Trial/VIP kamu aktif kembali!\n⏰ Sisa: *${daysLeft} hari*\n\nLanjut nikmati fitur premium ya 😊`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       ).catch(() => {});
     }
   }
@@ -309,19 +309,19 @@ bot.showDashboard = async (userId, chatId) => {
       const fileId = photos.photos[0][0].file_id;
       await bot.sendPhoto(chatId, fileId, {
         caption: caption,
-        parse_mode: "Markdown",
+        parse_mode: "HTML",
         reply_markup: bot.getMainKeyboardUser(userId)
       });
     } else {
       await bot.sendMessage(chatId, caption, {
-        parse_mode: "Markdown",
+        parse_mode: "HTML",
         reply_markup: bot.getMainKeyboardUser(userId)
       });
     }
   } catch (err) {
     console.error("Error getting profile photo:", err);
     await bot.sendMessage(chatId, caption, {
-      parse_mode: "Markdown",
+      parse_mode: "HTML",
       reply_markup: bot.getMainKeyboardUser(userId)
     });
   }

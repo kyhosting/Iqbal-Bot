@@ -10,8 +10,8 @@ export default function (bot, db, saveDB) {
     if (!groupCheck.verified) {
       return bot.sendMessage(
         chatId,
-        `⚠️ *Akses Ditolak*\n\nKamu harus join grup terlebih dahulu ya Kak.`,
-        { parse_mode: "Markdown" }
+        `⚠️ <b>Akses Ditolak</b>\n\nKamu harus join grup terlebih dahulu ya Kak.`,
+        { parse_mode: "HTML" }
       );
     }
 
@@ -26,14 +26,14 @@ export default function (bot, db, saveDB) {
       ]
     };
 
-    const message = `🧹 *BERSIHKAN CHAT*\n\n` +
+    const message = `🧹 <b>BERSIHKAN CHAT</b>\n\n` +
       `Klik tombol di bawah untuk:\n` +
       `✓ Hapus semua pesan sebelumnya\n` +
       `✓ Lanjutkan dengan fresh start\n\n` +
       `_Gunakan fitur ini untuk rapihkan chat!_ 😊`;
 
     const sentMsg = await bot.sendMessage(chatId, message, {
-      parse_mode: "Markdown",
+      parse_mode: "HTML",
       reply_markup: keyboard
     });
 
@@ -61,8 +61,8 @@ export default function (bot, db, saveDB) {
         // Send fresh message
         const freshMsg = await bot.sendMessage(
           chatId,
-          `✨ *Chat Berhasil Dibersihkan!*\n\n💫 Siap melanjutkan dengan fresh start!\n\nGunakan /start untuk menu utama 😊`,
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+          `✨ <b>Chat Berhasil Dibersihkan!</b>\n\n💫 Siap melanjutkan dengan fresh start!\n\nGunakan /start untuk menu utama 😊`,
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() }
         );
 
         await bot.answerCallbackQuery(query.id, "✅ Chat berhasil dibersihkan!", true);

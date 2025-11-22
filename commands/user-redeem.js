@@ -9,11 +9,11 @@ export default function (bot, db, saveDB) {
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `🎁 *Redeem Code System*\n\n` +
+      `🎁 <b>Redeem Code System</b>\n\n` +
       `Silakan masukkan kode redeem kamu ya Kak ✨\n\n` +
       `Ketik \`batal\` untuk membatalkan.`,
       { 
-        parse_mode: "Markdown",
+        parse_mode: "HTML",
         reply_markup: bot.getMainKeyboardUser(userId)
       }
     );
@@ -27,11 +27,11 @@ export default function (bot, db, saveDB) {
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `🎁 *Redeem Code System*\n\n` +
+      `🎁 <b>Redeem Code System</b>\n\n` +
       `Silakan masukkan kode redeem kamu ya Kak ✨\n\n` +
       `Ketik \`batal\` untuk membatalkan.`,
       { 
-        parse_mode: "Markdown",
+        parse_mode: "HTML",
         reply_markup: bot.getMainKeyboardUser(userId)
       }
     );
@@ -52,7 +52,7 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId, 
           "❌ Proses dibatalkan ya Kak 😊",
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
@@ -63,11 +63,11 @@ export default function (bot, db, saveDB) {
         delete sessions[userId];
         return bot.sendMessage(
           chatId,
-          `❌ *Yah… kode redeem tidak valid*\n\n` +
+          `❌ <b>Yah… kode redeem tidak valid</b>\n\n` +
           `Kode \`${code}\` tidak ditemukan Kak.\n` +
           `Coba cek lagi ya 🙏`,
           { 
-            parse_mode: "Markdown",
+            parse_mode: "HTML",
             reply_markup: bot.getMainKeyboardUser(userId)
           }
         );
@@ -78,11 +78,11 @@ export default function (bot, db, saveDB) {
         delete sessions[userId];
         return bot.sendMessage(
           chatId,
-          `❌ *Yah… kode sudah digunakan*\n\n` +
+          `❌ <b>Yah… kode sudah digunakan</b>\n\n` +
           `Kode ini sudah dipakai sama user lain Kak 😔\n` +
           `Coba minta kode baru ya!`,
           { 
-            parse_mode: "Markdown",
+            parse_mode: "HTML",
             reply_markup: bot.getMainKeyboardUser(userId)
           }
         );
@@ -95,10 +95,10 @@ export default function (bot, db, saveDB) {
           delete sessions[userId];
           return bot.sendMessage(
             chatId,
-            `❌ *Yah… kode sudah kadaluarsa*\n\n` +
+            `❌ <b>Yah… kode sudah kadaluarsa</b>\n\n` +
             `Kode ini sudah expired sejak ${expDate.toLocaleDateString('id-ID')} 😔`,
             { 
-              parse_mode: "Markdown",
+              parse_mode: "HTML",
               reply_markup: bot.getMainKeyboardUser(userId)
             }
           );
@@ -107,7 +107,7 @@ export default function (bot, db, saveDB) {
 
       // Redeem sukses!
       let duration = redeemData.duration || 30; // default 30 hari
-      let vipExpired = Date.now() + (duration * 24 * 60 * 60 * 1000);
+      let vipExpired = Date.now() + (duration <b> 24 </b> 60 <b> 60 </b> 1000);
       let expiredDate = new Date(vipExpired);
 
       // Update user
@@ -139,14 +139,14 @@ export default function (bot, db, saveDB) {
 
       await bot.sendMessage(
         chatId,
-        `🎉 *Mantap Kak!*\n\n` +
+        `🎉 <b>Mantap Kak!</b>\n\n` +
         `Kode redeem kamu valid dan sudah berhasil digunakan 💎\n\n` +
-        `✨ *Status:* VIP Aktif\n` +
-        `⏳ *Berlaku sampai:* ${expiredDate.toLocaleDateString('id-ID')}\n` +
-        `📅 *Durasi:* ${duration} hari\n\n` +
+        `✨ <b>Status:</b> VIP Aktif\n` +
+        `⏳ <b>Berlaku sampai:</b> ${expiredDate.toLocaleDateString('id-ID')}\n` +
+        `📅 <b>Durasi:</b> ${duration} hari\n\n` +
         `Silakan nikmati semua fitur premium ya 😊`,
         { 
-          parse_mode: "Markdown",
+          parse_mode: "HTML",
           reply_markup: bot.getMainKeyboardUser(userId)
         }
       );

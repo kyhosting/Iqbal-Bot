@@ -14,7 +14,7 @@ export default function (bot, db, saveDB) {
       return bot.sendMessage(
         chatId,
         `◆ HITUNG FILE\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+        { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() }
       );
     }
 
@@ -26,7 +26,7 @@ export default function (bot, db, saveDB) {
     return await bot.sendMessage(
       chatId,
       `◆ HITUNG FILE\n(Count Contacts)\n\n▸ Support Format:\n  • TXT (Text)\n  • VCF (Contact)\n\n▸ Hitung total kontak/nomor\n▸ Minimal 1 file\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,
-      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+      { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() }
     );
   });
 
@@ -44,16 +44,16 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId, 
           "❌ Proses dibatalkan ya Kak 😊",
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() }
         );
       }
 
       if (!msg.document) {
         return bot.sendMessage(
           chatId, 
-          "⚠️ *Kirim file dulu ya Kak* 😊",
+          "⚠️ <b>Kirim file dulu ya Kak</b> 😊",
           { 
-            parse_mode: "Markdown",
+            parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()
           }
         );
@@ -66,9 +66,9 @@ export default function (bot, db, saveDB) {
       if (!isTXT && !isVCF) {
         return bot.sendMessage(
           chatId,
-          "⚠️ *Hanya support TXT atau VCF ya Kak* 😊",
+          "⚠️ <b>Hanya support TXT atau VCF ya Kak</b> 😊",
           { 
-            parse_mode: "Markdown",
+            parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()
           }
         );
@@ -103,16 +103,16 @@ export default function (bot, db, saveDB) {
 
         await bot.sendMessage(
           chatId,
-          `✅ *Berhasil hitung kontak Kak!* 📊\n\n` +
-          `📂 *File:* \`${fileName}\`\n` +
-          `📏 *Ukuran:* ${fileSize} KB\n\n` +
-          `📊 *Detail:*\n` +
-          `• Total kontak: *${count}*\n` +
-          `• Kontak unik: *${unique}*\n` +
-          `• Duplikat: *${duplicates}*\n\n` +
+          `✅ <b>Berhasil hitung kontak Kak!</b> 📊\n\n` +
+          `📂 <b>File:</b> \`${fileName}\`\n` +
+          `📏 <b>Ukuran:</b> ${fileSize} KB\n\n` +
+          `📊 <b>Detail:</b>\n` +
+          `• Total kontak: <b>${count}</b>\n` +
+          `• Kontak unik: <b>${unique}</b>\n` +
+          `• Duplikat: <b>${duplicates}</b>\n\n` +
           `Semoga membantu ya! 😊`,
           { 
-            parse_mode: "Markdown",
+            parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()
           }
         );
@@ -126,9 +126,9 @@ export default function (bot, db, saveDB) {
         }
         bot.sendMessage(
           chatId,
-          "⚠️ *Yah… ada masalah saat hitung file* 😔\n\nCoba lagi ya Kak!",
+          "⚠️ <b>Yah… ada masalah saat hitung file</b> 😔\n\nCoba lagi ya Kak!",
           { 
-            parse_mode: "Markdown",
+            parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()
           }
         );

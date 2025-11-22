@@ -15,7 +15,7 @@ export default function (bot, db, saveDB) {
       return bot.sendMessage(
         chatId,
         `◆ XLS TO VCF\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+        { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() }
       );
     }
 
@@ -27,7 +27,7 @@ export default function (bot, db, saveDB) {
     return await bot.sendMessage(
       chatId,
       `◆ XLS TO VCF\n(Excel to Contact Converter)\n\n▸ Support Format:\n  • XLS (Excel)\n  • XLSX (Excel)\n\n▸ Kolom 1: Nama kontak\n▸ Kolom 2: Nomor telepon\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,
-      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+      { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() }
     );
   });
 
@@ -45,16 +45,16 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId, 
           "❌ Proses dibatalkan ya Kak 😊",
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() }
         );
       }
 
       if (!msg.document) {
         return bot.sendMessage(
           chatId,
-          "⚠️ *Kirim file Excel dulu ya Kak* 😊",
+          "⚠️ <b>Kirim file Excel dulu ya Kak</b> 😊",
           { 
-            parse_mode: "Markdown",
+            parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()
           }
         );
@@ -66,9 +66,9 @@ export default function (bot, db, saveDB) {
       if (!isExcel) {
         return bot.sendMessage(
           chatId,
-          "⚠️ *Harus file Excel ya Kak* (.xls atau .xlsx) 😊",
+          "⚠️ <b>Harus file Excel ya Kak</b> (.xls atau .xlsx) 😊",
           { 
-            parse_mode: "Markdown",
+            parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()
           }
         );
@@ -94,9 +94,9 @@ export default function (bot, db, saveDB) {
           delete sessions[userId];
           return bot.sendMessage(
             chatId,
-            "⚠️ *File Excel kosong Kak* 😔\n\nCoba isi dulu ya!",
+            "⚠️ <b>File Excel kosong Kak</b> 😔\n\nCoba isi dulu ya!",
             { 
-              parse_mode: "Markdown",
+              parse_mode: "HTML",
               reply_markup: bot.getMainKeyboard()
             }
           );
@@ -134,9 +134,9 @@ export default function (bot, db, saveDB) {
           delete sessions[userId];
           return bot.sendMessage(
             chatId,
-            "⚠️ *Tidak ada data valid Kak* 😔\n\nPastikan format Excel:\n• Kolom 1: Nama\n• Kolom 2: Nomor",
+            "⚠️ <b>Tidak ada data valid Kak</b> 😔\n\nPastikan format Excel:\n• Kolom 1: Nama\n• Kolom 2: Nomor",
             { 
-              parse_mode: "Markdown",
+              parse_mode: "HTML",
               reply_markup: bot.getMainKeyboard()
             }
           );
@@ -149,15 +149,15 @@ export default function (bot, db, saveDB) {
         await bot.sendDocument(chatId, outputPath);
         await bot.sendMessage(
           chatId,
-          `✅ *Konversi berhasil Kak!* 🎉\n\n` +
-          `📊 *Statistik:*\n` +
+          `✅ <b>Konversi berhasil Kak!</b> 🎉\n\n` +
+          `📊 <b>Statistik:</b>\n` +
           `• Total baris: ${data.length}\n` +
           `• Berhasil convert: ${successCount} kontak\n` +
           `• Dilewati: ${skipCount} baris\n\n` +
-          `📂 *File VCF:* \`${outputFile}\`\n\n` +
+          `📂 <b>File VCF:</b> \`${outputFile}\`\n\n` +
           `Semoga membantu ya! 😊`,
           { 
-            parse_mode: "Markdown",
+            parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()
           }
         );
@@ -170,9 +170,9 @@ export default function (bot, db, saveDB) {
         if (fs.existsSync(localPath)) fs.unlinkSync(localPath);
         bot.sendMessage(
           chatId,
-          "⚠️ *Yah… ada masalah saat convert Excel* 😔\n\nPastikan file Excel format yang benar ya!",
+          "⚠️ <b>Yah… ada masalah saat convert Excel</b> 😔\n\nPastikan file Excel format yang benar ya!",
           { 
-            parse_mode: "Markdown",
+            parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()
           }
         );

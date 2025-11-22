@@ -14,7 +14,7 @@ export default function (bot, db, saveDB) {
       return bot.sendMessage(
         chatId,
         `◆ RENAME KONTAK\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+        { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() }
       );
     }
 
@@ -26,7 +26,7 @@ export default function (bot, db, saveDB) {
     return await bot.sendMessage(
       chatId,
       `◆ RENAME KONTAK\n(Rename All Contacts)\n\n▸ Support Format:\n  • VCF (Contact)\n\n▸ Ubah nama semua kontak\n▸ Dalam file VCF\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,
-      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+      { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() }
     );
   });
 
@@ -44,16 +44,16 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId, 
           "❌ Proses dibatalkan ya Kak 😊",
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() }
         );
       }
 
       if (!msg.document || !msg.document.file_name.endsWith(".vcf")) {
         return bot.sendMessage(
           chatId,
-          "⚠️ *Harus file VCF ya Kak* 😊\n\nCoba kirim file dengan ekstensi .vcf",
+          "⚠️ <b>Harus file VCF ya Kak</b> 😊\n\nCoba kirim file dengan ekstensi .vcf",
           { 
-            parse_mode: "Markdown",
+            parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()
           }
         );
@@ -73,13 +73,13 @@ export default function (bot, db, saveDB) {
 
       return bot.sendMessage(
         chatId,
-        `📝 *Masukkan nama kontak baru ya Kak*\n\n` +
+        `📝 <b>Masukkan nama kontak baru ya Kak</b>\n\n` +
         `Semua kontak di file ini akan diganti namanya dengan nama yang kamu masukkan.\n\n` +
         `Contoh: Iqbal CV, Teman Iqbal, dll\n\n` +
         `✓ Ketik \`done\` setelah selesai\n` +
         `✗ Ketik \`batal\` untuk membatalkan`,
         { 
-          parse_mode: "Markdown",
+          parse_mode: "HTML",
           reply_markup: bot.getMainKeyboard()
         }
       );
@@ -93,7 +93,7 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId, 
           "❌ Proses dibatalkan ya Kak 😊",
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() }
         );
       }
 
@@ -103,7 +103,7 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId, 
           "❌ Nama kontak tidak boleh kosong Kak 😊\n\nCoba lagi ya!",
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() }
         );
       }
 
@@ -125,13 +125,13 @@ export default function (bot, db, saveDB) {
         await bot.sendDocument(chatId, outputPath);
         await bot.sendMessage(
           chatId,
-          `✅ *Semua kontak berhasil direname Kak!* 🎉\n\n` +
-          `👤 *Nama baru:* ${newContactName}\n` +
-          `📊 *Total kontak:* ${contactCount}\n` +
-          `📂 *File baru:* \`${outputFile}\`\n\n` +
+          `✅ <b>Semua kontak berhasil direname Kak!</b> 🎉\n\n` +
+          `👤 <b>Nama baru:</b> ${newContactName}\n` +
+          `📊 <b>Total kontak:</b> ${contactCount}\n` +
+          `📂 <b>File baru:</b> \`${outputFile}\`\n\n` +
           `Semoga membantu ya! 😊`,
           { 
-            parse_mode: "Markdown",
+            parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()
           }
         );
@@ -143,9 +143,9 @@ export default function (bot, db, saveDB) {
         console.error("Gagal rename kontak:", err);
         bot.sendMessage(
           chatId,
-          "⚠️ *Yah… ada masalah saat rename kontak* 😔\n\nCoba lagi ya Kak!",
+          "⚠️ <b>Yah… ada masalah saat rename kontak</b> 😔\n\nCoba lagi ya Kak!",
           { 
-            parse_mode: "Markdown",
+            parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()
           }
         );

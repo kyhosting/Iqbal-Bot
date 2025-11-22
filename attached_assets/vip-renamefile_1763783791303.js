@@ -14,7 +14,7 @@ export default function (bot, db, saveDB) {
       return bot.sendMessage(
         chatId,
         `◆ RENAME FILE\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+        { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() }
       );
     }
 
@@ -26,7 +26,7 @@ export default function (bot, db, saveDB) {
     return await bot.sendMessage(
       chatId,
       `◆ RENAME FILE\n(Rename File)\n\n▸ Support Format:\n  • VCF (Contact)\n  • TXT (Text)\n  • XLSX (Excel)\n\n▸ Ubah nama file Anda\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,
-      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+      { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() }
     );
   });
 
@@ -44,16 +44,16 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId, 
           "❌ Proses dibatalkan ya Kak 😊",
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() }
         );
       }
 
       if (!msg.document) {
         return bot.sendMessage(
           chatId,
-          "⚠️ *Kirim file dulu ya Kak* 😊",
+          "⚠️ <b>Kirim file dulu ya Kak</b> 😊",
           { 
-            parse_mode: "Markdown",
+            parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()
           }
         );
@@ -75,7 +75,7 @@ export default function (bot, db, saveDB) {
 
       return bot.sendMessage(
         chatId,
-        `📝 *Masukkan nama baru untuk file ya Kak*\n\n` +
+        `📝 <b>Masukkan nama baru untuk file ya Kak</b>\n\n` +
         `File asli: \`${msg.document.file_name}\`\n` +
         `Ekstensi: \`${ext}\`\n\n` +
         `Ketik nama baru (tanpa ekstensi).\n` +
@@ -83,7 +83,7 @@ export default function (bot, db, saveDB) {
         `✓ Ketik \`done\` setelah selesai\n` +
         `✗ Ketik \`batal\` untuk batalkan`,
         { 
-          parse_mode: "Markdown",
+          parse_mode: "HTML",
           reply_markup: bot.getMainKeyboard()
         }
       );
@@ -97,7 +97,7 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId, 
           "❌ Proses dibatalkan ya Kak 😊",
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() }
         );
       }
 
@@ -107,7 +107,7 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId, 
           "❌ Nama file tidak boleh kosong Kak 😊\n\nCoba lagi ya!",
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() }
         );
       }
 
@@ -127,12 +127,12 @@ export default function (bot, db, saveDB) {
         await bot.sendDocument(chatId, outputPath);
         await bot.sendMessage(
           chatId,
-          `✅ *File berhasil direname Kak!* 🎉\n\n` +
-          `📂 *Nama lama:* \`${session.originalName}\`\n` +
-          `📂 *Nama baru:* \`${outputFile}\`\n\n` +
+          `✅ <b>File berhasil direname Kak!</b> 🎉\n\n` +
+          `📂 <b>Nama lama:</b> \`${session.originalName}\`\n` +
+          `📂 <b>Nama baru:</b> \`${outputFile}\`\n\n` +
           `Semoga membantu ya! 😊`,
           { 
-            parse_mode: "Markdown",
+            parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()
           }
         );
@@ -144,9 +144,9 @@ export default function (bot, db, saveDB) {
         console.error("Gagal rename file:", err);
         bot.sendMessage(
           chatId,
-          "⚠️ *Yah… ada masalah saat rename file* 😔\n\nCoba lagi ya Kak!",
+          "⚠️ <b>Yah… ada masalah saat rename file</b> 😔\n\nCoba lagi ya Kak!",
           { 
-            parse_mode: "Markdown",
+            parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()
           }
         );

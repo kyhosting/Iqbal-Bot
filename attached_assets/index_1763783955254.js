@@ -124,8 +124,8 @@ bot.getRole = (userId) => {
     user.status = "inactive";
     user.notified_expiry = false;
     saveDB();
-    bot.sendMessage(userId, `⏰ *Masa Trial/VIP kamu sudah habis Kak*\nSekarang kembali jadi user biasa ya 😊`, {
-      parse_mode: "Markdown",
+    bot.sendMessage(userId, `⏰ <b>Masa Trial/VIP kamu sudah habis Kak</b>\nSekarang kembali jadi user biasa ya 😊`, {
+      parse_mode: "HTML",
       reply_markup: bot.getMainKeyboard()
     }).catch(() => {});
   }
@@ -143,7 +143,7 @@ bot.deleteAndSend = async (query, newText, newMarkup = null) => {
     await delay(300);
     
     // Send new message
-    const options = { parse_mode: "Markdown" };
+    const options = { parse_mode: "HTML" };
     if (newMarkup) options.reply_markup = newMarkup;
     
     await bot.sendMessage(query.message.chat.id, newText, options);
@@ -216,24 +216,24 @@ bot.on("callback_query", async (query) => {
         
         // Helper: Format dashboard message (EXACT format dari user)
         const getDashboardMessage = (user) => {
-          const daysLeft = Math.ceil((user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24));
+          const daysLeft = Math.ceil((user.vip_expired - Date.now()) / (1000 <b> 60 </b> 60 * 24));
           const expireDate = new Date(user.vip_expired).toLocaleDateString("id-ID");
           
-          return `🎌 *iqbal ᴄᴠ ʙᴏᴛꜱ*\n(by iqbaldev)\n\n` +
+          return `🎌 <b>iqbal ᴄᴠ ʙᴏᴛꜱ</b>\n(by iqbaldev)\n\n` +
             `╭─❖\n` +
             `│ こんにちは、私は Iqbalʙᴏᴛ です。\n` +
             `│ 私はファイル変換と管理を担当します。\n` +
             `│ ✦ Created by: @Iqbaldev\n` +
             `╰───────────────❖\n\n` +
             `╭─❖ ꜱᴛᴀᴛᴜꜱ ᴀᴋᴄᴇꜱ\n` +
-            `│ ➤ Nama: *${user.first_name || "User"}*\n` +
+            `│ ➤ Nama: <b>${user.first_name || "User"}</b>\n` +
             `│ ➤ ID: \`${user.id}\`\n` +
             `│ ➤ Username: @${user.username || "-"}\n` +
-            `│ ➤ Role: *${user.role.toUpperCase()}*\n` +
-            `│ ➤ Status: *✅ Aktif*\n` +
-            `│ ➤ Masa Aktif: *${expireDate}*\n` +
-            `│ ➤ Hari Tersisa: *${daysLeft} hari*\n` +
-            `│ ➤ Total Operasi: *${user.total_operation || 0}*\n` +
+            `│ ➤ Role: <b>${user.role.toUpperCase()}</b>\n` +
+            `│ ➤ Status: <b>✅ Aktif</b>\n` +
+            `│ ➤ Masa Aktif: <b>${expireDate}</b>\n` +
+            `│ ➤ Hari Tersisa: <b>${daysLeft} hari</b>\n` +
+            `│ ➤ Total Operasi: <b>${user.total_operation || 0}</b>\n` +
             `╰───────────────❖\n\n` +
             `╭─❖ ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ\n` +
             `│ ➤ 📄 TXT 📇 VCF 📊 XLSX\n` +
@@ -260,7 +260,7 @@ bot.on("callback_query", async (query) => {
         
         // Jika user belum ada di database, tambahkan dengan trial 1 hari
         if (!db.users[userId]) {
-          const trialExpired = Date.now() + 1 * 24 * 60 * 60 * 1000;
+          const trialExpired = Date.now() + 1 <b> 24 </b> 60 <b> 60 </b> 1000;
           db.users[userId] = {
             id: userId,
             username: (await bot.getChat(userId)).username || "",
@@ -284,18 +284,18 @@ bot.on("callback_query", async (query) => {
               const fileId = photos.photos[0][0].file_id;
               await bot.sendPhoto(userId, fileId, {
                 caption: caption,
-                parse_mode: "Markdown",
+                parse_mode: "HTML",
                 reply_markup: bot.getMainKeyboard()
               });
             } else {
               await bot.sendMessage(userId, caption, {
-                parse_mode: "Markdown",
+                parse_mode: "HTML",
                 reply_markup: bot.getMainKeyboard()
               });
             }
           } catch (err) {
             await bot.sendMessage(userId, caption, {
-              parse_mode: "Markdown",
+              parse_mode: "HTML",
               reply_markup: bot.getMainKeyboard()
             }).catch(() => {});
           }
@@ -318,18 +318,18 @@ bot.on("callback_query", async (query) => {
               const fileId = photos.photos[0][0].file_id;
               await bot.sendPhoto(userId, fileId, {
                 caption: caption,
-                parse_mode: "Markdown",
+                parse_mode: "HTML",
                 reply_markup: bot.getMainKeyboard()
               });
             } else {
               await bot.sendMessage(userId, caption, {
-                parse_mode: "Markdown",
+                parse_mode: "HTML",
                 reply_markup: bot.getMainKeyboard()
               });
             }
           } catch (err) {
             await bot.sendMessage(userId, caption, {
-              parse_mode: "Markdown",
+              parse_mode: "HTML",
               reply_markup: bot.getMainKeyboard()
             }).catch(() => {});
           }
@@ -347,10 +347,10 @@ setInterval(() => {
     const user = db.users[id];
     
     // Notif trial/VIP akan habis dalam 6 jam
-    if (user.vip_expired && user.vip_expired > Date.now() && user.vip_expired - Date.now() < 6 * 60 * 60 * 1000 && !user.notified_expiry) {
-      const hours = Math.ceil((user.vip_expired - Date.now()) / (1000 * 60 * 60));
-      bot.sendMessage(id, `⏰ *PERINGATAN: Trial/VIP kamu akan habis dalam ${hours} jam lagi Kak!*\n\n🎁 Perpanjang sekarang sebelum akses dicabut ya! 😊`, { 
-        parse_mode: "Markdown",
+    if (user.vip_expired && user.vip_expired > Date.now() && user.vip_expired - Date.now() < 6 <b> 60 </b> 60 * 1000 && !user.notified_expiry) {
+      const hours = Math.ceil((user.vip_expired - Date.now()) / (1000 <b> 60 </b> 60));
+      bot.sendMessage(id, `⏰ <b>PERINGATAN: Trial/VIP kamu akan habis dalam ${hours} jam lagi Kak!</b>\n\n🎁 Perpanjang sekarang sebelum akses dicabut ya! 😊`, { 
+        parse_mode: "HTML",
         reply_markup: bot.getMainKeyboard()
       }).catch(() => {});
       user.notified_expiry = true;
@@ -363,14 +363,14 @@ setInterval(() => {
       user.vip_expired = 0;
       user.status = "inactive";
       user.notified_expiry = false;
-      bot.sendMessage(id, "⏰ *Masa Trial/VIP kamu telah berakhir Kak* 😊\n\nKembali jadi user biasa ya. Beli VIP lagi untuk akses fitur premium!", { 
-        parse_mode: "Markdown",
+      bot.sendMessage(id, "⏰ <b>Masa Trial/VIP kamu telah berakhir Kak</b> 😊\n\nKembali jadi user biasa ya. Beli VIP lagi untuk akses fitur premium!", { 
+        parse_mode: "HTML",
         reply_markup: bot.getMainKeyboard()
       }).catch(() => {});
     }
   }
   saveDB();
-}, 30 * 60 * 1000); // cek tiap 30 menit
+}, 30 <b> 60 </b> 1000); // cek tiap 30 menit
 
 // ===== GROUP LEAVE DETECTOR - AUTO REVOKE AKSES (Suspend, not delete trial) =====
 bot.on("my_chat_member", async (update) => {
@@ -390,13 +390,13 @@ bot.on("my_chat_member", async (update) => {
         saveDB();
         
         bot.sendMessage(userId, 
-          `⚠️ *Anda Keluar Dari Grup*\n\n` +
+          `⚠️ <b>Anda Keluar Dari Grup</b>\n\n` +
           `Akses bot dihentikan. Silakan join kembali untuk melanjutkan.\n\n` +
           `📌 Grup yang wajib diikuti:\n` +
           `• @agentviber12\n` +
           `• @channelviber\n\n` +
           `Ketik /start untuk verifikasi ulang 😊`,
-          { parse_mode: "Markdown" }
+          { parse_mode: "HTML" }
         ).catch(() => {});
       }
     }
