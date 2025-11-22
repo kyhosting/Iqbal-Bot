@@ -3,6 +3,18 @@ import path from "path";
 
 export default function (bot) {
   const sessions = {};
+  const userMessages = {};
+
+  async function sendWithDelete(userId, chatId, text, options = {}) {
+    if (userMessages[userId]) {
+      try {
+        await bot.deleteMessage(chatId, userMessages[userId]);
+      } catch (e) {}
+    }
+    const msg = await bot.sendMessage(chatId, text, options);
+    userMessages[userId] = msg.message_id;
+    return msg;
+  }
 
   bot.onText(/^⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ$|^\/vcftotxt$/i, async (msg) => {
     const chatId = msg.chat.id;

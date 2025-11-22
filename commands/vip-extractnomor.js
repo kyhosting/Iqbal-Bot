@@ -50,7 +50,7 @@ export default function (bot, db, saveDB) {
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆◆  DIBATALKAN  ◆◆
+        return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
 │  ❌ Proses dibatalkan
@@ -121,7 +121,7 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text)) {
         try { fs.unlinkSync(session.localPath); } catch {}
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆◆  DIBATALKAN  ◆◆
+        return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
 │  ❌ Proses dibatalkan
