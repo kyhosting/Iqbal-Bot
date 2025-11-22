@@ -1,0 +1,17 @@
+{
+  "name": "iqbal-cv-bot",
+  "version": "1.0.0",
+  "description": "Telegram Bot untuk Konversi File VCF",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "node-telegram-bot-api": "^0.66.0",
+    "xlsx": "^0.18.5",
+    "vcard-parser": "^1.0.0",
+    "cheerio": "github:syawaloktasyahputra/cheerio",
+    "node-fetch": "^3.3.2"
+  }
+}
