@@ -9,9 +9,21 @@ function generateRandomCode() {
 
 export default function (bot, db, saveDB) {
   const sessions = {};
-  const userMessages = {}; // Track last message untuk auto-delete
+  const userMessages = {}; // Track message IDs untuk auto-delete
 
-  bot.onText(/^⛓️MENU OWNER$/i, (msg) => {
+  // Helper function untuk delete old message dan send new message
+  async function sendWithDelete(userId, chatId, text, options = {}) {
+    if (userMessages[userId]) {
+      try {
+        await bot.deleteMessage(chatId, userMessages[userId]);
+      } catch (e) {}
+    }
+    const msg = await bot.sendMessage(chatId, text, options);
+    userMessages[userId] = msg.message_id;
+    return msg;
+  }
+
+  bot.onText(/^⛓️MENU OWNER$/i, async (msg) => {
     const userId = msg.from.id;
     const chatId = msg.chat.id;
 
@@ -35,8 +47,7 @@ export default function (bot, db, saveDB) {
       ]
     };
 
-    bot.sendMessage(
-      chatId,
+    await sendWithDelete(userId, chatId, 
       `◆◆  PANEL ADMIN AKTIF  ◆◆
 
 ┌─❖
@@ -51,7 +62,7 @@ export default function (bot, db, saveDB) {
     );
   });
 
-  bot.onText(/^\/owner$/, (msg) => {
+  bot.onText(/^\/owner$/, async (msg) => {
     const userId = msg.from.id;
     const chatId = msg.chat.id;
 
@@ -75,8 +86,7 @@ export default function (bot, db, saveDB) {
       ]
     };
 
-    bot.sendMessage(
-      chatId,
+    await sendWithDelete(userId, chatId,
       `◆◆  PANEL ADMIN AKTIF  ◆◆
 
 ┌─❖
@@ -127,16 +137,14 @@ export default function (bot, db, saveDB) {
       };
 
       await bot.answerCallbackQuery(query.id);
-      await bot.sendMessage(chatId, message, { parse_mode: "HTML", reply_markup: backKeyboard });
+      await sendWithDelete(userId, chatId, message, { parse_mode: "HTML", reply_markup: backKeyboard });
     }
 
     // CREATE CODE
     else if (data === "owner_create_code") {
       sessions[userId] = { step: "create_code_name" };
       await bot.answerCallbackQuery(query.id);
-
-      await bot.sendMessage(
-        chatId,
+      await sendWithDelete(userId, chatId,
         `◆◆  BUAT KODE  ◆◆
 
 ┌─❖
@@ -154,9 +162,7 @@ export default function (bot, db, saveDB) {
     else if (data === "owner_delete_code") {
       sessions[userId] = { step: "delete_code" };
       await bot.answerCallbackQuery(query.id);
-
-      await bot.sendMessage(
-        chatId,
+      await sendWithDelete(userId, chatId,
         `◆◆  HAPUS KODE  ◆◆
 
 ┌─❖
@@ -193,16 +199,14 @@ export default function (bot, db, saveDB) {
       };
 
       await bot.answerCallbackQuery(query.id);
-      await bot.sendMessage(chatId, message, { parse_mode: "HTML", reply_markup: backKeyboard });
+      await sendWithDelete(userId, chatId, message, { parse_mode: "HTML", reply_markup: backKeyboard });
     }
 
     // BROADCAST
     else if (data === "owner_broadcast") {
       sessions[userId] = { step: "broadcast_message" };
       await bot.answerCallbackQuery(query.id);
-
-      await bot.sendMessage(
-        chatId,
+      await sendWithDelete(userId, chatId,
         `◆◆  BROADCAST KE SEMUA USER  ◆◆
 
 ┌─❖
@@ -221,9 +225,7 @@ export default function (bot, db, saveDB) {
     else if (data === "owner_set_vip") {
       sessions[userId] = { step: "setvip_userid" };
       await bot.answerCallbackQuery(query.id);
-
-      await bot.sendMessage(
-        chatId,
+      await sendWithDelete(userId, chatId,
         `◆◆  SET VIP MANUAL  ◆◆
 
 ┌─❖
@@ -240,13 +242,6 @@ export default function (bot, db, saveDB) {
       await bot.answerCallbackQuery(query.id);
       delete sessions[userId];
 
-      // Delete old message
-      if (userMessages[userId]) {
-        try {
-          await bot.deleteMessage(chatId, userMessages[userId]);
-        } catch (e) {}
-      }
-
       const keyboard = {
         inline_keyboard: [
           [{ text: "➕ Buat Kode", callback_data: "owner_create_code" }, { text: "📋 Lihat Kode", callback_data: "owner_list_codes" }],
@@ -255,8 +250,7 @@ export default function (bot, db, saveDB) {
         ]
       };
 
-      const msg = await bot.sendMessage(
-        chatId,
+      await sendWithDelete(userId, chatId,
         `◆◆  PANEL ADMIN AKTIF  ◆◆
 
 ┌─❖
@@ -266,7 +260,6 @@ export default function (bot, db, saveDB) {
 └─❖`,
         { parse_mode: "HTML", reply_markup: keyboard }
       );
-      userMessages[userId] = msg.message_id;
     }
   });
 
@@ -282,8 +275,7 @@ export default function (bot, db, saveDB) {
     if (session.step === "create_code_name") {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(
-          chatId,
+        return sendWithDelete(userId, chatId,
           `◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
@@ -294,8 +286,7 @@ export default function (bot, db, saveDB) {
       }
       sessions[userId].code_name = text.toUpperCase();
       sessions[userId].step = "create_code_duration";
-      return bot.sendMessage(
-        chatId,
+      return sendWithDelete(userId, chatId,
         `◆◆  DURASI VIP  ◆◆
 
 ┌─❖
@@ -313,16 +304,15 @@ export default function (bot, db, saveDB) {
     else if (session.step === "create_code_duration") {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆◆  DIBATALKAN  ◆◆\n\n┌─❖\n│  ❌ Dibatalkan\n└─❖`, { parse_mode: "HTML" });
+        return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆\n\n┌─❖\n│  ❌ Dibatalkan\n└─❖`, { parse_mode: "HTML" });
       }
       const duration = parseInt(text);
       if (isNaN(duration) || duration <= 0) {
-        return bot.sendMessage(chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ Durasi harus angka positif!\n└─❖`, { parse_mode: "HTML" });
+        return sendWithDelete(userId, chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ Durasi harus angka positif!\n└─❖`, { parse_mode: "HTML" });
       }
       sessions[userId].duration = duration;
       sessions[userId].step = "create_code_expiry";
-      return bot.sendMessage(
-        chatId,
+      return sendWithDelete(userId, chatId,
         `◆◆  TANGGAL EXPIRED  ◆◆
 
 ┌─❖
@@ -340,10 +330,10 @@ export default function (bot, db, saveDB) {
     else if (session.step === "create_code_expiry") {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆◆  DIBATALKAN  ◆◆\n\n┌─❖\n│  ❌ Dibatalkan\n└─❖`, { parse_mode: "HTML" });
+        return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆\n\n┌─❖\n│  ❌ Dibatalkan\n└─❖`, { parse_mode: "HTML" });
       }
       if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) {
-        return bot.sendMessage(chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ Format harus YYYY-MM-DD!\n└─❖`, { parse_mode: "HTML" });
+        return sendWithDelete(userId, chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ Format harus YYYY-MM-DD!\n└─❖`, { parse_mode: "HTML" });
       }
 
       const code = session.code_name;
@@ -356,15 +346,14 @@ export default function (bot, db, saveDB) {
       if (bot.saveRedeemDB) bot.saveRedeemDB();
 
       delete sessions[userId];
-      
+
       const backKeyboard = {
         inline_keyboard: [
           [{ text: "◀️ Kembali ke Menu", callback_data: "owner_back_menu" }]
         ]
       };
 
-      return bot.sendMessage(
-        chatId,
+      return sendWithDelete(userId, chatId,
         `◆◆  KODE DIBUAT  ◆◆
 
 ┌─❖
@@ -382,27 +371,26 @@ export default function (bot, db, saveDB) {
     else if (session.step === "delete_code") {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆◆  DIBATALKAN  ◆◆\n\n┌─❖\n│  ❌ Dibatalkan\n└─❖`, { parse_mode: "HTML" });
+        return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆\n\n┌─❖\n│  ❌ Dibatalkan\n└─❖`, { parse_mode: "HTML" });
       }
 
       const code = text.toUpperCase();
       if (!bot.redeemDB[code]) {
-        return bot.sendMessage(chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ Kode tidak ditemukan!\n└─❖`, { parse_mode: "HTML" });
+        return sendWithDelete(userId, chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ Kode tidak ditemukan!\n└─❖`, { parse_mode: "HTML" });
       }
 
       delete bot.redeemDB[code];
       if (bot.saveRedeemDB) bot.saveRedeemDB();
 
       delete sessions[userId];
-      
+
       const backKeyboard = {
         inline_keyboard: [
           [{ text: "◀️ Kembali ke Menu", callback_data: "owner_back_menu" }]
         ]
       };
 
-      return bot.sendMessage(
-        chatId,
+      return sendWithDelete(userId, chatId,
         `◆◆  KODE DIHAPUS  ◆◆
 
 ┌─❖
@@ -418,7 +406,7 @@ export default function (bot, db, saveDB) {
     else if (session.step === "broadcast_message") {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆◆  DIBATALKAN  ◆◆\n\n┌─❖\n│  ❌ Dibatalkan\n└─❖`, { parse_mode: "HTML" });
+        return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆\n\n┌─❖\n│  ❌ Dibatalkan\n└─❖`, { parse_mode: "HTML" });
       }
 
       const allUsers = Object.values(db.users);
@@ -437,7 +425,7 @@ ${text}
         try {
           await bot.sendMessage(user.id, broadcastMsg, { parse_mode: "HTML" });
           sent++;
-          await new Promise(resolve => setTimeout(resolve, 100)); // Delay untuk avoid rate limit
+          await new Promise(resolve => setTimeout(resolve, 100));
         } catch (e) {
           failed++;
         }
@@ -451,8 +439,7 @@ ${text}
         ]
       };
 
-      return bot.sendMessage(
-        chatId,
+      return sendWithDelete(userId, chatId,
         `◆◆  BROADCAST SELESAI  ◆◆
 
 ┌─❖
@@ -469,18 +456,17 @@ ${text}
     else if (session.step === "setvip_userid") {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆◆  DIBATALKAN  ◆◆\n\n┌─❖\n│  ❌ Dibatalkan\n└─❖`, { parse_mode: "HTML" });
+        return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆\n\n┌─❖\n│  ❌ Dibatalkan\n└─❖`, { parse_mode: "HTML" });
       }
 
       const targetUserId = parseInt(text);
       if (isNaN(targetUserId)) {
-        return bot.sendMessage(chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ User ID harus angka!\n└─❖`, { parse_mode: "HTML" });
+        return sendWithDelete(userId, chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ User ID harus angka!\n└─❖`, { parse_mode: "HTML" });
       }
 
       sessions[userId].target_user_id = targetUserId;
       sessions[userId].step = "setvip_duration";
-      return bot.sendMessage(
-        chatId,
+      return sendWithDelete(userId, chatId,
         `◆◆  DURASI VIP  ◆◆
 
 ┌─❖
@@ -496,12 +482,12 @@ ${text}
     else if (session.step === "setvip_duration") {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆◆  DIBATALKAN  ◆◆\n\n┌─❖\n│  ❌ Dibatalkan\n└─❖`, { parse_mode: "HTML" });
+        return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆\n\n┌─❖\n│  ❌ Dibatalkan\n└─❖`, { parse_mode: "HTML" });
       }
 
       const duration = parseInt(text);
       if (isNaN(duration) || duration <= 0) {
-        return bot.sendMessage(chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ Durasi harus angka positif!\n└─❖`, { parse_mode: "HTML" });
+        return sendWithDelete(userId, chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ Durasi harus angka positif!\n└─❖`, { parse_mode: "HTML" });
       }
 
       const targetUserId = session.target_user_id;
@@ -524,7 +510,7 @@ ${text}
       saveDB();
 
       delete sessions[userId];
-      
+
       const backKeyboard = {
         inline_keyboard: [
           [{ text: "◀️ Kembali ke Menu", callback_data: "owner_back_menu" }]
@@ -532,8 +518,7 @@ ${text}
       };
 
       const expDate = new Date(db.users[targetUserId].vip_expired).toLocaleDateString("id-ID");
-      return bot.sendMessage(
-        chatId,
+      return sendWithDelete(userId, chatId,
         `◆◆  VIP DISET  ◆◆
 
 ┌─❖
