@@ -17,10 +17,6 @@ author = "agent"
 task = "workflow.run"
 args = "Iqbal CV Bot"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Iqbal CV Bot Python"
-
 [[workflows.workflow]]
 name = "Iqbal CV Bot"
 author = "agent"
@@ -28,17 +24,6 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node index.js"
-
-[workflows.workflow.metadata]
-outputType = "console"
-
-[[workflows.workflow]]
-name = "Iqbal CV Bot Python"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd python_src && python3 main.py"
 
 [workflows.workflow.metadata]
 outputType = "console"
