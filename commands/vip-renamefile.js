@@ -4,33 +4,40 @@ import path from "path";
 export default function (bot, db, saveDB) {
   const sessions = {};
 
-  // Handle keyboard button & /renamefile command (MERGED - no duplicate!)
   bot.onText(/^⛓️ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ$|^\/renamefile$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);
 
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(
-        chatId,
-        `◆ RENAME FILE\n\n▸ ◆◆ AKSES DITOLAK ◆◆
+      return bot.sendMessage(chatId,
+        `◆◆  RENAME FILE  ◆◆
 
 ┌─❖
-├ ❌ Akses Ditolak
-├ Fitur khusus VIP
-└─❖\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
+│  ❌ Akses Ditolak
+│
+│  Fitur khusus VIP
+└─❖`,
         { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
 
-    // Verify group membership
     const hasAccess = await bot.verifyGroupAccess(userId, chatId);
     if (!hasAccess) return;
 
     sessions[userId] = { step: 1 };
-    return await bot.sendMessage(
-      chatId,
-      `◆ RENAME FILE\n(Rename File)\n\n▸ Support Format:\n  • VCF (Contact)\n  • TXT (Text)\n  • XLSX (Excel)\n\n▸ Ubah nama file Anda\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,
+    return await bot.sendMessage(chatId,
+      `◆◆  RENAME FILE  ◆◆
+
+┌─❖
+│  Rename File
+│
+│  Support: VCF, TXT, XLSX
+│
+│  Ubah nama file Anda
+│
+│  Kirim file untuk start
+└─❖`,
       { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
     );
   });
@@ -42,25 +49,27 @@ export default function (bot, db, saveDB) {
     const session = sessions[userId];
     if (!session) return;
 
-    // Step 1 → kirim file
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(
-          chatId, 
-          "◆◆ DIBATALKAN ◆◆\n\n╭─❖\n│ ❌ <b>Proses dibatalkan</b>\n╰───────────────❖ ya Kak 😊",
+        return bot.sendMessage(chatId,
+          `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Proses dibatalkan
+└─❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
       if (!msg.document) {
-        return bot.sendMessage(
-          chatId,
-          "⚠️ <b>Kirim file dulu ya Kak</b> 😊",
+        return bot.sendMessage(chatId,
+          `◆◆  RENAME FILE  ◆◆
+
+┌─❖
+│  ⚠️ Kirim file dulu
+└─❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-            parse_mode: "HTML",
-            reply_markup: bot.getMainKeyboardUser(userId)
-          }
         );
       }
 
@@ -78,83 +87,69 @@ export default function (bot, db, saveDB) {
       session.originalName = msg.document.file_name;
       session.step = 2;
 
-      return bot.sendMessage(
-        chatId,
-        `📝 <b>Masukkan nama baru untuk file ya Kak</b>\n\n` +
-        `File asli: \`${msg.document.file_name}\`\n` +
-        `Ekstensi: \`${ext}\`\n\n` +
-        `Ketik nama baru (tanpa ekstensi).\n` +
-        `Ketik \`skip\` untuk pakai nama yang sama.\n\n` +
-        `✓ Ketik \`done\` setelah selesai\n` +
-        `✗ Ketik \`batal\` untuk batalkan`,
+      return bot.sendMessage(chatId,
+        `◆◆  RENAME FILE  ◆◆
+
+┌─❖
+│  📝 Masukkan nama baru
+│
+│  File: ${msg.document.file_name}
+│
+│  Ekstensi: ${ext}
+│
+│  (Tanpa ekstensi)
+└─❖`,
         { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-          parse_mode: "HTML",
-          reply_markup: bot.getMainKeyboardUser(userId)
-        }
       );
     }
 
-    // Step 2 → input nama baru
     if (session.step === 2) {
       if (/^batal$/i.test(text)) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
-        return bot.sendMessage(
-          chatId, 
-          "◆◆ DIBATALKAN ◆◆\n\n╭─❖\n│ ❌ <b>Proses dibatalkan</b>\n╰───────────────❖ ya Kak 😊",
+        return bot.sendMessage(chatId,
+          `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Proses dibatalkan
+└─❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
-      if (/^done$/i.test(text)) {
-        fs.unlinkSync(session.file);
-        delete sessions[userId];
-        return bot.sendMessage(
-          chatId, 
-          "❌ Nama file tidak boleh kosong Kak 😊\n\nCoba lagi ya!",
-          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-        );
-      }
-
-      let newName = text;
-      if (/^skip$/i.test(text)) {
-        newName = path.basename(session.originalName, session.ext);
-      } else {
-        newName = text.trim().replace(/[^a-zA-Z0-9-_\s]/g, "_");
-      }
-
-      const outputFile = `${newName}${session.ext}`;
-      const outputPath = path.join(process.cwd(), outputFile);
+      const newName = text.replace(/[^a-zA-Z0-9-_]/g, "_") || "file_baru";
+      const newPath = path.join(process.cwd(), `${newName}${session.ext}`);
 
       try {
-        fs.copyFileSync(session.file, outputPath);
+        fs.renameSync(session.file, newPath);
+        await bot.sendDocument(chatId, newPath);
+        await bot.sendMessage(chatId,
+          `◆◆  RENAME SUKSES  ◆◆
 
-        await bot.sendDocument(chatId, outputPath);
-        await bot.sendMessage(
-          chatId,
-          `✅ <b>File berhasil direname Kak!</b> 🎉\n\n` +
-          `📂 <b>Nama lama:</b> \`${session.originalName}\`\n` +
-          `📂 <b>Nama baru:</b> \`${outputFile}\`\n\n` +
-          `Semoga membantu ya! 😊`,
+┌─❖
+│  ✅ File berhasil direname
+│
+│  Nama lama: ${session.originalName}
+│
+│  Nama baru: ${newName}${session.ext}
+└─❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-            parse_mode: "HTML",
-            reply_markup: bot.getMainKeyboardUser(userId)
-          }
         );
 
         bot.incrementOperation(userId);
-        fs.unlinkSync(outputPath);
-        fs.unlinkSync(session.file);
       } catch (err) {
-        console.error("Gagal rename file:", err);
-        bot.sendMessage(
-          chatId,
-          "⚠️ <b>Yah… ada masalah saat rename file</b> 😔\n\nCoba lagi ya Kak!",
+        console.error("Rename error:", err);
+        bot.sendMessage(chatId,
+          `◆◆  RENAME FILE  ◆◆
+
+┌─❖
+│  ⚠️ Rename gagal
+└─❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-            parse_mode: "HTML",
-            reply_markup: bot.getMainKeyboardUser(userId)
-          }
         );
+      } finally {
+        if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
+        if (fs.existsSync(newPath)) fs.unlinkSync(newPath);
       }
 
       delete sessions[userId];

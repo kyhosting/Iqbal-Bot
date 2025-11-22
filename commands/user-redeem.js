@@ -6,18 +6,17 @@ export default function (bot, db, saveDB) {
     const userId = msg.from.id;
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(
-      chatId,
-      `◆◆ REDEEM CODE SYSTEM ◆◆\n\n` +
-      `┌─❖\n` +
-      `├ 🎁 <b>Input Kode Redeem</b>\n` +
-      `├ ➤ Masukkan kode redeem kamu\n` +
-      `├ ➤ Ketik <code>batal</code> untuk membatalkan\n` +
-      `└─❖`,
+    bot.sendMessage(chatId,
+      `◆◆  REDEEM CODE SYSTEM  ◆◆
+
+┌─❖
+│  🎁 Input Kode Redeem
+│
+│  Masukkan kode redeem kamu
+│
+│  Ketik 'batal' untuk membatalkan
+└─❖`,
       { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-        parse_mode: "HTML",
-        reply_markup: bot.getMainKeyboardUser(userId)
-      }
     );
   });
 
@@ -26,18 +25,17 @@ export default function (bot, db, saveDB) {
     const userId = msg.from.id;
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(
-      chatId,
-      `◆◆ REDEEM CODE SYSTEM ◆◆\n\n` +
-      `┌─❖\n` +
-      `├ 🎁 <b>Input Kode Redeem</b>\n` +
-      `├ ➤ Masukkan kode redeem kamu\n` +
-      `├ ➤ Ketik <code>batal</code> untuk membatalkan\n` +
-      `└─❖`,
+    bot.sendMessage(chatId,
+      `◆◆  REDEEM CODE SYSTEM  ◆◆
+
+┌─❖
+│  🎁 Input Kode Redeem
+│
+│  Masukkan kode redeem kamu
+│
+│  Ketik 'batal' untuk membatalkan
+└─❖`,
       { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-        parse_mode: "HTML",
-        reply_markup: bot.getMainKeyboardUser(userId)
-      }
     );
   });
 
@@ -52,9 +50,12 @@ export default function (bot, db, saveDB) {
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(
-          chatId, 
-          `❌ <b>Proses dibatalkan</b>\n\n┌─❖\n├ ➤ Redeem gagal\n└─❖`,
+        return bot.sendMessage(chatId,
+          `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Redeem dibatalkan
+└─❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
@@ -64,25 +65,31 @@ export default function (bot, db, saveDB) {
 
       if (!redeemData) {
         delete sessions[userId];
-        return bot.sendMessage(
-          chatId,
-          `❌ <b>Kode Tidak Valid</b>\n\n◆◆ ERROR ◆◆\n\n┌─❖\n├ ➤ Kode: <code>${code}</code>\n├ ➤ Status: Tidak ditemukan\n├ ➤ Coba cek lagi ya 🙏\n└─❖`,
+        return bot.sendMessage(chatId,
+          `◆◆  KODE TIDAK VALID  ◆◆
+
+┌─❖
+│  Kode: ${code}
+│
+│  Status: Tidak ditemukan
+│
+│  Coba cek lagi ya 🙏
+└─❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-            parse_mode: "HTML",
-            reply_markup: bot.getMainKeyboardUser(userId)
-          }
         );
       }
 
       if (redeemData.used_by) {
         delete sessions[userId];
-        return bot.sendMessage(
-          chatId,
-          `❌ <b>Kode Sudah Digunakan</b>\n\n◆◆ ERROR ◆◆\n\n┌─❖\n├ ➤ Kode sudah dipakai user lain\n├ ➤ Silakan minta kode baru\n└─❖`,
+        return bot.sendMessage(chatId,
+          `◆◆  KODE SUDAH DIGUNAKAN  ◆◆
+
+┌─❖
+│  Kode sudah dipakai user lain
+│
+│  Silakan minta kode baru
+└─❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-            parse_mode: "HTML",
-            reply_markup: bot.getMainKeyboardUser(userId)
-          }
         );
       }
 
@@ -90,56 +97,68 @@ export default function (bot, db, saveDB) {
         const expDate = new Date(redeemData.expires_at);
         if (Date.now() > expDate.getTime()) {
           delete sessions[userId];
-          return bot.sendMessage(
-            chatId,
-            `❌ <b>Kode Kadaluarsa</b>\n\n◆◆ EXPIRED ◆◆\n\n┌─❖\n├ ➤ Expired: ${expDate.toLocaleDateString('id-ID')}\n├ ➤ Kode sudah tidak berlaku\n└─❖`,
+          return bot.sendMessage(chatId,
+            `◆◆  KODE KADALUARSA  ◆◆
+
+┌─❖
+│  Expired: ${expDate.toLocaleDateString('id-ID')}
+│
+│  Kode sudah tidak berlaku
+└─❖`,
             { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-              parse_mode: "HTML",
-              reply_markup: bot.getMainKeyboardUser(userId)
-            }
           );
         }
       }
 
       let duration = redeemData.duration || 30;
       let vipExpired = Date.now() + (duration * 24 * 60 * 60 * 1000);
-      let expiredDate = new Date(vipExpired);
+
+      const user = db.users[userId] || {};
+      if (user.vip_expired && user.vip_expired > Date.now()) {
+        vipExpired = user.vip_expired + (duration * 24 * 60 * 60 * 1000);
+      }
+
+      redeemData.used_by = userId;
+      redeemData.used_date = new Date().toLocaleDateString('id-ID');
+      bot.saveRedeemDB();
 
       if (!db.users[userId]) {
         db.users[userId] = {
           id: userId,
-          username: msg.from.username || "",
-          first_name: msg.from.first_name || "",
-          last_name: msg.from.last_name || "",
+          username: "",
+          first_name: "",
+          last_name: "",
           role: "vip",
           vip_expired: vipExpired,
           status: "active",
-          total_operation: 0,
-          notified_expiry: false
+          total_operation: 0
         };
       } else {
         db.users[userId].role = "vip";
         db.users[userId].vip_expired = vipExpired;
         db.users[userId].status = "active";
-        db.users[userId].notified_expiry = false;
       }
-
-      bot.redeemDB[code].used_by = userId;
-      bot.redeemDB[code].used_at = new Date().toISOString();
-
       saveDB();
-      bot.saveRedeemDB();
 
-      await bot.sendMessage(
-        chatId,
-        `✅ <b>Redeem Berhasil!</b>\n\n◆◆ VIP ACTIVATED ◆◆\n\n┌─❖\n├ 💎 <b>Status</b>\n├ ➤ Kode: <code>${code}</code>\n├ ➤ Status: <b>VIP AKTIF</b>\n├ ➤ Berlaku: ${expiredDate.toLocaleDateString('id-ID')}\n├ ➤ Durasi: <b>${duration} hari</b>\n└─❖\n\n✨ Nikmati semua fitur premium ya 😊`,
-        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-          parse_mode: "HTML",
-          reply_markup: bot.getMainKeyboardUser(userId)
-        }
-      );
+      const daysLeft = Math.ceil((vipExpired - Date.now()) / (1000 * 60 * 60 * 24));
 
       delete sessions[userId];
+      return bot.sendMessage(chatId,
+        `◆◆  REDEEM SUKSES  ◆◆
+
+┌─❖
+│  ✅ VIP Activated!
+│
+│  Kode: ${code}
+│
+│  Durasi: ${duration} hari
+│
+│  Sisa: ${daysLeft} hari
+│
+│  💎 Selamat bersenang-senang!
+└─❖`,
+        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+      );
     }
   });
 }
