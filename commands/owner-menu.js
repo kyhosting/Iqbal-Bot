@@ -244,7 +244,7 @@ export default function (bot, db, saveDB) {
     if (session && session.step === "create_code_duration") {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆◆ DIBATALKAN ◆◆\n\n┌─❖\n├ ❌ Proses dibatalkan\n└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+        return bot.sendMessage(chatId, `◆◆ DIBATALKAN ◆◆\n\n┌─❖\n├ ❌ Proses dibatalkan\n└─❖`, { reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       const duration = parseInt(text);
@@ -260,7 +260,7 @@ export default function (bot, db, saveDB) {
     if (session && session.step === "create_code_expiry") {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆◆ DIBATALKAN ◆◆\n\n┌─❖\n├ ❌ Proses dibatalkan\n└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+        return bot.sendMessage(chatId, `◆◆ DIBATALKAN ◆◆\n\n┌─❖\n├ ❌ Proses dibatalkan\n└─❖`, { reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       const expiry = text.trim();
@@ -287,7 +287,7 @@ export default function (bot, db, saveDB) {
 
       bot.saveRedeemDB();
 
-      bot.sendMessage(chatId, `◆◆ KODE BERHASIL DIBUAT ◆◆\n\n┌─❖\n├ ✅ Random Code\n├ Kode: ${randomCode}\n├ Durasi: ${duration} hari\n├ Expired: ${expiryDate.toLocaleDateString('id-ID')}\n└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+      bot.sendMessage(chatId, `◆◆ KODE BERHASIL DIBUAT ◆◆\n\n┌─❖\n├ ✅ Random Code\n├ Kode: ${randomCode}\n├ Durasi: ${duration} hari\n├ Expired: ${expiryDate.toLocaleDateString('id-ID')}\n└─❖`, { reply_markup: bot.getMainKeyboardUser(userId) });
       delete sessions[userId];
     }
 
@@ -295,7 +295,7 @@ export default function (bot, db, saveDB) {
 
     if (/^batal$/i.test(text)) {
       delete sessions[userId];
-      return bot.sendMessage(chatId, `◆◆ DIBATALKAN ◆◆\n\n┌─❖\n├ ❌ Broadcast dibatalkan\n└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+      return bot.sendMessage(chatId, `◆◆ DIBATALKAN ◆◆\n\n┌─❖\n├ ❌ Broadcast dibatalkan\n└─❖`, { reply_markup: bot.getMainKeyboardUser(userId) });
     }
 
     try {
@@ -312,7 +312,7 @@ export default function (bot, db, saveDB) {
         }
       }
 
-      bot.sendMessage(chatId, `◆◆ BROADCAST SELESAI ◆◆\n\n┌─❖\n├ ✅ Berhasil: ${success}\n├ ❌ Gagal: ${failed}\n└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+      bot.sendMessage(chatId, `◆◆ BROADCAST SELESAI ◆◆\n\n┌─❖\n├ ✅ Berhasil: ${success}\n├ ❌ Gagal: ${failed}\n└─❖`, { reply_markup: bot.getMainKeyboardUser(userId) });
       delete sessions[userId];
     } catch (err) {
       bot.sendMessage(chatId, `◆◆ ERROR ◆◆\n\n┌─❖\n├ ❌ Broadcast gagal\n└─❖`, { parse_mode: "HTML" });
@@ -346,7 +346,7 @@ export default function (bot, db, saveDB) {
 
     bot.saveRedeemDB();
 
-    bot.sendMessage(chatId, `◆◆ KODE BERHASIL DIBUAT ◆◆\n\n┌─❖\n├ ✅ Manual Code\n├ Kode: ${code}\n├ Durasi: ${duration} hari\n├ Expired: ${expiresAt}\n└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+    bot.sendMessage(chatId, `◆◆ KODE BERHASIL DIBUAT ◆◆\n\n┌─❖\n├ ✅ Manual Code\n├ Kode: ${code}\n├ Durasi: ${duration} hari\n├ Expired: ${expiresAt}\n└─❖`, { reply_markup: bot.getMainKeyboardUser(userId) });
   });
 
   bot.onText(/^\/deletecode (.+)$/, (msg, match) => {
@@ -366,7 +366,7 @@ export default function (bot, db, saveDB) {
     delete bot.redeemDB[code];
     bot.saveRedeemDB();
 
-    bot.sendMessage(chatId, `◆◆ KODE DIHAPUS ◆◆\n\n┌─❖\n├ ✅ Kode: ${code}\n├ Status: Tidak Berlaku\n└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+    bot.sendMessage(chatId, `◆◆ KODE DIHAPUS ◆◆\n\n┌─❖\n├ ✅ Kode: ${code}\n├ Status: Tidak Berlaku\n└─❖`, { reply_markup: bot.getMainKeyboardUser(userId) });
   });
 
   bot.onText(/^\/setvip (\d+) (\d+)$/, (msg, match) => {
@@ -400,6 +400,6 @@ export default function (bot, db, saveDB) {
     saveDB();
 
     const expireDate = new Date(db.users[targetUserId].vip_expired).toLocaleDateString('id-ID');
-    bot.sendMessage(chatId, `◆◆ VIP BERHASIL DIBERIKAN ◆◆\n\n┌─❖\n├ ✅ VIP Manual\n├ User: ${targetUserId}\n├ Durasi: ${durationDays} hari\n├ Expired: ${expireDate}\n└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+    bot.sendMessage(chatId, `◆◆ VIP BERHASIL DIBERIKAN ◆◆\n\n┌─❖\n├ ✅ VIP Manual\n├ User: ${targetUserId}\n├ Durasi: ${durationDays} hari\n├ Expired: ${expireDate}\n└─❖`, { reply_markup: bot.getMainKeyboardUser(userId) });
   });
 }

@@ -18,11 +18,11 @@ export default function (bot, db, saveDB) {
 ┌─❖
 ├ ❌ Akses Ditolak
 ├ Fitur khusus VIP
-└─❖\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { reply_markup: bot.getMainKeyboardUser(userId) });
     }
 
     sessions[userId] = { step: 1, splitCounter: 1, fileCounter: 1 };
-    bot.sendMessage(chatId, `◆ POTONG LANJUTAN\n(Cut VCF Advanced)\n\n▸ Support Format:\n  • VCF (Contact)\n\n▸ Potong file sesuai range\n▸ Kontak yang ditentukan\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+    bot.sendMessage(chatId, `◆ POTONG LANJUTAN\n(Cut VCF Advanced)\n\n▸ Support Format:\n  • VCF (Contact)\n\n▸ Potong file sesuai range\n▸ Kontak yang ditentukan\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`, { reply_markup: bot.getMainKeyboardUser(userId) });
   });
 
   bot.on("message", async (msg) => {
@@ -35,11 +35,11 @@ export default function (bot, db, saveDB) {
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, "◆◆ DIBATALKAN ◆◆\n\n╭─❖\n│ ❌ <b>Proses dibatalkan</b>\n╰───────────────❖ ya Kak 😊", { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+        return bot.sendMessage(chatId, "◆◆ DIBATALKAN ◆◆\n\n╭─❖\n│ ❌ <b>Proses dibatalkan</b>\n╰───────────────❖ ya Kak 😊", { reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       if (!msg.document || !msg.document.file_name.endsWith(".vcf")) {
-        return bot.sendMessage(chatId, "⚠️ <b>Harus file VCF ya Kak</b> 😊", { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+        return bot.sendMessage(chatId, "⚠️ <b>Harus file VCF ya Kak</b> 😊", { reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       const fileId = msg.document.file_id;
@@ -54,7 +54,7 @@ export default function (bot, db, saveDB) {
       session.originalName = msg.document.file_name.replace(".vcf", "");
       session.step = 2;
 
-      bot.sendMessage(chatId, `📎 <b>Masukkan nama file output ya Kak</b>\n\nKetik \`skip\` untuk pakai nama lama`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+      bot.sendMessage(chatId, `📎 <b>Masukkan nama file output ya Kak</b>\n\nKetik \`skip\` untuk pakai nama lama`, { reply_markup: bot.getMainKeyboardUser(userId) });
       return;
     }
 
@@ -62,16 +62,16 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text)) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
-        return bot.sendMessage(chatId, "◆◆ DIBATALKAN ◆◆\n\n╭─❖\n│ ❌ <b>Proses dibatalkan</b>\n╰───────────────❖ ya Kak 😊", { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+        return bot.sendMessage(chatId, "◆◆ DIBATALKAN ◆◆\n\n╭─❖\n│ ❌ <b>Proses dibatalkan</b>\n╰───────────────❖ ya Kak 😊", { reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       session.newFileName = /^skip$/i.test(text) || !text ? session.originalName : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
       session.step = session.splitCounter === 1 ? 3 : 5;
 
       if (session.splitCounter === 1) {
-        bot.sendMessage(chatId, `🔢 <b>Masukkan angka awal penomoran kontak ya Kak</b>`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+        bot.sendMessage(chatId, `🔢 <b>Masukkan angka awal penomoran kontak ya Kak</b>`, { reply_markup: bot.getMainKeyboardUser(userId) });
       } else {
-        bot.sendMessage(chatId, `📄 <b>Berapa kontak per file ya Kak?</b>`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+        bot.sendMessage(chatId, `📄 <b>Berapa kontak per file ya Kak?</b>`, { reply_markup: bot.getMainKeyboardUser(userId) });
       }
       return;
     }
@@ -80,11 +80,11 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text) || isNaN(parseInt(text))) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
-        return bot.sendMessage(chatId, "◆◆ DIBATALKAN ◆◆\n\n╭─❖\n│ ❌ <b>Proses dibatalkan</b>\n╰───────────────❖ ya Kak 😊", { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+        return bot.sendMessage(chatId, "◆◆ DIBATALKAN ◆◆\n\n╭─❖\n│ ❌ <b>Proses dibatalkan</b>\n╰───────────────❖ ya Kak 😊", { reply_markup: bot.getMainKeyboardUser(userId) });
       }
       session.splitCounter = parseInt(text);
       session.step = 4;
-      bot.sendMessage(chatId, `🔢 <b>Masukkan angka awal nama file ya Kak</b>`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+      bot.sendMessage(chatId, `🔢 <b>Masukkan angka awal nama file ya Kak</b>`, { reply_markup: bot.getMainKeyboardUser(userId) });
       return;
     }
 
@@ -92,11 +92,11 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text) || isNaN(parseInt(text))) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
-        return bot.sendMessage(chatId, "◆◆ DIBATALKAN ◆◆\n\n╭─❖\n│ ❌ <b>Proses dibatalkan</b>\n╰───────────────❖ ya Kak 😊", { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+        return bot.sendMessage(chatId, "◆◆ DIBATALKAN ◆◆\n\n╭─❖\n│ ❌ <b>Proses dibatalkan</b>\n╰───────────────❖ ya Kak 😊", { reply_markup: bot.getMainKeyboardUser(userId) });
       }
       session.fileCounter = parseInt(text);
       session.step = 5;
-      bot.sendMessage(chatId, `📄 <b>Berapa kontak per file ya Kak?</b>`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+      bot.sendMessage(chatId, `📄 <b>Berapa kontak per file ya Kak?</b>`, { reply_markup: bot.getMainKeyboardUser(userId) });
       return;
     }
 
@@ -104,7 +104,7 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text) || isNaN(parseInt(text))) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
-        return bot.sendMessage(chatId, "◆◆ DIBATALKAN ◆◆\n\n╭─❖\n│ ❌ <b>Proses dibatalkan</b>\n╰───────────────❖ ya Kak 😊", { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+        return bot.sendMessage(chatId, "◆◆ DIBATALKAN ◆◆\n\n╭─❖\n│ ❌ <b>Proses dibatalkan</b>\n╰───────────────❖ ya Kak 😊", { reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       const perFile = parseInt(text);
@@ -121,11 +121,11 @@ export default function (bot, db, saveDB) {
         fs.unlinkSync(session.file);
 
         session.step = 6;
-        bot.sendMessage(chatId, `✅ <b>Selesai dipotong Kak!</b> 🎉\n\nKetik \`lanjut\` untuk file berikutnya\nKetik \`selesai\` untuk berhenti`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+        bot.sendMessage(chatId, `✅ <b>Selesai dipotong Kak!</b> 🎉\n\nKetik \`lanjut\` untuk file berikutnya\nKetik \`selesai\` untuk berhenti`, { reply_markup: bot.getMainKeyboardUser(userId) });
         bot.incrementOperation(userId);
       } catch (err) {
         console.error(err);
-        bot.sendMessage(chatId, "⚠️ <b>Yah… ada masalah saat potong file</b> 😔", { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+        bot.sendMessage(chatId, "⚠️ <b>Yah… ada masalah saat potong file</b> 😔", { reply_markup: bot.getMainKeyboardUser(userId) });
       }
       return;
     }
@@ -133,17 +133,17 @@ export default function (bot, db, saveDB) {
     if (session.step === 6) {
       if (/^lanjut$/i.test(text)) {
         session.step = 1;
-        bot.sendMessage(chatId, `📤 <b>Kirim file VCF berikutnya ya Kak</b>\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+        bot.sendMessage(chatId, `📤 <b>Kirim file VCF berikutnya ya Kak</b>\n\n✓ Ketik \`done\` setelah selesai\n✗ Ketik \`batal\` untuk membatalkan`, { reply_markup: bot.getMainKeyboardUser(userId) });
         return;
       }
 
       if (/^done$/i.test(text) || /^selesai$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, "✅ Semua proses selesai ya Kak! 😊", { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+        return bot.sendMessage(chatId, "✅ Semua proses selesai ya Kak! 😊", { reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       delete sessions[userId];
-      return bot.sendMessage(chatId, "✅ Semua proses selesai ya Kak! 😊", { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+      return bot.sendMessage(chatId, "✅ Semua proses selesai ya Kak! 😊", { reply_markup: bot.getMainKeyboardUser(userId) });
     }
   });
 }
