@@ -5,7 +5,7 @@ import XLSX from "xlsx";
 export default function (bot, db, saveDB) {
   const sessions = {};
 
-  bot.onText(/^⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ$|^\/xlstovcf$/i, async (msg) => {
+  bot.onText(/^⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ$, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);

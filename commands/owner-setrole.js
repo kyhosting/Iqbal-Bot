@@ -1,5 +1,5 @@
 export default function (bot, db, saveDB) {
-  bot.onText(/^\/setrole (\d+) (\w+) (\w+)$/, (msg, match) => {
+  bot.onText(/, (msg, match) => {
     const executorId = msg.from.id;
     const targetId = parseInt(match[1]);
     const role = match[2].toLowerCase();

@@ -1,5 +1,5 @@
 export default function (bot, db, saveDB) {
-  bot.onText(/^/me$/, async/, async (msg) => {
+  bot.onText(/^\/me$/, async (msg) => {
     const userId = msg.from.id;
     const chatId = msg.chat.id;
 
