@@ -180,6 +180,35 @@ bot.verifyGroupAccess = async (userId, chatId) => {
   // Skip check for owner
   if (config.owner.includes(userId)) return true;
   
+  // Check if user is suspended
+  const user = db.users[userId];
+  if (user && user.suspended) {
+    const groupMainDeeplink = `https://t.me/agentviber12?join`;
+    const groupCvDeeplink = `https://t.me/channelviber?join`;
+
+    const rejoinKeyboard = {
+      inline_keyboard: [
+        [{ text: "📱 @agentviber12", url: groupMainDeeplink }],
+        [{ text: "📱 @channelviber", url: groupCvDeeplink }]
+      ]
+    };
+    
+    // Show remaining days if active
+    let remainingText = "";
+    if (user.vip_expired && user.vip_expired > Date.now()) {
+      const daysLeft = Math.ceil((user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24));
+      remainingText = `\n\n✨ Sisa akses kamu: <b>${daysLeft} hari</b>\nJoin kembali untuk aktifkan!`;
+    }
+    
+    await bot.sendMessage(
+      chatId,
+      `❌ <b>Akses Dicabut Sementara Kak!</b>\n\nKamu keluar dari salah satu grup 😢\n\nWajib join 2 grup:\n• @agentviber12\n• @channelviber${remainingText}\n\nKlik tombol untuk rejoin!`,
+      { parse_mode: "HTML", reply_markup: rejoinKeyboard }
+    );
+    
+    return false;
+  }
+  
   // Check group membership
   const groupCheck = await bot.checkGroupMembership(userId);
   
@@ -326,6 +355,66 @@ bot.showDashboard = async (userId, chatId) => {
     });
   }
 };
+
+// ===== AUTO-SUSPEND WHEN USER LEAVES GROUP =====
+bot.on("my_chat_member", async (update) => {
+  try {
+    const userId = update.from.id;
+    const chatId = update.chat.id;
+    const newStatus = update.new_chat_member.status;
+    const oldStatus = update.old_chat_member.status;
+    
+    // Only process if user LEFT (status changed from member to left/kicked)
+    if ((oldStatus === "member" || oldStatus === "administrator" || oldStatus === "creator") &&
+        (newStatus === "left" || newStatus === "kicked")) {
+      
+      // Check if user exists in database
+      if (db.users[userId]) {
+        const user = db.users[userId];
+        
+        // Check if user still in both groups or NOT
+        const groupCheck = await bot.checkGroupMembership(userId);
+        
+        // If user is NOT verified (not in both groups) → SUSPEND ACCESS
+        if (!groupCheck.verified) {
+          // SUSPEND: Set flag but PRESERVE vip_expired
+          user.suspended = true;
+          user.status = "suspended";
+          // vip_expired TIDAK direset - tetap tersimpan!
+          saveDB();
+          
+          // Notify user about suspension
+          const groupMainDeeplink = `https://t.me/agentviber12?join`;
+          const groupCvDeeplink = `https://t.me/channelviber?join`;
+          
+          const rejoinKeyboard = {
+            inline_keyboard: [
+              [{ text: "📱 @agentviber12", url: groupMainDeeplink }],
+              [{ text: "📱 @channelviber", url: groupCvDeeplink }]
+            ]
+          };
+          
+          // Show remaining days if VIP/trial still active
+          let remainingText = "";
+          if (user.vip_expired && user.vip_expired > Date.now()) {
+            const daysLeft = Math.ceil((user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24));
+            remainingText = `\n\n✨ Sisa akses kamu masih ada: <b>${daysLeft} hari</b>\n\nJoin kembali ke grup untuk aktifkan akses!`;
+          }
+          
+          await bot.sendMessage(
+            userId,
+            `❌ <b>Akses Dicabut Sementara Kak!</b>\n\nKamu keluar dari salah satu grup 😢\n\n📱 Wajib join kedua grup:\n• @agentviber12 (Grup Utama)\n• @channelviber (Channel CV)${remainingText}\n\nKlik tombol di bawah untuk rejoin!`,
+            { parse_mode: "HTML", reply_markup: rejoinKeyboard }
+          ).catch(() => {});
+          
+          console.log(`⚠️ [SUSPENDED] User ${userId} left group - access suspended`);
+        }
+      }
+    }
+  } catch (err) {
+    console.error("Error in my_chat_member handler:", err);
+  }
+});
 
 // ===== GLOBAL CALLBACK: Verify Again (dari inline button join) =====
 bot.on("callback_query", async (query) => {
