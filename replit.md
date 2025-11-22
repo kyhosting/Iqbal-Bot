@@ -110,6 +110,20 @@ Notifikasi: "Akses dipulihkan! Sisa X hari" ✅
 
 ### Keyboard System 🎹
 Keyboard buttons dengan 2 kolom layout yang rapi:
+
+**User Biasa / Trial / VIP / Redeem Code:**
+```
+⛓️ TXT TO VCF ⛓️        ⛓️ VCF TO TXT ⛓️
+⛓️ XLS TO VCF ⛓️        ⛓️ MSG TO TXT ⛓️
+⛓️ BAGI LANJUT ⛓️       ⛓️ ESTRAK NOMOR ⛓️
+⛓️ GABUNG FILE ⛓️
+⛓️ POTONG LANJUT ⛓️     ⛓️ CREATE ADMIN ⛓️
+⛓️ CEK KONTAK ⛓️        ⛓️ HITUNG FILE ⛓️
+⛓️ RENAME KONTAK ⛓️     ⛓️ RENAME FILE ⛓️
+🎁 REDEEM CODE
+```
+
+**Owner Saja:**
 ```
 ⛓️ TXT TO VCF ⛓️        ⛓️ VCF TO TXT ⛓️
 ⛓️ XLS TO VCF ⛓️        ⛓️ MSG TO TXT ⛓️
@@ -120,9 +134,10 @@ Keyboard buttons dengan 2 kolom layout yang rapi:
 ⛓️ RENAME KONTAK ⛓️     ⛓️ RENAME FILE ⛓️
 🎁 REDEEM CODE           ⛓️ MENU OWNER ⛓️
 ```
+
 - Auto-display setelah setiap command selesai
 - Clean & professional naming
-- Friendly emoji indicators
+- **Role-based filtering** - MENU OWNER hanya untuk Owner
 - Consistent across all features
 
 ### Group Access Control System 🔐 (NEW)

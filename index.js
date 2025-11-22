@@ -88,9 +88,15 @@ bot.getMainKeyboardUser = (userId) => {
     ['⛓️ GABUNG FILE ⛓️'],
     ['⛓️ POTONG LANJUT ⛓️', '⛓️ CREATE ADMIN ⛓️'],
     ['⛓️ CEK KONTAK ⛓️', '⛓️ HITUNG FILE ⛓️'],
-    ['⛓️ RENAME KONTAK ⛓️', '⛓️ RENAME FILE ⛓️'],
-    ['🎁 REDEEM CODE', '⛓️ MENU OWNER ⛓️']
+    ['⛓️ RENAME KONTAK ⛓️', '⛓️ RENAME FILE ⛓️']
   ];
+  
+  // Tambah MENU OWNER hanya untuk owner
+  if (config.owner.includes(userId)) {
+    baseKeyboard.push(['🎁 REDEEM CODE', '⛓️ MENU OWNER ⛓️']);
+  } else {
+    baseKeyboard.push(['🎁 REDEEM CODE']);
+  }
   
   return {
     keyboard: baseKeyboard,
