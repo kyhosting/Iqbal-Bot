@@ -42,6 +42,7 @@ Edit `.env`:
 BOT_TOKEN=your_bot_token_here
 OWNER_ID=8317563450
 OWNER_USERNAME=Iqbaldev
+BOT_CREATOR=KIKI FZL DAN PARTNER/SUPPORT IQBAL DEV
 GROUP_MAIN=agentviber12
 GROUP_CV=channelviber
 NODE_ENV=development
@@ -284,7 +285,7 @@ npm run migrate
 
 ## 📄 License
 
-MIT - Dibuat oleh Iqbaldev
+MIT - Dibuat oleh KIKI FZL DAN PARTNER/SUPPORT IQBAL DEV
 
 ## 🙏 Credits
 
@@ -295,4 +296,4 @@ MIT - Dibuat oleh Iqbaldev
 
 ---
 
-Made with ❤️ by Iqbaldev • こんにちは 🎌
+Made with ❤️ by KIKI FZL DAN PARTNER/SUPPORT IQBAL DEV • こんにちは 🎌

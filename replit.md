@@ -4,7 +4,7 @@
 
 Telegram bot untuk konversi dan management file contact (VCF/TXT/XLSX). Bot ini memiliki sistem VIP dengan redeem code, verifikasi grup mandatory, dan UI aesthetic Japanese-style yang ramah dan profesional.
 
-**Owner**: @Iqbaldev (ID: 8317563450)  
+**Developer**: KIKI FZL DAN PARTNER/SUPPORT IQBAL DEV  
 **Bot**: @Bot_cv_by_kyXploit_bot  
 **Version**: 2.0.0
 
@@ -290,5 +290,5 @@ Bot berjalan dengan workflow "Iqbal CV Bot" (`node index.js`)
 - **/setvip USER_ID DURASI** - Set VIP manual (owner)
 
 ---
-**Created with ❤️ by Iqbaldev**  
+**Created with ❤️ by KIKI FZL DAN PARTNER/SUPPORT IQBAL DEV**  
 こんにちは、私は Iqbalʙᴏᴛ です 🎌
