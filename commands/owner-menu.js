@@ -431,13 +431,13 @@ export default function (bot, db, saveDB) {
         first_name: "User",
         last_name: "",
         role: "vip",
-        vip_expired: Date.now() + durationDays <b> 24 </b> 60 <b> 60 </b> 1000,
+        vip_expired: Date.now() + durationDays * 24 * 60 * 60 * 1000,
         status: "active",
         total_operation: 0
       };
     } else {
       db.users[targetUserId].role = "vip";
-      db.users[targetUserId].vip_expired = Date.now() + durationDays <b> 24 </b> 60 <b> 60 </b> 1000;
+      db.users[targetUserId].vip_expired = Date.now() + durationDays * 24 * 60 * 60 * 1000;
       db.users[targetUserId].status = "active";
     }
 
