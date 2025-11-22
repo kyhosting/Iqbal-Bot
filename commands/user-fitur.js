@@ -2,8 +2,79 @@ export default function (bot) {
   bot.onText(/^\/fitur$/, async (msg) => {
     const chatId = msg.chat.id;
 
-    const message = `◆◆ DAFTAR FITUR ◆◆\n\n┌─❖\n├ 📋 <b>FITUR TERSEDIA</b>\n└─❖\n\n┌─❖\n├ 🔄 <b>KONVERSI FILE</b>\n├ ➤ TXT ↔ VCF ↔ XLSX\n├ ➤ MSG to TXT\n├─❖\n├ 📂 <b>MANAJEMEN FILE</b>\n├ ➤ Split & Merge\n├ ➤ Rapikan & Clean\n├ ➤ Rename File/Kontak\n├ ➤ Count Contacts\n├─❖\n├ 🛠️ <b>UTILITIES</b>\n├ ➤ Extract Nomor\n├ ➤ Check Kontak\n├ ➤ Create Admin\n└─❖`;
+    const message = `🎌 FITUR BOT IQBAL CV
+==============================
 
-    await bot.sendMessage(chatId, message, { parse_mode: "HTML" });
+📄 KONVERSI FILE
+• ⛓️ TXT TO VCF
+  Ubah file TXT menjadi format VCF
+
+• ⛓️ VCF TO TXT
+  Ubah file VCF menjadi format TXT
+
+• ⛓️ XLS TO VCF
+  Ubah file Excel/XLSX menjadi VCF
+
+• ⛓️ MSG TO TXT
+  Ekstrak nomor dari pesan Telegram
+
+==============================
+
+📞 EKSTRAK & NOMOR
+• ⛓️ EKSTRAK NOMOR
+  Ambil semua nomor dari file VCF/TXT/XLSX/CSV
+
+==============================
+
+📦 GABUNG FILE
+• ⛓️ GABUNGKAN
+  Gabung multiple file TXT atau VCF jadi satu
+
+==============================
+
+🔧 UTILITAS FILE
+• ⛓️ RAPIKAN TXT
+  Hapus duplikat & sort nomor
+
+• ⛓️ HITUNG FILE
+  Hitung total kontak di file
+
+• ⛓️ RENAME FILE
+  Ganti nama file
+
+• ⛓️ RENAME KONTAK
+  Ganti nama semua kontak dalam file
+
+• ⛓️ CEK KONTAK
+  Lihat detail kontak dari file
+
+==============================
+
+👑 ADMIN COMMANDS
+• ⛓️ CREATE ADMIN
+  Buat admin baru (owner only)
+
+• ⛓️ MENU OWNER
+  Panel management untuk owner
+
+==============================
+
+🎮 COMMAND LAINNYA
+• /start → Mulai & lihat profil
+• /me → Lihat profil user
+• /fitur → Lihat semua fitur (saat ini)
+• /cekid → Cek ID grup/channel/user
+• /bantuan → Hubungi owner
+• /clear → Bersihkan chat
+
+==============================
+
+💎 SISTEM VIP
+Semua fitur premium butuh akses VIP.
+Gunakan kode redeem untuk VIP access! 🎁
+
+Selamat menggunakan bot! 😊`;
+
+    await bot.sendMessage(chatId, message);
   });
 }
