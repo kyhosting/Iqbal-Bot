@@ -45,7 +45,7 @@ export default function (bot, db, saveDB) {
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆◆  DIBATALKAN  ◆◆
+        return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
 │  ❌ Proses dibatalkan
@@ -80,7 +80,7 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text)) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆◆  DIBATALKAN  ◆◆
+        return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
 │  ❌ Proses dibatalkan
@@ -102,7 +102,7 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text) || isNaN(parseInt(text))) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆◆  DIBATALKAN  ◆◆
+        return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
 │  ❌ Proses dibatalkan
@@ -118,7 +118,7 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text) || isNaN(parseInt(text))) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆◆  DIBATALKAN  ◆◆
+        return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
 │  ❌ Proses dibatalkan
@@ -134,7 +134,7 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text) || isNaN(parseInt(text)) || parseInt(text) <= 0) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆◆  DIBATALKAN  ◆◆
+        return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
 │  ❌ Proses dibatalkan

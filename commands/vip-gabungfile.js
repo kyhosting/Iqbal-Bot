@@ -4,6 +4,18 @@ import XLSX from "xlsx";
 
 export default function (bot, db, saveDB) {
   const sessions = {};
+  const userMessages = {};
+
+  async function sendWithDelete(userId, chatId, text, options = {}) {
+    if (userMessages[userId]) {
+      try {
+        await bot.deleteMessage(chatId, userMessages[userId]);
+      } catch (e) {}
+    }
+    const msg = await bot.sendMessage(chatId, text, options);
+    userMessages[userId] = msg.message_id;
+    return msg;
+  }
 
   bot.onText(/^⛓️ GABUNG FILE$/i, async (msg) => {
     const chatId = msg.chat.id;
