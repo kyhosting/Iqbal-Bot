@@ -84,6 +84,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "⛓️ ʜɪᴛᴜɴɢ ᴋᴏɴᴛᴀᴋ ⛓️": lambda u, c: handle_vip_command(u, c, 'hitung'),
         "⛓️ ᴄᴇᴋ ɴᴀᴍᴀ ᴋᴏɴᴛᴀᴋ ⛓️": lambda u, c: handle_vip_command(u, c, 'cek_nama'),
         "⛓️ ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ ⛓️": lambda u, c: handle_vip_command(u, c, 'admin'),
+        "🪓 ʙᴀɢɪ ʟᴀɴᴊᴜᴛ ⛓️": lambda u, c: handle_vip_command(u, c, 'bagi_lanjutan'),
+        "📊 ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛ ⛓️": lambda u, c: handle_vip_command(u, c, 'potong_lanjutan'),
         "🎁 ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ ⛓️": lambda u, c: redeem_start(u, c),
         "ᴍᴇɴᴜ ᴏᴡɴᴇʀ ⛓️": lambda u, c: owner_menu(u, c),
     }
@@ -104,6 +106,15 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         from vip_commands import clear_session
         clear_session(user_id)
         return
+    
+    if text.lower() == 'lanjut':
+        from vip_commands import vip_sessions
+        if user_id in vip_sessions and vip_sessions[user_id].get('command') in ['bagi_lanjutan', 'potong_lanjutan']:
+            session = vip_sessions[user_id]
+            session['step'] = 1
+            session['files'] = []
+            await update.message.reply_text("📤 *Kirim file VCF berikutnya:*", parse_mode="Markdown")
+            return
     
     # Check if handling VIP command
     if update.message.document:

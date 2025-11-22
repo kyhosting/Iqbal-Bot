@@ -93,20 +93,15 @@ async def handle_file_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         elif cmd == 'txttovcf':
             session['files'].append(file_path)
             session['step'] = 2
-            await update.message.reply_text("👤 *Nama kontak?*\n\n_Misal: Kontak, Client, Custom_", parse_mode="Markdown")
+            await update.message.reply_text("📝 *Nama file output?*", parse_mode="Markdown")
         elif cmd == 'xlstovcf':
             session['files'].append(file_path)
             session['step'] = 2
             await update.message.reply_text("👤 *Nama kontak?*", parse_mode="Markdown")
         elif cmd == 'vcftotxt':
-            out = f"/tmp/{file_name.replace('.vcf', '.txt')}"
-            extract_phone_numbers_unlimited(file_path, out)
-            await update.message.reply_document(out)
-            await update.message.reply_text("✅ *Selesai!*", parse_mode="Markdown")
-            os.remove(file_path) if os.path.exists(file_path) else None
-            os.remove(out) if os.path.exists(out) else None
-            increment_operation(user_id)
-            clear_session(user_id)
+            session['files'].append(file_path)
+            session['step'] = 2
+            await update.message.reply_text("📝 *Nama file output?*", parse_mode="Markdown")
         elif cmd in ['gabungfile', 'gabungtxt']:
             session['files'].append(file_path)
             msg = f"✅ *File {len(session['files'])} OK*\n\nKirim file lagi atau ketik `done` untuk selesai"
@@ -187,6 +182,10 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         
         elif cmd == 'txttovcf':
             if session['step'] == 2:
+                session['data']['output_filename'] = text
+                session['step'] = 3
+                await update.message.reply_text("👤 *Nama kontak?*\n\n_Misal: Klien, Kontak_", parse_mode="Markdown")
+            elif session['step'] == 3:
                 cont_all = []
                 with open(files[0], 'r') as f:
                     for line in f:
@@ -194,7 +193,7 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
                         if num and num.replace(" ", "").isnumeric():
                             cont_all.append(num)
                 if cont_all:
-                    fname = f"/tmp/output_{text}.vcf"
+                    fname = f"/tmp/{session['data']['output_filename']}.vcf"
                     create_vcf_file_unlimited(cont_all, text, fname)
                     await update.message.reply_document(fname)
                     await update.message.reply_text("✅ *Selesai!*", parse_mode="Markdown")
