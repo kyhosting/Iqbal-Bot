@@ -23,11 +23,11 @@ export default function (bot, db, saveDB) {
     
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(chatId, `◆ CREATE ADMIN\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      return bot.sendMessage(chatId, `◆ CREATE ADMIN\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `◆ CREATE ADMIN\n(Buat File Admin)\n\n▸ Support Format:\n  • VCF (Contact)\n\n▸ Buat daftar nomor admin\n▸ Format terstruktur\n\n▸ Masukkan nomor (spasi pisahkan)\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `◆ CREATE ADMIN\n(Buat File Admin)\n\n▸ Support Format:\n  • VCF (Contact)\n\n▸ Buat daftar nomor admin\n▸ Format terstruktur\n\n▸ Masukkan nomor (spasi pisahkan)\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
   });
 
   bot.on("message", (msg) => {
@@ -41,12 +41,12 @@ export default function (bot, db, saveDB) {
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, "❌ Proses dibatalkan ya Kak 😊", { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, "❌ Proses dibatalkan ya Kak 😊", { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
       }
 
       const numbers = text.split(/\s+/).filter(Boolean);
       if (numbers.length === 0) {
-        return bot.sendMessage(chatId, "⚠️ *Nomor tidak boleh kosong Kak* 😊\n\nCoba lagi ya!", { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, "⚠️ <b>Nomor tidak boleh kosong Kak</b> 😊\n\nCoba lagi ya!", { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
       }
 
       const filename = "ADMIN.vcf";
@@ -57,17 +57,17 @@ export default function (bot, db, saveDB) {
         fs.writeFileSync(filepath, content);
 
         bot.sendDocument(chatId, filepath).then(() => {
-          bot.sendMessage(chatId, `✅ *File ADMIN.vcf berhasil dibuat Kak!* 🎉\n\n👤 *Total admin:* ${numbers.length}\n\nSemoga membantu ya! 😊`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+          bot.sendMessage(chatId, `✅ <b>File ADMIN.vcf berhasil dibuat Kak!</b> 🎉\n\n👤 <b>Total admin:</b> ${numbers.length}\n\nSemoga membantu ya! 😊`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
           bot.incrementOperation(userId);
           fs.unlinkSync(filepath);
         }).catch((err) => {
           console.error("Gagal mengirim file:", err);
-          bot.sendMessage(chatId, "⚠️ *Yah… gagal kirim file* 😔", { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+          bot.sendMessage(chatId, "⚠️ <b>Yah… gagal kirim file</b> 😔", { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
           try { fs.unlinkSync(filepath); } catch {}
         });
       } catch (err) {
         console.error("Gagal membuat file:", err);
-        bot.sendMessage(chatId, "⚠️ *Yah… gagal buat file VCF* 😔", { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        bot.sendMessage(chatId, "⚠️ <b>Yah… gagal buat file VCF</b> 😔", { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
       }
 
       delete sessions[userId];

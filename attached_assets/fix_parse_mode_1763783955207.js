@@ -9,16 +9,16 @@ function fixFile(filePath) {
   // Pattern 1: Handle lines that have { reply_markup: but no parse_mode
   content = content.replace(
     /(\{\s*)reply_markup:/g,
-    '$1parse_mode: "Markdown", reply_markup:'
+    '$1parse_mode: "HTML", reply_markup:'
   );
   
   // Pattern 2: Handle standalone bot.sendMessage() calls without options
   // This will catch most simple cases
   content = content.replace(
-    /bot\.sendMessage\(([^,]+),\s*([^,}]+?)\)\s*;/g,
+    /bot\.sendMessage\(([^,]+),\s<b>([^,}]+?)\)\s</b>;/g,
     (match) => {
       if (!match.includes('parse_mode') && !match.includes('{')) {
-        return match.replace(');', ', { parse_mode: "Markdown" });');
+        return match.replace(');', ', { parse_mode: "HTML" });');
       }
       return match;
     }
@@ -42,9 +42,9 @@ function fixFile(filePath) {
       
       // Now fix this full statement
       if (fullStatement.includes('{') && !fullStatement.includes('parse_mode')) {
-        fullStatement = fullStatement.replace('{ ', '{ parse_mode: "Markdown", ');
+        fullStatement = fullStatement.replace('{ ', '{ parse_mode: "HTML", ');
       } else if (!fullStatement.includes('{') && fullStatement.includes(');')) {
-        fullStatement = fullStatement.replace(');', ', { parse_mode: "Markdown" });');
+        fullStatement = fullStatement.replace(');', ', { parse_mode: "HTML" });');
       }
       
       // Put it back

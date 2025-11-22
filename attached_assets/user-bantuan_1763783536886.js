@@ -13,8 +13,8 @@ export default function (bot, db, saveDB) {
     if (!groupCheck.verified) {
       return bot.sendMessage(
         chatId,
-        `⚠️ *Akses Ditolak*\n\nKamu harus join grup terlebih dahulu ya Kak.`,
-        { parse_mode: "Markdown" }
+        `⚠️ <b>Akses Ditolak</b>\n\nKamu harus join grup terlebih dahulu ya Kak.`,
+        { parse_mode: "HTML" }
       );
     }
 
@@ -47,9 +47,9 @@ export default function (bot, db, saveDB) {
       ]
     };
 
-    const message = `🆘 *MENU BANTUAN*\n\n` +
+    const message = `🆘 <b>MENU BANTUAN</b>\n\n` +
       `Ada yang bisa dibantu Kak?\n\n` +
-      `📋 *Pilihan Tersedia:*\n` +
+      `📋 <b>Pilihan Tersedia:</b>\n` +
       `• 🐞 Lapor Bug - Laporkan bug yang Anda temukan\n` +
       `• ⚠️ Bot Error - Laporkan error yang Anda alami\n` +
       `• 🛠️ Request Fitur - Usulkan fitur baru\n` +
@@ -58,7 +58,7 @@ export default function (bot, db, saveDB) {
       `_Owner akan merespons secepat mungkin ya Kak!_ 😊`;
 
     await bot.sendMessage(chatId, message, {
-      parse_mode: "Markdown",
+      parse_mode: "HTML",
       reply_markup: keyboard
     });
   });
@@ -96,24 +96,24 @@ export default function (bot, db, saveDB) {
         ]
       };
 
-      let message = `💎 *DAFTAR PAKET VIP*\n\n`;
+      let message = `💎 <b>DAFTAR PAKET VIP</b>\n\n`;
       message += `${'═'.repeat(35)}\n\n`;
-      message += `✨ *PAKET VIP TERSEDIA:*\n\n`;
+      message += `✨ <b>PAKET VIP TERSEDIA:</b>\n\n`;
       
-      message += `📌 *PAKET 7 HARI*\n`;
+      message += `📌 <b>PAKET 7 HARI</b>\n`;
       message += `├─ Harga: Rp 15.000\n`;
       message += `└─ Akses: Semua fitur selama 7 hari\n\n`;
 
-      message += `📌 *PAKET 30 HARI* ⭐ PALING POPULER\n`;
+      message += `📌 <b>PAKET 30 HARI</b> ⭐ PALING POPULER\n`;
       message += `├─ Harga: Rp 35.000\n`;
       message += `└─ Akses: Semua fitur selama 30 hari\n\n`;
 
-      message += `📌 *PAKET 1 TAHUN*\n`;
+      message += `📌 <b>PAKET 1 TAHUN</b>\n`;
       message += `├─ Harga: Rp 100.000\n`;
       message += `└─ Akses: Semua fitur selama 1 tahun\n\n`;
 
       message += `${'═'.repeat(35)}\n\n`;
-      message += `🎯 *FITUR VIP YANG DIDAPATKAN:*\n`;
+      message += `🎯 <b>FITUR VIP YANG DIDAPATKAN:</b>\n`;
       message += `✓ Konversi file tanpa batas\n`;
       message += `✓ Ekstrak nomor (unlimited)\n`;
       message += `✓ Gabung & split file\n`;
@@ -125,7 +125,7 @@ export default function (bot, db, saveDB) {
 
       await bot.deleteMessage(chatId, query.message.message_id).catch(() => {});
       await bot.sendMessage(chatId, message, {
-        parse_mode: "Markdown",
+        parse_mode: "HTML",
         reply_markup: keyboard
       });
 
@@ -162,9 +162,9 @@ export default function (bot, db, saveDB) {
         ]
       };
 
-      const message = `🆘 *MENU BANTUAN*\n\n` +
+      const message = `🆘 <b>MENU BANTUAN</b>\n\n` +
         `Ada yang bisa dibantu Kak?\n\n` +
-        `📋 *Pilihan Tersedia:*\n` +
+        `📋 <b>Pilihan Tersedia:</b>\n` +
         `• 🐞 Lapor Bug - Laporkan bug yang Anda temukan\n` +
         `• ⚠️ Bot Error - Laporkan error yang Anda alami\n` +
         `• 🛠️ Request Fitur - Usulkan fitur baru\n` +
@@ -174,7 +174,7 @@ export default function (bot, db, saveDB) {
 
       await bot.deleteMessage(chatId, query.message.message_id).catch(() => {});
       await bot.sendMessage(chatId, message, {
-        parse_mode: "Markdown",
+        parse_mode: "HTML",
         reply_markup: keyboard
       });
 
