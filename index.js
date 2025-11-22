@@ -214,6 +214,45 @@ bot.on("callback_query", async (query) => {
         await bot.deleteMessage(chatId, messageId).catch(() => {});
         await delay(300);
         
+        // Helper: Format dashboard message
+        const getDashboardMessage = (user) => {
+          const daysLeft = Math.ceil((user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24));
+          const expireDate = new Date(user.vip_expired).toLocaleDateString("id-ID");
+          
+          return `◆ iqbal cv bots\n(by iqbaldev)\n\n` +
+            `◆ こんにちは、私は IqbalBOT です。\n私はファイル変換と管理を担当します。\n\n` +
+            `◆ STATUS AKSES\n` +
+            `▸ Nama: ${user.first_name || "User"}\n` +
+            `▸ ID: ${user.id}\n` +
+            `▸ Username: @${user.username || "-"}\n` +
+            `▸ Role: ${user.role.toUpperCase()}\n` +
+            `▸ Status: ✅ Aktif\n` +
+            `▸ Masa Aktif: ${expireDate}\n` +
+            `▸ Hari Tersisa: ${daysLeft} hari\n` +
+            `▸ Total Operasi: ${user.total_operation || 0}\n` +
+            `◆\n\n` +
+            `◆ FILE FORMAT SUPPORT\n` +
+            `▸ 📄 TXT 📱 VCF 📊 XLSX\n` +
+            `他の形式も順次対応予定です。\n\n` +
+            `◆ MENU BOT\n` +
+            `▸ ⛓️ RAPIKAN TXT\n` +
+            `▸ ⛓️ MSG TO TXT\n` +
+            `▸ ⛓️ TXT TO VCF\n` +
+            `▸ ⛓️ XLS TO VCF\n` +
+            `▸ ⛓️ VCF TO TXT\n` +
+            `▸ ⛓️ SPLIT FILE\n` +
+            `▸ ⛓️ GABUNG FILE\n` +
+            `▸ ⛓️ RENAME KONTAK\n` +
+            `▸ ⛓️ AMBIL NAMA FILE\n` +
+            `▸ ⛓️ BUAT NAMA\n` +
+            `▸ ⛓️ ADM & NAVY\n` +
+            `▸ ⛓️ RENAME FILE\n` +
+            `▸ ⛓️ HITUNG FILE\n` +
+            `◆\n\n` +
+            `◆ ご利用ありがとうございます。\n` +
+            `このボットは絶えず進化しています 🌸`;
+        };
+        
         // Jika user belum ada di database, tambahkan dengan trial 1 hari
         if (!db.users[userId]) {
           const trialExpired = Date.now() + 1 * 24 * 60 * 60 * 1000;
@@ -232,20 +271,12 @@ bot.on("callback_query", async (query) => {
           };
           saveDB();
           
-          // Notif trial gratis
-          if (!config.owner.includes(userId)) {
-            await bot.sendMessage(
-              userId,
-              `🎁 *TRIAL 1 HARI GRATIS!*\n\nSelamat verifikasi! ✅\n\n✨ Akses semua fitur premium sudah aktif!\n\nNikmati ya Kak! 😊`,
-              { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
-            ).catch(() => {});
-          } else {
-            await bot.sendMessage(
-              userId,
-              `✅ *Selamat Datang Owner!*\n\nDashboard siap digunakan 🎉`,
-              { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
-            ).catch(() => {});
-          }
+          // Send dashboard
+          await bot.sendMessage(
+            userId,
+            getDashboardMessage(db.users[userId]),
+            { reply_markup: bot.getMainKeyboard() }
+          ).catch(() => {});
         } else {
           // User sudah ada - restore jika suspended
           if (db.users[userId].suspended && db.users[userId].vip_expired && db.users[userId].vip_expired > Date.now()) {
@@ -255,20 +286,14 @@ bot.on("callback_query", async (query) => {
               db.users[userId].role = db.users[userId].trial_start ? "trial" : "vip";
             }
             saveDB();
-            
-            const daysLeft = Math.ceil((db.users[userId].vip_expired - Date.now()) / (1000 * 60 * 60 * 24));
-            await bot.sendMessage(
-              userId,
-              `✅ *Akses Dipulihkan!*\n\n⏰ Sisa: ${daysLeft} hari\n\nSelamat, fitur premium sudah bisa diakses! 🎉`,
-              { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
-            ).catch(() => {});
-          } else {
-            await bot.sendMessage(
-              userId,
-              `✅ *Verifikasi Berhasil!*\n\nSiap menggunakan fitur premium 🎉`,
-              { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
-            ).catch(() => {});
           }
+          
+          // Send dashboard
+          await bot.sendMessage(
+            userId,
+            getDashboardMessage(db.users[userId]),
+            { reply_markup: bot.getMainKeyboard() }
+          ).catch(() => {});
         }
       } catch (err) {
         console.error("Error di verify_again callback:", err);
