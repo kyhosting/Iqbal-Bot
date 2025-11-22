@@ -57,7 +57,7 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId,
           "⚠️ <b>Harus file VCF ya Kak</b> 😊\n\nCoba kirim file dengan ekstensi .vcf",
-          { 
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboardUser(userId)
           }
@@ -83,7 +83,7 @@ export default function (bot, db, saveDB) {
         `Contoh: Iqbal CV, Teman Iqbal, dll\n\n` +
         `✓ Ketik \`done\` setelah selesai\n` +
         `✗ Ketik \`batal\` untuk membatalkan`,
-        { 
+        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
           parse_mode: "HTML",
           reply_markup: bot.getMainKeyboardUser(userId)
         }
@@ -135,7 +135,7 @@ export default function (bot, db, saveDB) {
           `📊 <b>Total kontak:</b> ${contactCount}\n` +
           `📂 <b>File baru:</b> \`${outputFile}\`\n\n` +
           `Semoga membantu ya! 😊`,
-          { 
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboardUser(userId)
           }
@@ -149,7 +149,7 @@ export default function (bot, db, saveDB) {
         bot.sendMessage(
           chatId,
           "⚠️ <b>Yah… ada masalah saat rename kontak</b> 😔\n\nCoba lagi ya Kak!",
-          { 
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboardUser(userId)
           }

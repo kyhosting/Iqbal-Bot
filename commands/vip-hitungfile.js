@@ -57,7 +57,7 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId, 
           "⚠️ <b>Kirim file dulu ya Kak</b> 😊",
-          { 
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboardUser(userId)
           }
@@ -72,7 +72,7 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId,
           "⚠️ <b>Hanya support TXT atau VCF ya Kak</b> 😊",
-          { 
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboardUser(userId)
           }
@@ -116,7 +116,7 @@ export default function (bot, db, saveDB) {
           `• Kontak unik: <b>${unique}</b>\n` +
           `• Duplikat: <b>${duplicates}</b>\n\n` +
           `Semoga membantu ya! 😊`,
-          { 
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboardUser(userId)
           }
@@ -132,7 +132,7 @@ export default function (bot, db, saveDB) {
         bot.sendMessage(
           chatId,
           "⚠️ <b>Yah… ada masalah saat hitung file</b> 😔\n\nCoba lagi ya Kak!",
-          { 
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboardUser(userId)
           }

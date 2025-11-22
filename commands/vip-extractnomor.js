@@ -20,11 +20,11 @@ export default function (bot, db, saveDB) {
 ┌─❖
 ├ ❌ Akses Ditolak
 ├ Fitur khusus VIP
-└─❖\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖\n\nFitur ini khusus untuk VIP Kak\n\n◆`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `◆ EKSTRAK NOMOR\n(Extract Phone Numbers)\n\n▸ Support Format:\n  • VCF (Contact)\n  • TXT (Text)\n  • XLSX (Excel)\n  • CSV (Spreadsheet)\n\n▸ Ekstrak semua nomor telepon\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`, { reply_markup: bot.getMainKeyboardUser(userId) });
+    bot.sendMessage(chatId, `◆ EKSTRAK NOMOR\n(Extract Phone Numbers)\n\n▸ Support Format:\n  • VCF (Contact)\n  • TXT (Text)\n  • XLSX (Excel)\n  • CSV (Spreadsheet)\n\n▸ Ekstrak semua nomor telepon\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
   });
 
   bot.on("message", async (msg) => {
@@ -38,7 +38,7 @@ export default function (bot, db, saveDB) {
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, `❌ <b>Proses Dibatalkan</b>\n\nExtrak nomor dibatalkan. Klik menu untuk memulai ulang.`, { reply_markup: bot.getMainKeyboardUser(userId) });
+        return bot.sendMessage(chatId, `❌ <b>Proses Dibatalkan</b>\n\nExtrak nomor dibatalkan. Klik menu untuk memulai ulang.`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       if (!msg.document) {
@@ -82,7 +82,7 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text)) {
         try { fs.unlinkSync(session.localPath); } catch {}
         delete sessions[userId];
-        return bot.sendMessage(chatId, `❌ <b>Proses Dibatalkan</b>\n\nExtrak nomor dibatalkan. Klik menu untuk memulai ulang.`, { reply_markup: bot.getMainKeyboardUser(userId) });
+        return bot.sendMessage(chatId, `❌ <b>Proses Dibatalkan</b>\n\nExtrak nomor dibatalkan. Klik menu untuk memulai ulang.`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       const outputName = text.trim().replace(/[^a-zA-Z0-9-_]/g, "_") || "nomor_hasil";
@@ -105,7 +105,7 @@ export default function (bot, db, saveDB) {
         fs.writeFileSync(outputFile, uniqueNumbers.join("\n"));
 
         // Send ONE message with info + file + single success message
-        await bot.sendMessage(chatId, `✅ <b>EKSTRAK NOMOR SELESAI!</b>\n\n📄 File: \`${session.fileName}\`\n📊 Total Nomor: <b>${uniqueNumbers.length}</b>\n\n📝 Nomor-nomor Anda sudah di-extract dan disimpan ke file. Download file di bawah ini.\n\nSemoga membantu ya Kak! 😊`, { reply_markup: bot.getMainKeyboardUser(userId) });
+        await bot.sendMessage(chatId, `✅ <b>EKSTRAK NOMOR SELESAI!</b>\n\n📄 File: \`${session.fileName}\`\n📊 Total Nomor: <b>${uniqueNumbers.length}</b>\n\n📝 Nomor-nomor Anda sudah di-extract dan disimpan ke file. Download file di bawah ini.\n\nSemoga membantu ya Kak! 😊`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
 
         // Send file
         await bot.sendDocument(chatId, outputFile);
@@ -120,7 +120,7 @@ export default function (bot, db, saveDB) {
         console.error("Extract error:", err);
         try { fs.unlinkSync(session.localPath); } catch {}
         delete sessions[userId];
-        return bot.sendMessage(chatId, `❌ <b>Ekstrak Gagal</b>\n\nAda kesalahan saat memproses file.\nCoba ulangi atau hubungi owner.`, { reply_markup: bot.getMainKeyboardUser(userId) });
+        return bot.sendMessage(chatId, `❌ <b>Ekstrak Gagal</b>\n\nAda kesalahan saat memproses file.\nCoba ulangi atau hubungi owner.`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
       }
     }
   });

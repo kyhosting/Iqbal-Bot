@@ -198,7 +198,7 @@ bot.verifyGroupAccess = async (userId, chatId) => {
     await bot.sendMessage(
       chatId,
       `⚠️ Wajib join 2 grup untuk akses`,
-      { reply_markup: joinKeyboard }
+       { parse_mode: "HTML", reply_markup: joinKeyboard }
     );
     
     return false;
