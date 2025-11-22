@@ -13,7 +13,12 @@ export default function (bot, db, saveDB) {
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
-        `◆ RENAME KONTAK\n\n▸ ◆◆ AKSES DITOLAK ◆◆\n\n╭─❖\n│ ❌ <b>Akses Ditolak</b>\n│ ➤ Fitur khusus VIP\n╰───────────────❖\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
+        `◆ RENAME KONTAK\n\n▸ ◆◆ AKSES DITOLAK ◆◆
+
+┌─❖
+├ ❌ Akses Ditolak
+├ Fitur khusus VIP
+└─❖\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
         { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
