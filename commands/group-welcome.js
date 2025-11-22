@@ -39,6 +39,17 @@ export default function (bot, db, saveDB) {
       );
     }
 
+    // Check if user is VIP
+    const user = db.users[userId];
+    if (!user || user.role !== "vip") {
+      return trackMessage(
+        userId,
+        chatId,
+        `❌ Fitur grup hanya untuk VIP users kak!`,
+        { parse_mode: "HTML" }
+      );
+    }
+
     sessions[userId] = { step: 1, groupId };
     trackMessage(
       userId,
@@ -80,6 +91,17 @@ export default function (bot, db, saveDB) {
         userId,
         chatId,
         `❌ Error checking admin status`,
+        { parse_mode: "HTML" }
+      );
+    }
+
+    // Check if user is VIP
+    const user = db.users[userId];
+    if (!user || user.role !== "vip") {
+      return trackMessage(
+        userId,
+        chatId,
+        `❌ Fitur grup hanya untuk VIP users kak!`,
         { parse_mode: "HTML" }
       );
     }
