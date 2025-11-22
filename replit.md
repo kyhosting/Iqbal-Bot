@@ -115,11 +115,35 @@ Keyboard buttons dengan 2 kolom layout:
 - Friendly emoji indicators
 - Consistent across all features
 
+### Group Access Control System 🔐 (NEW)
+**Fitur Keamanan - Hanya Owner & VIP di Grup**
+
+Semua fitur bot di grup hanya bisa diakses oleh Owner dan VIP users:
+- User biasa: TIDAK bisa akses apapun di grup
+- Redeem code users: TIDAK bisa akses di grup (hanya bisa di DM)
+- VIP users: BISA akses semua fitur di grup
+- Owner: BISA akses semua fitur dimana saja
+
+**Komponen Code:**
+- Helper: `bot.checkGroupOwnerVipAccess(userId, chatId)` - Check role & chat type
+- Implementasi: Semua 8 user commands + owner menu
+- Commands terproteksi:
+  - `/redeem`, `/bantuan`, `/cekid`, `/fitur`, `/clear`, `/viplist`
+  - `/owner`, `⛓️MENU OWNER`
+  - `/setwelcome`, `/setrules`, `/ban`, `/unban`, `/kick`
+
+**Flow:**
+1. User invoke command di grup
+2. Bot check: apakah group chat?
+3. JIKA group → verify role (owner atau vip?)
+4. JIKA bukan owner/vip → block dengan: "❌ Fitur grup hanya untuk VIP users kak!"
+5. JIKA DM → allow (normal behavior)
+
 ### Available Features
 
-#### User Commands
+#### User Commands (Group-Protected ⛓️)
 - `/start` - Welcome message dengan foto profil, status VIP, statistik
-- `🎁 Redeem Code` - Redeem VIP access code
+- `🎁 Redeem Code` - Redeem VIP access code (DM only / VIP in group)
 
 #### VIP Commands (Conversion)
 - `⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ` - Convert VCF ke TXT
@@ -142,9 +166,18 @@ Keyboard buttons dengan 2 kolom layout:
 - `⛓️CEK KONTAK` - Cek detail kontak
 - `⛓️ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ` - Create admin (owner only)
 
-#### Owner Commands
+#### Owner Commands (Group-Protected ⛓️)
 - `⛓️MENU OWNER` - Panel management dengan inline keyboard
 - Command management untuk redeem codes dan user VIP
+- `/owner` - Slash command untuk owner menu (same as keyboard)
+
+#### Group Management Commands (VIP-Only ⛓️)
+- `/setwelcome` - Set custom welcome message (VIP + admin)
+- `/setrules` - Set custom grup rules (VIP + admin)
+- `/rules` - Show grup rules (anyone)
+- `/ban` - Ban user dari grup (VIP + admin)
+- `/unban` - Unban user (VIP + admin)
+- `/kick` - Kick user dari grup (VIP + admin)
 
 ### Message Tone & Style 💬
 
@@ -244,6 +277,8 @@ Bot berjalan dengan workflow "Iqbal CV Bot" (`node index.js`)
 - ✅ TXT TO VCF & VCF TO TXT dengan format separator ◆ ▸
 - ✅ Normalized message format across all 23 features
 - ✅ **HTML parse_mode formatting** - All critical messages converted to HTML
+- ✅ **GROUP MANAGEMENT SYSTEM** - 2 new commands: welcome + moderation (VIP-only access)
+- ✅ **GROUP ACCESS CONTROL** - ALL fitur bot di grup restricted untuk Owner & VIP only
 - ✅ **Bot Status: RUNNING** - All 23 command files loaded successfully ✅
 
 ## File Structure

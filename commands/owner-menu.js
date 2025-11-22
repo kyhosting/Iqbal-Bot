@@ -102,6 +102,19 @@ export default function (bot, db, saveDB) {
     const userId = msg.from.id;
     const chatId = msg.chat.id;
 
+    const hasAccess = await bot.checkGroupOwnerVipAccess(userId, chatId);
+    if (!hasAccess) {
+      return bot.sendMessage(
+        chatId,
+        `◆◆  AKSES DITOLAK  ◆◆
+
+┌─❖
+│  ❌ Fitur grup hanya untuk owner kak!
+└─❖`,
+        { parse_mode: "HTML" }
+      );
+    }
+
     if (bot.getRole(userId) !== "owner") {
       return bot.sendMessage(
         chatId,
@@ -120,6 +133,19 @@ export default function (bot, db, saveDB) {
   bot.onText(/^\/owner$/, async (msg) => {
     const userId = msg.from.id;
     const chatId = msg.chat.id;
+
+    const hasAccess = await bot.checkGroupOwnerVipAccess(userId, chatId);
+    if (!hasAccess) {
+      return bot.sendMessage(
+        chatId,
+        `◆◆  AKSES DITOLAK  ◆◆
+
+┌─❖
+│  ❌ Fitur grup hanya untuk owner kak!
+└─❖`,
+        { parse_mode: "HTML" }
+      );
+    }
 
     if (bot.getRole(userId) !== "owner") {
       return bot.sendMessage(

@@ -16,6 +16,20 @@ export default function (bot, db, saveDB) {
     const userId = msg.from.id;
     const chatId = msg.chat.id;
 
+    const hasAccess = await bot.checkGroupOwnerVipAccess(userId, chatId);
+    if (!hasAccess) {
+      return trackMessage(
+        userId,
+        chatId,
+        `◆◆  AKSES DITOLAK  ◆◆
+
+┌─❖
+│  ❌ Fitur grup hanya untuk VIP users kak!
+└─❖`,
+        { parse_mode: "HTML" }
+      );
+    }
+
     const message = `◆◆  CLEAR CHAT  ◆◆
 
 ┌─❖
