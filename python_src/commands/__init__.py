@@ -1,1 +1,0 @@
-# Iqbal CV Bot Commands
