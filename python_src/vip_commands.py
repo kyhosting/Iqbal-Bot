@@ -3,7 +3,7 @@ import os
 import re
 import asyncio
 import pandas as pd
-from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
+from telegram import Update
 from telegram.ext import ContextTypes
 from file_converters import (
     count_contacts_in_vcf, count_contacts_in_txt,
@@ -66,8 +66,7 @@ async def handle_vip_command(update: Update, context: ContextTypes.DEFAULT_TYPE,
         title, instruction = commands_flow[command]
         await update.message.reply_text(
             f"*{title}*\n\n{instruction}\n\nKetik `batal` untuk membatalkan",
-            parse_mode="Markdown",
-            reply_markup=ReplyKeyboardMarkup([[KeyboardButton("❌ Batal ❌")]], resize_keyboard=True)
+            parse_mode="Markdown"
         )
 
 async def handle_file_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -111,14 +110,12 @@ async def handle_file_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         elif command == 'gabungvcf':
             session['files'].append(file_path)
             await update.message.reply_text(
-                f"✅ File {len(session['files'])} diterima\n\nKirim file lagi atau ketik 'Selesai'",
-                reply_markup=ReplyKeyboardMarkup([[KeyboardButton("✅ Selesai"), KeyboardButton("❌ Batal ❌")]], resize_keyboard=True)
+                f"✅ File {len(session['files'])} diterima\n\nKirim file lagi atau ketik `done` untuk selesai", KeyboardButton("❌ Batal ❌")]], resize_keyboard=True)
             )
         elif command == 'gabungtxt':
             session['files'].append(file_path)
             await update.message.reply_text(
-                f"✅ File {len(session['files'])} diterima\n\nKirim file lagi atau ketik 'Selesai'",
-                reply_markup=ReplyKeyboardMarkup([[KeyboardButton("✅ Selesai"), KeyboardButton("❌ Batal ❌")]], resize_keyboard=True)
+                f"✅ File {len(session['files'])} diterima\n\nKirim file lagi atau ketik `done` untuk selesai", KeyboardButton("❌ Batal ❌")]], resize_keyboard=True)
             )
         elif command == 'hitung':
             await process_hitung(update, context, file_path, file_name)
@@ -242,7 +239,7 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
                     clear_session(user_id)
                     
         elif command == 'gabungvcf':
-            if text == '✅ Selesai':
+            if text.lower() == 'done':
                 if len(files) >= 2:
                     await update.message.reply_text("📄 Nama file output?")
                 else:
@@ -261,7 +258,7 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
                 clear_session(user_id)
                 
         elif command == 'gabungtxt':
-            if text == '✅ Selesai':
+            if text.lower() == 'done':
                 if len(files) >= 2:
                     await update.message.reply_text("📄 Nama file output?")
                 else:
