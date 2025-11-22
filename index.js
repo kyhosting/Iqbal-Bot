@@ -202,7 +202,7 @@ bot.verifyGroupAccess = async (userId, chatId) => {
     
     await bot.sendMessage(
       chatId,
-      `❌ <b>Akses Dicabut Sementara Kak!</b>\n\nKamu keluar dari salah satu grup 😢\n\nWajib join 2 grup:\n• @agentviber12\n• @channelviber${remainingText}\n\nKlik tombol untuk rejoin!`,
+      `❌ <b>Akses Dicabut Sementara Kak!</b>\n\nKamu keluar dari salah satu grup 😢${remainingText}`,
       { parse_mode: "HTML", reply_markup: rejoinKeyboard }
     );
     
@@ -403,7 +403,7 @@ bot.on("my_chat_member", async (update) => {
           
           await bot.sendMessage(
             userId,
-            `❌ <b>Akses Dicabut Sementara Kak!</b>\n\nKamu keluar dari salah satu grup 😢\n\n📱 Wajib join kedua grup:\n• @agentviber12 (Grup Utama)\n• @channelviber (Channel CV)${remainingText}\n\nKlik tombol di bawah untuk rejoin!`,
+            `❌ <b>Akses Dicabut Sementara Kak!</b>\n\nKamu keluar dari salah satu grup 😢${remainingText}`,
             { parse_mode: "HTML", reply_markup: rejoinKeyboard }
           ).catch(() => {});
           
