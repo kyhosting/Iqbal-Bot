@@ -1,0 +1,64 @@
+ini code gabung file tolong jadikan 1 keyboard button bisa gabung file txt atau vcf tidak perlu kirim 1 per 1 langsung kirim dalam jumlah besar misal 10,20,30 dan seterusnya  ini Code nya
+#===========[GABUNG VCF]
+
+@on_msg(filters.command("🗄️ Gabung VCF 🗄️", "") & filters.private)
+async def ngecreategabung(client, message):
+    user_id = message.from_user.id
+    ngecek = ngecek_(user_id)
+    if not ngecek:
+        return await message.reply("<b><i>lu gada akses kocak\n\nmau punya akses? pm @Soyydev😋</b></i>")
+    allfile = []
+    while True:
+        asking = await client.ask(text="<b><i>Kirim file yang ingin anda gabung! (wajib .vcf)\n\nNote: Jika sudah memasukkan 2 file / lebih anda dapan menekan tombol done</b></i>", user_id=user_id, chat_id=user_id, reply_markup=ReplyKeyboardMarkup([[KeyboardButton("⭕️ Done ⭕️")], [KeyboardButton("❌ Batal ❌")]], resize_keyboard=True))
+        if asking.text:
+            if batals(asking.text):
+                return await message.reply("<b><i>Proses dibatalkan</b></i>", reply_markup=home_keyboard)
+            elif asking.text == "⭕️ Done ⭕️":
+                if len(allfile) < 2:
+                    return await message.reply("<b><i>Proses gagal, mohon masukkan 2 file atau lebih!!</b></i>", reply_markup=home_keyboard)
+                break
+        elif not on_vcf(asking):
+            return await message.reply("<b><i>File invalid, proses dibatalkan!!</b></i>", reply_markup=home_keyboard)
+        file = await asking.download()
+        allfile.append(file)
+    ask2 = await client.ask(text="<b><i>Masukkan nama file baru!!</b></i>", user_id=user_id, chat_id=user_id, reply_markup=ReplyKeyboardMarkup([[KeyboardButton("❌ Batal ❌")]], resize_keyboard=True))
+    if batals(ask2.text):
+        return await message.reply("<b><i>Proses dibatalkan</b></i>", reply_markup=home_keyboard)
+    merge_vcf_files(allfile, ask2.text)
+    await message.reply_document(f"{ask2.text}.vcf")
+    await message.reply(f"<b><i>👋🏻 Hai!, {message.from_user.first_name},\n\nSelamat datang di {client.me.mention}!\nSaya dapat convert file secara instan</b></i>", reply_markup=home_keyboard)
+    allfile.append(f"{ask2.text}.vcf")
+    for isine in allfile:
+        os.remove(isine)
+
+#===========[GABUNG TXT]
+
+@on_msg(filters.command("🗄️ Gabung TXT 🗄️", "") & filters.private)
+async def ngecreatetxtgbg(client, message):
+    user_id = message.from_user.id
+    ngecek = ngecek_(user_id)
+    if not ngecek:
+        return await message.reply("<b><i>lu gada akses kocak\n\nmau punya akses? pm @Soyydev😋</b></i>")
+    allfile = []
+    while True:
+        asking = await client.ask(text="<b><i>Kirim file yang ingin anda gabung! (wajib .txt)\n\nNote: Jika sudah memasukkan 2 file / lebih anda dapan menekan tombol done</b></i>", user_id=user_id, chat_id=user_id, reply_markup=ReplyKeyboardMarkup([[KeyboardButton("⭕️ Done ⭕️")], [KeyboardButton("❌ Batal ❌")]], resize_keyboard=True))
+        if asking.text:
+            if batals(asking.text):
+                return await message.reply("<b><i>Proses dibatalkan</b></i>", reply_markup=home_keyboard)
+            elif asking.text == "⭕️ Done ⭕️":
+                if len(allfile) < 2:
+                    return await message.reply("<b><i>Proses gagal, mohon masukkan 2 file atau lebih!!</b></i>", reply_markup=home_keyboard)
+                break
+        elif not on_txt(asking):
+            return await message.reply("<b><i>File invalid, proses dibatalkan!!</b></i>", reply_markup=home_keyboard)
+        file = await asking.download()
+        allfile.append(file)
+    ask2 = await client.ask(text="<b><i>Masukkan nama file baru!!</b></i>", user_id=user_id, chat_id=user_id, reply_markup=ReplyKeyboardMarkup([[KeyboardButton("❌ Batal ❌")]], resize_keyboard=True))
+    if batals(ask2.text):
+        return await message.reply("<b><i>Proses dibatalkan</b></i>", reply_markup=home_keyboard)
+    process_filesgbg(allfile, f"{ask2.text}.txt")
+    await message.reply_document(f"{ask2.text}.txt")
+    await message.reply(f"<b><i>👋🏻 Hai!, {message.from_user.first_name},\n\nSelamat datang di {client.me.mention}!\nSaya dapat convert file secara instan</b></i>", reply_markup=home_keyboard)
+    allfile.append(f"{ask2.text}.txt")
+    for isine in allfile:
+        os.remove(isine)

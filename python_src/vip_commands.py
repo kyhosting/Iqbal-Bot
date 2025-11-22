@@ -103,20 +103,50 @@ async def handle_file_message(update: Update, context: ContextTypes.DEFAULT_TYPE
             session['step'] = 2
             await update.message.reply_text("📝 *Nama file output?*", parse_mode="Markdown")
         elif cmd in ['gabungfile', 'gabungtxt']:
-            # Check if we're waiting for output name (step 2)
-            if session.get('step') == 2:
-                await update.message.reply_text(f"⏳ *Ketik nama file output dulu ya!*\n\nSudah menerima {len(session.get('files', []))} file", parse_mode="Markdown")
-                os.remove(file_path) if os.path.exists(file_path) else None
-            else:
-                session['files'].append(file_path)
-                session['file_type'] = file_name.split('.')[-1]
-                # Silently store file, no message
-        elif cmd == 'hitung':
-            total = count_contacts_in_vcf(file_path) if file_name.endswith('.vcf') else count_contacts_in_txt(file_path)
-            await update.message.reply_text(f"📊 *Total: {total} kontak*", parse_mode="Markdown")
-            os.remove(file_path) if os.path.exists(file_path) else None
-            increment_operation(user_id)
-            clear_session(user_id)
+            if text.lower() == 'done':
+                if len(files) >= 2:
+                    await update.message.reply_text(f"📝 *Nama file output?*", parse_mode="Markdown")
+                    session['step'] = 2
+                else:
+                    await update.message.reply_text("⚠️ *Minimal 2 file diperlukan!*", parse_mode="Markdown")
+            elif session.get('step') == 2:
+                # User entered output filename - merge and send
+                fname = f"/tmp/{text}.vcf" if files[0].endswith('.vcf') else f"/tmp/{text}.txt"
+                try:
+                    if files[0].endswith('.vcf'):
+                        with open(fname, 'w') as outfile:
+                            for f in files:
+                                if os.path.exists(f):
+                                    with open(f, 'r') as infile:
+                                        outfile.write(infile.read())
+                                        outfile.write("\n")
+
+                    else:
+                        nums = set()
+                        for f in files:
+                            if os.path.exists(f):
+                                with open(f, 'r') as fh:
+                                    for line in fh:
+                                        if line.strip():
+                                            nums.add(line.strip())
+                        with open(fname, 'w') as fh:
+                            for n in sorted(nums):
+                                fh.write(n + '\n')
+
+                    
+                    await update.message.reply_document(fname)
+                    await update.message.reply_text(f"✅ *Selesai gabung {len(files)} file!*", parse_mode="Markdown")
+                    
+                    # Cleanup
+                    for f in files:
+                        os.remove(f) if os.path.exists(f) else None
+                    os.remove(fname) if os.path.exists(fname) else None
+                    
+                    increment_operation(user_id)
+                    clear_session(user_id)
+                except Exception as e:
+                    await update.message.reply_text(f"❌ *Error: {str(e)}*", parse_mode="Markdown")
+                    clear_session(user_id)
         elif cmd == 'cek_nama':
             kontak = read_vcf_unlimited(file_path)
             nama = []
@@ -232,21 +262,22 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         elif cmd in ['gabungfile', 'gabungtxt']:
             if text.lower() == 'done':
                 if len(files) >= 2:
-                    await update.message.reply_text(f"📝 *Nama file output untuk {len(files)} file?*", parse_mode="Markdown")
+                    await update.message.reply_text(f"📝 *Nama file output?*", parse_mode="Markdown")
                     session['step'] = 2
                 else:
                     await update.message.reply_text("⚠️ *Minimal 2 file diperlukan!*", parse_mode="Markdown")
             elif session.get('step') == 2:
-                # Process merge and send result
-                fname = f"/tmp/{text}.vcf" if cmd == 'gabungfile' and files[0].endswith('.vcf') else f"/tmp/{text}.txt"
+                # User entered output filename - merge and send
+                fname = f"/tmp/{text}.vcf" if files[0].endswith('.vcf') else f"/tmp/{text}.txt"
                 try:
-                    if cmd == 'gabungfile' and files[0].endswith('.vcf'):
+                    if files[0].endswith('.vcf'):
                         with open(fname, 'w') as outfile:
                             for f in files:
                                 if os.path.exists(f):
                                     with open(f, 'r') as infile:
                                         outfile.write(infile.read())
                                         outfile.write("\n")
+
                     else:
                         nums = set()
                         for f in files:
@@ -258,13 +289,20 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
                         with open(fname, 'w') as fh:
                             for n in sorted(nums):
                                 fh.write(n + '\n')
+
                     
                     await update.message.reply_document(fname)
-                    await update.message.reply_text(f"✅ *Gabung {len(files)} file - Selesai!*", parse_mode="Markdown")
+                    await update.message.reply_text(f"✅ *Selesai gabung {len(files)} file!*", parse_mode="Markdown")
+                    
+                    # Cleanup
                     for f in files:
                         os.remove(f) if os.path.exists(f) else None
                     os.remove(fname) if os.path.exists(fname) else None
+                    
                     increment_operation(user_id)
+                    clear_session(user_id)
+                except Exception as e:
+                    await update.message.reply_text(f"❌ *Error: {str(e)}*", parse_mode="Markdown")
                     clear_session(user_id)
                 except Exception as e:
                     await update.message.reply_text(f"❌ *Error: {str(e)}*", parse_mode="Markdown")
