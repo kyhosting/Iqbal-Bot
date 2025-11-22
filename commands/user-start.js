@@ -155,7 +155,7 @@ export default function (bot, db, saveDB) {
     }
   });
 
-  // DASHBOARD WITH AESTHETIC FORMAT
+  // DASHBOARD WITH AESTHETIC FORMAT - MARKDOWN
   bot.showDashboard = async (userId, chatId) => {
     try {
       const user = db.users[userId];
@@ -186,14 +186,10 @@ export default function (bot, db, saveDB) {
 
       const statusText = isVip ? "🔥 VIP ACTIVE" : "👤 Regular";
       const roleText = userData.role === "owner" ? "👑 OWNER" : (userData.role === "vip" ? "💎 VIP" : "👤 USER");
+      const username = userData.username || "unknown";
 
-      // Get profile photo
-      let photoSent = false;
-      try {
-        const userPhotos = await bot.getUserProfilePhotos(userId, { limit: 1 });
-        if (userPhotos.total_count > 0) {
-          const photoId = userPhotos.photos[0][0].file_id;
-          const caption = `🎌 <b>iqbal ᴄᴠ ʙᴏᴛꜱ</b>
+      // Buat caption dengan format MARKDOWN yang tepat
+      const caption = `🎌 *iqbal ᴄᴠ ʙᴏᴛꜱ*
 (by iqbaldev)
 
 ╭─❖
@@ -202,23 +198,23 @@ export default function (bot, db, saveDB) {
 │ ✦ Created by: @Iqbaldev
 ╰───────────────❖
 
-╭─❖ <b>ꜱᴛᴀᴛᴜꜱ ᴀᴄᴄᴇꜱ</b>
-│ ➤ Nama: <b>${userData.first_name || "User"}</b>
-│ ➤ ID: <code>${userId}</code>
-│ ➤ Username: @${userData.username || "unknown"}
-│ ➤ Role: <b>${roleText}</b>
-│ ➤ Status: <b>${statusText}</b>
-│ ➤ Masa Aktif: <b>${expiredDate}</b>
-│ ➤ Hari Tersisa: <b>${remainingDays} hari</b>
-│ ➤ Total Operasi: <b>${userData.total_operation}</b>
+╭─❖ *ꜱᴛᴀᴛᴜꜱ ᴀᴋᴄᴇꜱ*
+│ ➤ Nama: *${userData.first_name || "User"}*
+│ ➤ ID: \`${userId}\`
+│ ➤ Username: @${username}
+│ ➤ Role: *${roleText}*
+│ ➤ Status: *${statusText}*
+│ ➤ Masa Aktif: *${expiredDate}*
+│ ➤ Hari Tersisa: *${remainingDays} hari*
+│ ➤ Total Operasi: *${userData.total_operation}*
 ╰───────────────❖
 
-╭─❖ <b>ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ</b>
+╭─❖ *ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ*
 │ ➤ 📄 TXT 📇 VCF 📊 XLSX
 │ ➤ 他の形式も順次対応予定です。
 ╰───────────────❖
 
-╭─❖ <b>ᴍᴇɴᴜ ʙᴏᴛ</b>
+╭─❖ *ᴍᴇɴᴜ ʙᴏᴛ*
 │ ➤ ⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ
 │ ➤ ⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ
 │ ➤ ⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ
@@ -237,9 +233,15 @@ export default function (bot, db, saveDB) {
 💎 ご利用ありがとうございます。
 このボットは常に進化しています ⚙️`;
 
+      // Get profile photo
+      let photoSent = false;
+      try {
+        const userPhotos = await bot.getUserProfilePhotos(userId, { limit: 1 });
+        if (userPhotos.total_count > 0) {
+          const photoId = userPhotos.photos[0][0].file_id;
           await bot.sendPhoto(chatId, photoId, {
             caption: caption,
-            parse_mode: "HTML",
+            parse_mode: "Markdown",
             reply_markup: bot.getMainKeyboardUser(userId)
           });
           photoSent = true;
@@ -250,58 +252,14 @@ export default function (bot, db, saveDB) {
 
       // Jika tidak ada foto, kirim text saja
       if (!photoSent) {
-        const message = `🎌 <b>iqbal ᴄᴠ ʙᴏᴛꜱ</b>
-(by iqbaldev)
-
-╭─❖
-│ こんにちは、私は Iqbalʙᴏᴛ です。
-│ 私はファイル変換と管理を担当します。
-│ ✦ Created by: @Iqbaldev
-╰───────────────❖
-
-╭─❖ <b>ꜱᴛᴀᴛᴜꜱ ᴀᴄᴄᴇꜱ</b>
-│ ➤ Nama: <b>${userData.first_name || "User"}</b>
-│ ➤ ID: <code>${userId}</code>
-│ ➤ Username: @${userData.username || "unknown"}
-│ ➤ Role: <b>${roleText}</b>
-│ ➤ Status: <b>${statusText}</b>
-│ ➤ Masa Aktif: <b>${expiredDate}</b>
-│ ➤ Hari Tersisa: <b>${remainingDays} hari</b>
-│ ➤ Total Operasi: <b>${userData.total_operation}</b>
-╰───────────────❖
-
-╭─❖ <b>ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ</b>
-│ ➤ 📄 TXT 📇 VCF 📊 XLSX
-│ ➤ 他の形式も順次対応予定です。
-╰───────────────❖
-
-╭─❖ <b>ᴍᴇɴᴜ ʙᴏᴛ</b>
-│ ➤ ⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ
-│ ➤ ⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ
-│ ➤ ⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ
-│ ➤ ⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ
-│ ➤ ⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ
-│ ➤ ⛓️ ꜱᴘʟɪᴛ ꜰɪʟᴇ
-│ ➤ ⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ
-│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ
-│ ➤ ⛓️ ᴀᴍʙɪʟ ɴᴀᴍᴀ ꜰɪʟᴇ
-│ ➤ ⛓️ ʙᴜᴀᴛ ɴᴀᴍᴀ
-│ ➤ ⛓️ ᴀᴅᴍ & ɴᴀᴠʏ
-│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ
-│ ➤ ⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ
-╰───────────────❖
-
-💎 ご利用ありがとうございます。
-このボットは常に進化しています ⚙️`;
-
-        await bot.sendMessage(chatId, message, {
-          parse_mode: "HTML",
+        await bot.sendMessage(chatId, caption, {
+          parse_mode: "Markdown",
           reply_markup: bot.getMainKeyboardUser(userId)
         });
       }
     } catch (err) {
       console.error("Error di showDashboard:", err);
-      await bot.sendMessage(chatId, "❌ Error loading dashboard", { parse_mode: "HTML" });
+      await bot.sendMessage(chatId, "❌ Error loading dashboard", { parse_mode: "Markdown" });
     }
   };
 }
