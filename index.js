@@ -234,6 +234,99 @@ for (const file of commandFiles) {
   }
 }
 
+// ===== HELPER: Show Dashboard (with profile photo) =====
+bot.showDashboard = async (userId, chatId) => {
+  let user = db.users[userId];
+
+  // Jika user belum ada, tambahkan ke database + kasih trial 1 hari
+  if (!user) {
+    const trialExpired = Date.now() + 1 * 24 * 60 * 60 * 1000;
+    db.users[userId] = {
+      id: userId,
+      username: (await bot.getChat(userId)).username || "",
+      first_name: (await bot.getChat(userId)).first_name || "",
+      last_name: (await bot.getChat(userId)).last_name || "",
+      role: config.owner.includes(userId) ? "owner" : "trial",
+      vip_expired: config.owner.includes(userId) ? 0 : trialExpired,
+      status: "active",
+      total_operation: 0,
+      notified_expiry: false,
+      trial_start: Date.now(),
+      suspended: false
+    };
+    saveDB();
+
+    // Notif trial diberikan (hanya untuk non-owner)
+    if (!config.owner.includes(userId)) {
+      await bot.sendMessage(
+        userId,
+        `🎁 *TRIAL 1 HARI GRATIS!*\n\nSelamat! Kamu sudah verifikasi grup 🎉\n\n✅ Akses trial selama 1 hari sudah aktif!\n⏰ Berlaku sampai: ${new Date(trialExpired).toLocaleDateString("id-ID")}\n\nNikmati semua fitur premium dulu ya Kak! 💎\nSetelah trial habis, beli VIP untuk terus akses 😊`,
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+      ).catch(() => {});
+    }
+  } else {
+    // User sudah ada - restore jika suspended
+    if (user.suspended && user.vip_expired && user.vip_expired > Date.now()) {
+      user.suspended = false;
+      user.status = "active";
+      if (!user.role || user.role === "user") {
+        user.role = user.trial_start ? "trial" : "vip";
+      }
+      saveDB();
+
+      const daysLeft = Math.ceil((user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24));
+      await bot.sendMessage(
+        userId,
+        `✅ *Akses Dipulihkan Kak!*\n\nKamu sudah join kedua grup 🎉\n\n✨ Trial/VIP kamu aktif kembali!\n⏰ Sisa: *${daysLeft} hari*\n\nLanjut nikmati fitur premium ya 😊`,
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+      ).catch(() => {});
+    }
+  }
+
+  // Get user data (refresh)
+  user = db.users[userId];
+  const role = bot.getRole(userId);
+
+  // Hitung sisa hari VIP
+  let expired = "Tidak Aktif";
+  let remaining = "0 hari";
+  let status = user.status || "inactive";
+
+  if (user.vip_expired && user.vip_expired > Date.now()) {
+    const expDate = new Date(user.vip_expired);
+    expired = expDate.toLocaleDateString("id-ID");
+    const daysLeft = Math.ceil((user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24));
+    remaining = `${daysLeft} hari`;
+    status = "active";
+  }
+
+  // Caption dengan format EXACT (tidak boleh diubah sekalipun 1 huruf)
+  const caption = `🎌 iqbal ᴄᴠ ʙᴏᴛꜱ\n(by iqbaldev)\n\n╭─❖\n│ こんにちは、私は Iqbalʙᴏᴛ です。\n│ 私はファイル変換と管理を担当します。\n│ ✦ Created by: @Iqbaldev\n╰───────────────❖\n\n╭─❖ ꜱᴛᴀᴛᴜꜱ ᴀᴋᴄᴇꜱ\n│ ➤ Nama: *${user.first_name || "User"}*\n│ ➤ ID: \`${userId}\`\n│ ➤ Username: @${user.username || "-"}\n│ ➤ Role: *${role.toUpperCase()}*\n│ ➤ Status: *${status === "active" ? "✅ Aktif" : "❌ Tidak Aktif"}*\n│ ➤ Masa Aktif: *${expired}*\n│ ➤ Hari Tersisa: *${remaining}*\n│ ➤ Total Operasi: *${user.total_operation || 0}*\n╰───────────────❖\n\n╭─❖ ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ\n│ ➤ 📄 TXT 📇 VCF 📊 XLSX\n│ ➤ 他の形式も順次対応予定です。\n╰───────────────❖\n\n╭─❖ ᴍᴇɴᴜ ʙᴏᴛ\n│ ➤ ⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ\n│ ➤ ⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ\n│ ➤ ⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n│ ➤ ⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ\n│ ➤ ⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n│ ➤ ⛓️ ꜱᴘʟɪᴛ ꜰɪʟᴇ\n│ ➤ ⛓️ ɢᴀʙᴜɢ ꜰɪʟᴇ\n│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ\n│ ➤ ⛓️ ᴀᴍʙɪʟ ɴᴀᴍᴀ ꜰɪʟᴇ\n│ ➤ ⛓️ ʙᴜᴀᴛ ɴᴀᴍᴀ\n│ ➤ ⛓️ ᴀᴅᴍ & ɴᴀᴠʏ\n│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ\n│ ➤ ⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ\n╰───────────────❖\n\n💎 ご利用ありがとうございます。\nこのボットは常に進化しています ⚙️`;
+
+  try {
+    const photos = await bot.getUserProfilePhotos(userId, { limit: 1 });
+    if (photos.total_count > 0) {
+      const fileId = photos.photos[0][0].file_id;
+      await bot.sendPhoto(chatId, fileId, {
+        caption: caption,
+        parse_mode: "Markdown",
+        reply_markup: bot.getMainKeyboardUser(userId)
+      });
+    } else {
+      await bot.sendMessage(chatId, caption, {
+        parse_mode: "Markdown",
+        reply_markup: bot.getMainKeyboardUser(userId)
+      });
+    }
+  } catch (err) {
+    console.error("Error getting profile photo:", err);
+    await bot.sendMessage(chatId, caption, {
+      parse_mode: "Markdown",
+      reply_markup: bot.getMainKeyboardUser(userId)
+    });
+  }
+};
+
 // ===== GLOBAL CALLBACK: Verify Again (dari inline button join) =====
 bot.on("callback_query", async (query) => {
   if (query.data === "verify_again") {
@@ -252,45 +345,13 @@ bot.on("callback_query", async (query) => {
         show_alert: true
       });
     } else {
-      // User sudah join - DELETE message & show success
+      // User sudah join - DELETE message & show dashboard with photo
       try {
         await bot.deleteMessage(chatId, messageId).catch(() => {});
         await delay(300);
         
-        // Jika user belum ada di database, tambahkan dengan trial 1 hari
-        if (!db.users[userId]) {
-          const trialExpired = Date.now() + 1 * 24 * 60 * 60 * 1000;
-          db.users[userId] = {
-            id: userId,
-            username: (await bot.getChat(userId)).username || "",
-            first_name: (await bot.getChat(userId)).first_name || "",
-            last_name: (await bot.getChat(userId)).last_name || "",
-            role: config.owner.includes(userId) ? "owner" : "trial",
-            vip_expired: config.owner.includes(userId) ? 0 : trialExpired,
-            status: "active",
-            total_operation: 0,
-            notified_expiry: false,
-            trial_start: Date.now(),
-            suspended: false
-          };
-          saveDB();
-        } else {
-          // User sudah ada - restore jika suspended
-          if (db.users[userId].suspended && db.users[userId].vip_expired && db.users[userId].vip_expired > Date.now()) {
-            db.users[userId].suspended = false;
-            db.users[userId].status = "active";
-            if (!db.users[userId].role || db.users[userId].role === "user") {
-              db.users[userId].role = db.users[userId].trial_start ? "trial" : "vip";
-            }
-            saveDB();
-          }
-        }
-        
-        await bot.sendMessage(
-          userId,
-          `✅ *Verifikasi Berhasil!*\n\nKamu sudah bisa akses semua fitur bot 🎉`,
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
-        );
+        // Show dashboard aesthetic dengan foto profil
+        await bot.showDashboard(userId, chatId);
       } catch (err) {
         console.error("Error di verify_again callback:", err);
       }
