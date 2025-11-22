@@ -10,10 +10,10 @@ from telegram.ext import (
 from config_py import CONFIG
 from helpers import *
 from verification import check_group_membership, verify_group_access, handle_verify_again
-from commands.user_commands import cmd_me, cmd_bantuan, cmd_fitur
+from commands.user_commands import cmd_me, cmd_bantuan, cmd_fitur, cmd_cekid, cmd_viplist, cmd_clear
 from redeem_system import redeem_start, redeem_input, REDEEM_INPUT
 from owner_commands import owner_menu, handle_owner_input, owner_list_codes, owner_list_users
-from vip_commands import handle_vip_command, handle_file_message, handle_text_message
+from vip_commands import handle_vip_command, handle_file_message, handle_text_message, handle_extract_nomor
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -84,6 +84,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ ⛓️": lambda u, c: handle_vip_command(u, c, 'rename_file'),
         "⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ ⛓️": lambda u, c: handle_vip_command(u, c, 'rename_kontak'),
         "⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ ⛓️": lambda u, c: handle_vip_command(u, c, 'msgtotxt'),
+        "⛓️ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ ⛓️": lambda u, c: handle_extract_nomor(u, c),
         "⛓️ ʜɪᴛᴜɴɢ ᴋᴏɴᴛᴀᴋ ⛓️": lambda u, c: handle_vip_command(u, c, 'hitung'),
         "⛓️ ᴄᴇᴋ ɴᴀᴍᴀ ᴋᴏɴᴛᴀᴋ ⛓️": lambda u, c: handle_vip_command(u, c, 'cek_nama'),
         "⛓️ ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ ⛓️": lambda u, c: handle_vip_command(u, c, 'admin'),
@@ -122,6 +123,9 @@ def main():
     app.add_handler(CommandHandler("bantuan", cmd_bantuan))
     app.add_handler(CommandHandler("fitur", cmd_fitur))
     app.add_handler(CommandHandler("help", cmd_bantuan))
+    app.add_handler(CommandHandler("cekid", cmd_cekid))
+    app.add_handler(CommandHandler("viplist", cmd_viplist))
+    app.add_handler(CommandHandler("clear", cmd_clear))
     app.add_handler(CommandHandler("owner", owner_menu))
     
     # Redeem flow

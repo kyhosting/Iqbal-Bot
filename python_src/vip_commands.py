@@ -250,3 +250,94 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
     except Exception as e:
         await update.message.reply_text(f"❌ {str(e)}")
         clear_session(user_id)
+
+
+async def handle_extract_nomor(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Extract phone numbers from file"""
+    user_id = update.effective_user.id
+    db_user = get_user(user_id)
+    if not db_user or db_user['role'] not in ['vip', 'trial', 'owner']:
+        await update.message.reply_text("🔒 Fitur VIP saja!")
+        return
+    
+    session = get_session(user_id)
+    session['command'] = 'extract_nomor'
+    session['step'] = 1
+    
+    await update.message.reply_text("""⛓️ EKSTRAK NOMOR ⛓️
+
+Support format:
+• VCF (Contact)
+• TXT (Text)
+• XLS/XLSX (Excel)
+• CSV (Data)
+
+Kirim file untuk ekstrak semua nomor telepon.
+Ketik batal untuk membatalkan""", parse_mode="Markdown")
+
+async def handle_extract_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Process extract from file"""
+    user_id = update.effective_user.id
+    session = get_session(user_id)
+    
+    if session.get('command') != 'extract_nomor':
+        return
+    
+    file_obj = update.message.document
+    file_name = file_obj.file_name
+    file = await context.bot.get_file(file_obj.file_id)
+    file_path = f"/tmp/{file_name}"
+    await file.download_to_drive(file_path)
+    
+    try:
+        nums = set()
+        
+        if file_name.endswith('.vcf'):
+            kontak = read_vcf_unlimited(file_path)
+            for c in kontak:
+                if isinstance(c, str):
+                    matches = re.findall(r'TEL[^:]*:(\+?[\d\s-]+)', c)
+                    for m in matches:
+                        num = m.replace("+", "").replace(" ", "").replace("-", "")
+                        if num.isnumeric():
+                            nums.add(num)
+        elif file_name.endswith('.txt'):
+            with open(file_path, 'r') as f:
+                for line in f:
+                    num = line.strip().replace("+", "")
+                    if num and num.replace(" ", "").isnumeric():
+                        nums.add(num)
+        elif file_name.endswith(('.xls', '.xlsx')):
+            df = pd.read_excel(file_path)
+            for num in df.values.flatten().tolist():
+                num_str = str(num).replace("+", "").strip()
+                if num_str and num_str.replace(" ", "").isnumeric():
+                    nums.add(num_str)
+        elif file_name.endswith('.csv'):
+            import csv
+            with open(file_path, 'r') as f:
+                reader = csv.reader(f)
+                for row in reader:
+                    for cell in row:
+                        num = str(cell).replace("+", "").strip()
+                        if num and num.replace(" ", "").isnumeric():
+                            nums.add(num)
+        
+        if nums:
+            out_file = f"extract_{len(nums)}_nomor.txt"
+            with open(out_file, 'w') as f:
+                for n in sorted(nums):
+                    f.write(n + '\n')
+            
+            await update.message.reply_text(f"✅ Ekstrak OK\n📊 Total: {len(nums)} nomor")
+            await update.message.reply_document(out_file)
+            os.remove(out_file)
+            increment_operation(user_id)
+        else:
+            await update.message.reply_text("❌ Tidak ada nomor ditemukan")
+        
+        os.remove(file_path)
+        clear_session(user_id)
+    except Exception as e:
+        await update.message.reply_text(f"❌ {str(e)}")
+        clear_session(user_id)
