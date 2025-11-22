@@ -375,7 +375,7 @@ export default function (bot, db, saveDB) {
     const expiresAt = match[3];
 
     if (bot.redeemDB[code]) {
-      return bot.sendMessage(chatId, `⚠️ Kode \`${code}\` sudah ada!`, { parse_mode: "HTML" });
+      return bot.sendMessage(chatId, `⚠️ Kode <code>${code}</code> sudah ada!`, { parse_mode: "HTML" });
     }
 
     bot.redeemDB[code] = {
