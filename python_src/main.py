@@ -12,7 +12,10 @@ from helpers import *
 from verification import check_group_membership, verify_group_access, handle_verify_again
 from commands.user_commands import cmd_me, cmd_bantuan, cmd_fitur, cmd_cekid, cmd_viplist, cmd_clear
 from redeem_system import redeem_start, redeem_input, REDEEM_INPUT
-from owner_commands import owner_menu, handle_owner_input, owner_list_codes, owner_list_users
+from owner_commands import (
+    owner_menu, handle_owner_input, owner_list_codes, owner_list_users,
+    owner_create_code, owner_set_vip, owner_broadcast
+)
 from vip_commands import handle_vip_command, handle_file_message, handle_text_message, handle_extract_nomor
 
 logging.basicConfig(
@@ -162,7 +165,11 @@ def main():
     
     # Callback queries
     app.add_handler(CallbackQueryHandler(handle_verify_again, pattern="^verify_again$"))
-    app.add_handler(CallbackQueryHandler(owner_menu, pattern="^owner_"))
+    app.add_handler(CallbackQueryHandler(owner_create_code, pattern="^owner_create_code$"))
+    app.add_handler(CallbackQueryHandler(owner_list_codes, pattern="^owner_list_codes$"))
+    app.add_handler(CallbackQueryHandler(owner_list_users, pattern="^owner_list_users$"))
+    app.add_handler(CallbackQueryHandler(owner_set_vip, pattern="^owner_set_vip$"))
+    app.add_handler(CallbackQueryHandler(owner_broadcast, pattern="^owner_broadcast$"))
     
     # Message handlers
     app.add_handler(MessageHandler(filters.Document.ALL, handle_file_message))
