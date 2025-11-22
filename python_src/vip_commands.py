@@ -102,10 +102,6 @@ async def handle_file_message(update: Update, context: ContextTypes.DEFAULT_TYPE
             session['files'].append(file_path)
             session['step'] = 2
             await update.message.reply_text("📝 *Nama file output?*", parse_mode="Markdown")
-        elif cmd in ['gabungfile', 'gabungtxt']:
-            # Just store file silently - no messages
-            session['files'].append(file_path)
-            session['file_type'] = file_name.split('.')[-1]
         elif cmd == 'cek_nama':
             kontak = read_vcf_unlimited(file_path)
             nama = []
@@ -217,45 +213,6 @@ async def handle_text_message(update: Update, context: ContextTypes.DEFAULT_TYPE
                     clear_session(user_id)
                 else:
                     await update.message.reply_text("❌ *Nomor tidak ditemukan!*", parse_mode="Markdown")
-        
-        elif cmd in ['gabungfile', 'gabungtxt']:
-            if text.lower() == 'done':
-                if len(files) >= 2:
-                    await update.message.reply_text(f"📝 *Nama file output untuk {len(files)} file?*", parse_mode="Markdown")
-                    session['step'] = 2
-                else:
-                    await update.message.reply_text("⚠️ *Minimal 2 file diperlukan!*", parse_mode="Markdown")
-            elif session.get('step') == 2:
-                fname = f"/tmp/{text}.vcf" if files[0].endswith('.vcf') else f"/tmp/{text}.txt"
-                try:
-                    if files[0].endswith('.vcf'):
-                        with open(fname, 'w') as outfile:
-                            for f in files:
-                                if os.path.exists(f):
-                                    with open(f, 'r') as infile:
-                                        outfile.write(infile.read())
-                                        outfile.write('\n')
-                    else:
-                        nums = set()
-                        for f in files:
-                            if os.path.exists(f):
-                                with open(f, 'r') as fh:
-                                    for line in fh:
-                                        if line.strip():
-                                            nums.add(line.strip())
-                        with open(fname, 'w') as fh:
-                            for n in sorted(nums):
-                                fh.write(n + '\n')
-                    await update.message.reply_document(fname)
-                    await update.message.reply_text(f"✅ *Selesai gabung {len(files)} file!*", parse_mode="Markdown")
-                    for f in files:
-                        os.remove(f) if os.path.exists(f) else None
-                    os.remove(fname) if os.path.exists(fname) else None
-                    increment_operation(user_id)
-                    clear_session(user_id)
-                except Exception as e:
-                    await update.message.reply_text(f"❌ *Error: {str(e)}*", parse_mode="Markdown")
-                    clear_session(user_id)
         
         elif cmd == 'rename_file':
             if session['step'] == 2 and files:
