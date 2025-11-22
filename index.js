@@ -243,7 +243,26 @@ bot.verifyGroupAccess = async (userId, chatId) => {
   }
   
   // Verified! Mark flag untuk tidak perlu verify lagi
-  if (user) {
+  // IMPORTANT: Buat user jika belum ada, baru set flag
+  if (!user) {
+    const trialExpired = Date.now() + 1 * 24 * 60 * 60 * 1000;
+    db.users[userId] = {
+      id: userId,
+      username: "",
+      first_name: "",
+      last_name: "",
+      role: config.owner.includes(userId) ? "owner" : "trial",
+      vip_expired: config.owner.includes(userId) ? 0 : trialExpired,
+      status: "active",
+      total_operation: 0,
+      notified_expiry: false,
+      trial_start: Date.now(),
+      suspended: false,
+      group_verified: true // Set verified saat pertama verify berhasil
+    };
+    saveDB();
+  } else {
+    // User sudah ada, set flag
     user.group_verified = true;
     saveDB();
   }
