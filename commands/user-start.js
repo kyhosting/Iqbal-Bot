@@ -24,10 +24,13 @@ export default function (bot, db, saveDB) {
 
     const user = db.users[userId];
 
-    if (user && !user.suspended && user.status === "active") {
+    // ===== CHECK GROUP VERIFIED FLAG FIRST =====
+    // Jika user sudah pernah verify group → langsung tampilkan dashboard
+    if (user && user.group_verified && !user.suspended) {
       return bot.showDashboard(userId, chatId);
     }
 
+    // User suspended (keluar dari grup) → force re-verify
     if (user && user.suspended) {
       const verifyKeyboard = {
         inline_keyboard: [
@@ -54,6 +57,7 @@ export default function (bot, db, saveDB) {
       );
     }
 
+    // User belum pernah verify atau belum ada → tanya verifikasi
     const verifyKeyboard = {
       inline_keyboard: [
         [{ text: "✅ Verifikasi Sekarang", callback_data: "verify_join" }]
@@ -114,6 +118,34 @@ export default function (bot, db, saveDB) {
         }
       } else {
         try {
+          // ===== SET GROUP VERIFIED FLAG =====
+          // Saat user verified, set flag agar tidak perlu verify lagi
+          if (!db.users[userId]) {
+            const chatUser = await bot.getChat(userId);
+            db.users[userId] = {
+              id: userId,
+              username: chatUser.username || "",
+              first_name: chatUser.first_name || "User",
+              last_name: chatUser.last_name || "",
+              role: "trial",
+              vip_expired: Date.now() + 1 * 24 * 60 * 60 * 1000,
+              status: "active",
+              total_operation: 0,
+              notified_expiry: false,
+              trial_start: Date.now(),
+              suspended: false,
+              group_verified: true // SET FLAG SETELAH VERIFY BERHASIL!
+            };
+          } else {
+            db.users[userId].group_verified = true;
+            db.users[userId].suspended = false;
+            if (!db.users[userId].vip_expired) {
+              db.users[userId].vip_expired = Date.now() + 1 * 24 * 60 * 60 * 1000;
+              db.users[userId].role = "trial";
+            }
+          }
+          saveDB();
+
           await bot.deleteMessage(chatId, messageId).catch(() => {});
           await bot.showDashboard(userId, chatId);
         } catch (err) {
