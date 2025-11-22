@@ -23,11 +23,11 @@ export default function (bot, db, saveDB) {
 
     if (bot.getRole(userId) !== "owner") {
       return bot.sendMessage(chatId, 
-        `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n` +
-        `<b>❖ MENU OWNER</b>\n` +
-        `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n` +
-        `<code>✦ ❌ Menu ini hanya untuk owner</code>\n\n` +
-        `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`,
+        `◆◆  MENU OWNER  ◆◆
+
+┌─❖
+│  ❌ Menu ini hanya untuk owner
+└─❖`,
         { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
@@ -42,12 +42,13 @@ export default function (bot, db, saveDB) {
     };
 
     bot.sendMessage(chatId,
-      `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n` +
-      `<b>❖ PANEL ADMIN AKTIF</b>\n` +
-      `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n` +
-      `<code>▶ 🛡️ Management Panel</code>\n` +
-      `<code>▶ Pilih menu yang ingin digunakan</code>\n\n` +
-      `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`,
+      `◆◆  PANEL ADMIN AKTIF  ◆◆
+
+┌─❖
+│  🛡️ Management Panel
+│
+│  Pilih menu yang ingin digunakan
+└─❖`,
       { parse_mode: "HTML", reply_markup: keyboard }
     );
   });
@@ -58,11 +59,11 @@ export default function (bot, db, saveDB) {
 
     if (bot.getRole(userId) !== "owner") {
       return bot.sendMessage(chatId, 
-        `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n` +
-        `<b>❖ MENU OWNER</b>\n` +
-        `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n` +
-        `<code>✦ ❌ Khusus owner</code>\n\n` +
-        `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`,
+        `◆◆  MENU OWNER  ◆◆
+
+┌─❖
+│  ❌ Khusus owner
+└─❖`,
         { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
@@ -77,12 +78,13 @@ export default function (bot, db, saveDB) {
     };
 
     bot.sendMessage(chatId,
-      `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n` +
-      `<b>❖ PANEL ADMIN AKTIF</b>\n` +
-      `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n` +
-      `<code>▶ 🛡️ Management Panel</code>\n` +
-      `<code>▶ Pilih menu yang ingin digunakan</code>\n\n` +
-      `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`,
+      `◆◆  PANEL ADMIN AKTIF  ◆◆
+
+┌─❖
+│  🛡️ Management Panel
+│
+│  Pilih menu yang ingin digunakan
+└─❖`,
       { parse_mode: "HTML", reply_markup: keyboard }
     );
   });
@@ -98,13 +100,13 @@ export default function (bot, db, saveDB) {
 
     if (data === "owner_list_codes") {
       const codes = Object.keys(bot.redeemDB);
-      let message = `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n<b>❖ DAFTAR KODE (${codes.length})</b>\n<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n`;
+      let message = `◆◆  DAFTAR KODE (${codes.length})  ◆◆\n\n┌─❖\n`;
       codes.forEach((code, i) => {
         const r = bot.redeemDB[code];
         const status = r.used_by ? "✅ Terpakai" : "⏳ Aktif";
-        message += `<code>${i + 1}. ${code} | ${status} | ${r.duration}h</code>\n`;
+        message += `│  ${i + 1}. ${code} | ${status} | ${r.duration}h\n`;
       });
-      message += `\n<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`;
+      message += `└─❖`;
       
       bot.answerCallbackQuery(query.id);
       bot.sendMessage(chatId, message, { parse_mode: "HTML" });
@@ -121,16 +123,26 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
         return bot.sendMessage(chatId, 
-          `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n<b>❖ DIBATALKAN</b>\n<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`,
+          `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Dibatalkan
+└─❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
       const duration = parseInt(text);
-      if (isNaN(duration) || duration <= 0) return bot.sendMessage(chatId, `⚠️ Durasi harus angka!`, { parse_mode: "HTML" });
+      if (isNaN(duration) || duration <= 0) return bot.sendMessage(chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ Durasi harus angka!\n└─❖`, { parse_mode: "HTML" });
       sessions[userId].step = "create_code_expiry";
       sessions[userId].duration = duration;
       return bot.sendMessage(chatId, 
-        `<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n<b>❖ INPUT EXPIRED DATE</b>\n<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>\n\n<code>▶ Format: YYYY-MM-DD</code>\n<code>▶ Contoh: 2025-12-31</code>\n\n<b>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</b>`,
+        `◆◆  INPUT EXPIRED DATE  ◆◆
+
+┌─❖
+│  Format: YYYY-MM-DD
+│
+│  Contoh: 2025-12-31
+└─❖`,
         { parse_mode: "HTML" }
       );
     }
