@@ -3,17 +3,15 @@ export default function (bot, db, saveDB) {
     const userId = msg.from.id;
     const chatId = msg.chat.id;
 
-    // Check group membership
     const groupCheck = await bot.checkGroupMembership(userId);
     if (!groupCheck.verified) {
       return bot.sendMessage(
         chatId,
-        `⚠️ <b>Akses Ditolak</b>\n\nKamu harus join grup terlebih dahulu ya Kak.`,
+        `⚠️ <b>Akses Ditolak</b>\n\n╭─❖\n│ ➤ Harus join grup terlebih dahulu\n╰───────────────❖`,
         { parse_mode: "HTML" }
       );
     }
 
-    // Ensure user exists in database
     if (!db.users[userId]) {
       db.users[userId] = {
         id: userId,
@@ -31,7 +29,6 @@ export default function (bot, db, saveDB) {
     const role = bot.getRole(userId);
     const user = db.users[userId];
     
-    // Hitung sisa hari VIP
     let expired = "Tidak Aktif";
     let remaining = "0 hari";
     let status = user.status || "inactive";
@@ -43,30 +40,30 @@ export default function (bot, db, saveDB) {
       const daysLeft = Math.ceil((user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24));
       remaining = `${daysLeft} hari`;
       status = "active";
-      vipBadge = `✅ Aktif - ${daysLeft} hari lagi`;
+      vipBadge = `✅ Aktif - ${daysLeft} hari`;
     }
 
-    const profileMessage = `👤 <b>PROFIL USER</b>\n\n` +
+    const profileMessage = `◆◆ PROFIL USER ◆◆\n\n` +
       `╭─❖\n` +
-      `│ 🎌 <b>Informasi Dasar</b>\n` +
-      `│ Nama: <b>${msg.from.first_name}${msg.from.last_name ? ' ' + msg.from.last_name : ''}</b>\n` +
-      `│ ID: <code>${userId}</code>\n` +
-      `│ Username: ${msg.from.username ? '@' + msg.from.username : '-'}\n` +
+      `│ 🎌 <b>INFORMASI DASAR</b>\n` +
+      `│ ➤ Nama: <b>${msg.from.first_name}${msg.from.last_name ? ' ' + msg.from.last_name : ''}</b>\n` +
+      `│ ➤ ID: <code>${userId}</code>\n` +
+      `│ ➤ Username: @${msg.from.username || '-'}\n` +
       `╰───────────────❖\n\n` +
       `╭─❖\n` +
-      `│ 🎯 <b>Status Akses</b>\n` +
-      `│ Role: <b>${role.toUpperCase()}</b>\n` +
-      `│ VIP Status: ${vipBadge}\n` +
-      `│ Masa Berlaku: <b>${expired}</b>\n` +
-      `│ Waktu Tersisa: <b>${remaining}</b>\n` +
+      `│ 🎯 <b>STATUS AKSES</b>\n` +
+      `│ ➤ Role: <b>${role.toUpperCase()}</b>\n` +
+      `│ ➤ VIP: ${vipBadge}\n` +
+      `│ ➤ Masa Aktif: <b>${expired}</b>\n` +
+      `│ ➤ Sisa Hari: <b>${remaining}</b>\n` +
       `╰───────────────❖\n\n` +
       `╭─❖\n` +
-      `│ 📊 <b>Statistik</b>\n` +
-      `│ Total Operasi: <b>${user.total_operation || 0}</b>\n` +
-      `│ Member Sejak: <b>${new Date().toLocaleDateString('id-ID')}</b>\n` +
+      `│ 📊 <b>STATISTIK</b>\n` +
+      `│ ➤ Total Operasi: <b>${user.total_operation || 0}</b>\n` +
+      `│ ➤ Member Sejak: ${new Date().toLocaleDateString('id-ID')}\n` +
       `╰───────────────❖\n\n` +
-      `💡 Untuk upgrade VIP, gunakan kode redeem dengan command:\n` +
-      `<code>/redeem KODE</code> atau klik tombol "🎁 Redeem Code"`;
+      `💡 Upgrade VIP:\n` +
+      `<code>/redeem KODE</code> atau klik 🎁 Redeem Code`;
 
     await bot.sendMessage(chatId, profileMessage, {
       parse_mode: "HTML",

@@ -1,7 +1,6 @@
 export default function (bot, db, saveDB) {
   const sessions = {};
 
-  // Handle keyboard button "🎁 Redeem Code"
   bot.onText(/^🎁 Redeem Code$/i, (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
@@ -9,9 +8,12 @@ export default function (bot, db, saveDB) {
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `🎁 <b>Redeem Code System</b>\n\n` +
-      `Silakan masukkan kode redeem kamu ya Kak ✨\n\n` +
-      `Ketik <code>batal</code> untuk membatalkan.`,
+      `◆◆ REDEEM CODE SYSTEM ◆◆\n\n` +
+      `╭─❖\n` +
+      `│ 🎁 <b>Input Kode Redeem</b>\n` +
+      `│ ➤ Masukkan kode redeem kamu\n` +
+      `│ ➤ Ketik <code>batal</code> untuk membatalkan\n` +
+      `╰───────────────❖`,
       { 
         parse_mode: "HTML",
         reply_markup: bot.getMainKeyboardUser(userId)
@@ -19,7 +21,6 @@ export default function (bot, db, saveDB) {
     );
   });
 
-  // Handle /redeem command
   bot.onText(/^\/redeem$/, (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
@@ -27,9 +28,12 @@ export default function (bot, db, saveDB) {
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `🎁 <b>Redeem Code System</b>\n\n` +
-      `Silakan masukkan kode redeem kamu ya Kak ✨\n\n` +
-      `Ketik <code>batal</code> untuk membatalkan.`,
+      `◆◆ REDEEM CODE SYSTEM ◆◆\n\n` +
+      `╭─❖\n` +
+      `│ 🎁 <b>Input Kode Redeem</b>\n` +
+      `│ ➤ Masukkan kode redeem kamu\n` +
+      `│ ➤ Ketik <code>batal</code> untuk membatalkan\n` +
+      `╰───────────────❖`,
       { 
         parse_mode: "HTML",
         reply_markup: bot.getMainKeyboardUser(userId)
@@ -45,13 +49,12 @@ export default function (bot, db, saveDB) {
 
     if (!session) return;
 
-    // Step 1: Input kode redeem
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
         return bot.sendMessage(
           chatId, 
-          "❌ Proses dibatalkan ya Kak 😊",
+          `❌ <b>Proses dibatalkan</b>\n\n╭─❖\n│ ➤ Redeem gagal\n╰───────────────❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
@@ -63,9 +66,7 @@ export default function (bot, db, saveDB) {
         delete sessions[userId];
         return bot.sendMessage(
           chatId,
-          `❌ <b>Yah… kode redeem tidak valid</b>\n\n` +
-          `Kode <code>${code}</code> tidak ditemukan Kak.\n` +
-          `Coba cek lagi ya 🙏`,
+          `❌ <b>Kode Tidak Valid</b>\n\n◆◆ ERROR ◆◆\n\n╭─❖\n│ ➤ Kode: <code>${code}</code>\n│ ➤ Status: Tidak ditemukan\n│ ➤ Coba cek lagi ya 🙏\n╰───────────────❖`,
           { 
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboardUser(userId)
@@ -73,14 +74,11 @@ export default function (bot, db, saveDB) {
         );
       }
 
-      // Check if already used
       if (redeemData.used_by) {
         delete sessions[userId];
         return bot.sendMessage(
           chatId,
-          `❌ <b>Yah… kode sudah digunakan</b>\n\n` +
-          `Kode ini sudah dipakai sama user lain Kak 😔\n` +
-          `Coba minta kode baru ya!`,
+          `❌ <b>Kode Sudah Digunakan</b>\n\n◆◆ ERROR ◆◆\n\n╭─❖\n│ ➤ Kode sudah dipakai user lain\n│ ➤ Silakan minta kode baru\n╰───────────────❖`,
           { 
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboardUser(userId)
@@ -88,15 +86,13 @@ export default function (bot, db, saveDB) {
         );
       }
 
-      // Check expiry
       if (redeemData.expires_at) {
         const expDate = new Date(redeemData.expires_at);
         if (Date.now() > expDate.getTime()) {
           delete sessions[userId];
           return bot.sendMessage(
             chatId,
-            `❌ <b>Yah… kode sudah kadaluarsa</b>\n\n` +
-            `Kode ini sudah expired sejak ${expDate.toLocaleDateString('id-ID')} 😔`,
+            `❌ <b>Kode Kadaluarsa</b>\n\n◆◆ EXPIRED ◆◆\n\n╭─❖\n│ ➤ Expired: ${expDate.toLocaleDateString('id-ID')}\n│ ➤ Kode sudah tidak berlaku\n╰───────────────❖`,
             { 
               parse_mode: "HTML",
               reply_markup: bot.getMainKeyboardUser(userId)
@@ -105,12 +101,10 @@ export default function (bot, db, saveDB) {
         }
       }
 
-      // Redeem sukses!
-      let duration = redeemData.duration || 30; // default 30 hari
+      let duration = redeemData.duration || 30;
       let vipExpired = Date.now() + (duration * 24 * 60 * 60 * 1000);
       let expiredDate = new Date(vipExpired);
 
-      // Update user
       if (!db.users[userId]) {
         db.users[userId] = {
           id: userId,
@@ -130,7 +124,6 @@ export default function (bot, db, saveDB) {
         db.users[userId].notified_expiry = false;
       }
 
-      // Mark redeem as used and save immediately
       bot.redeemDB[code].used_by = userId;
       bot.redeemDB[code].used_at = new Date().toISOString();
 
@@ -139,12 +132,7 @@ export default function (bot, db, saveDB) {
 
       await bot.sendMessage(
         chatId,
-        `🎉 <b>Mantap Kak!</b>\n\n` +
-        `Kode redeem kamu valid dan sudah berhasil digunakan 💎\n\n` +
-        `✨ <b>Status:</b> VIP Aktif\n` +
-        `⏳ <b>Berlaku sampai:</b> ${expiredDate.toLocaleDateString('id-ID')}\n` +
-        `📅 <b>Durasi:</b> ${duration} hari\n\n` +
-        `Silakan nikmati semua fitur premium ya 😊`,
+        `✅ <b>Redeem Berhasil!</b>\n\n◆◆ VIP ACTIVATED ◆◆\n\n╭─❖\n│ 💎 <b>Status</b>\n│ ➤ Kode: <code>${code}</code>\n│ ➤ Status: <b>VIP AKTIF</b>\n│ ➤ Berlaku: ${expiredDate.toLocaleDateString('id-ID')}\n│ ➤ Durasi: <b>${duration} hari</b>\n╰───────────────❖\n\n✨ Nikmati semua fitur premium ya 😊`,
         { 
           parse_mode: "HTML",
           reply_markup: bot.getMainKeyboardUser(userId)
