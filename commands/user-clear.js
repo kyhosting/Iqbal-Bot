@@ -1,4 +1,17 @@
 export default function (bot, db, saveDB) {
+  const userMessages = {};
+
+  async function trackMessage(userId, chatId, text, options = {}) {
+    if (userMessages[userId]) {
+      try {
+        await bot.deleteMessage(chatId, userMessages[userId]);
+      } catch (e) {}
+    }
+    const msg = await bot.sendMessage(chatId, text, options);
+    userMessages[userId] = msg.message_id;
+    return msg;
+  }
+
   bot.onText(/^\/clear$/, async (msg) => {
     const userId = msg.from.id;
     const chatId = msg.chat.id;
@@ -16,6 +29,6 @@ export default function (bot, db, saveDB) {
 │  Ketik 'batal' untuk batal
 └─❖`;
 
-    await bot.sendMessage(chatId, message, { parse_mode: "HTML" });
+    await trackMessage(userId, chatId, message, { parse_mode: "HTML" });
   });
 }

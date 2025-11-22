@@ -1,6 +1,20 @@
 export default function (bot) {
+  const userMessages = {};
+
+  async function trackMessage(userId, chatId, text, options = {}) {
+    if (userMessages[userId]) {
+      try {
+        await bot.deleteMessage(chatId, userMessages[userId]);
+      } catch (e) {}
+    }
+    const msg = await bot.sendMessage(chatId, text, options);
+    userMessages[userId] = msg.message_id;
+    return msg;
+  }
+
   bot.onText(/^\/fitur$/, async (msg) => {
     const chatId = msg.chat.id;
+    const userId = msg.from.id;
 
     const message = `◆◆  FITUR BOT IQBAL CV  ◆◆
 
@@ -86,6 +100,6 @@ export default function (bot) {
 │  Ketik 'start' untuk mulai
 └─❖`;
 
-    await bot.sendMessage(chatId, message);
+    await trackMessage(userId, chatId, message, { parse_mode: "HTML" });
   });
 }

@@ -1,11 +1,25 @@
 export default function (bot, db, saveDB) {
+  const userMessages = {};
+
+  async function trackMessage(userId, chatId, text, options = {}) {
+    if (userMessages[userId]) {
+      try {
+        await bot.deleteMessage(chatId, userMessages[userId]);
+      } catch (e) {}
+    }
+    const msg = await bot.sendMessage(chatId, text, options);
+    userMessages[userId] = msg.message_id;
+    return msg;
+  }
+
   bot.onText(/^\/me$/, async (msg) => {
     const userId = msg.from.id;
     const chatId = msg.chat.id;
 
     const groupCheck = await bot.checkGroupMembership(userId);
     if (!groupCheck.verified) {
-      return bot.sendMessage(
+      return trackMessage(
+        userId,
         chatId,
         `◆◆  AKSES DITOLAK  ◆◆
 
@@ -86,7 +100,7 @@ export default function (bot, db, saveDB) {
 │  Ketik 'start' untuk menu
 └─❖`;
 
-    await bot.sendMessage(chatId, profileMessage, {
+    await trackMessage(userId, chatId, profileMessage, {
       parse_mode: "HTML",
       reply_markup: bot.getMainKeyboardUser(userId)
     });

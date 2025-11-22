@@ -1,12 +1,30 @@
 export default function (bot, db, saveDB) {
   const sessions = {};
+  const userMessages = {};
+
+  async function trackMessage(userId, chatId, text, options = {}) {
+    if (userMessages[userId]) {
+      try {
+        await bot.deleteMessage(chatId, userMessages[userId]);
+      } catch (e) {}
+    }
+    const msg = await bot.sendMessage(chatId, text, options);
+    userMessages[userId] = msg.message_id;
+    return msg;
+  }
+
+  async function sendWithDelete(userId, chatId, text, options = {}) {
+    return trackMessage(userId, chatId, text, options);
+  }
 
   bot.onText(/^🎁 Redeem Code$/i, (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId,
+    trackMessage(
+      userId,
+      chatId,
       `◆◆  REDEEM CODE SYSTEM  ◆◆
 
 ┌─❖
@@ -25,7 +43,9 @@ export default function (bot, db, saveDB) {
     const userId = msg.from.id;
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId,
+    trackMessage(
+      userId,
+      chatId,
       `◆◆  REDEEM CODE SYSTEM  ◆◆
 
 ┌─❖
@@ -50,7 +70,9 @@ export default function (bot, db, saveDB) {
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId,
+        return sendWithDelete(
+          userId,
+          chatId,
           `◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
@@ -65,7 +87,9 @@ export default function (bot, db, saveDB) {
 
       if (!redeemData) {
         delete sessions[userId];
-        return bot.sendMessage(chatId,
+        return sendWithDelete(
+          userId,
+          chatId,
           `◆◆  KODE TIDAK VALID  ◆◆
 
 ┌─❖
@@ -81,7 +105,9 @@ export default function (bot, db, saveDB) {
 
       if (redeemData.used_by) {
         delete sessions[userId];
-        return bot.sendMessage(chatId,
+        return sendWithDelete(
+          userId,
+          chatId,
           `◆◆  KODE SUDAH DIGUNAKAN  ◆◆
 
 ┌─❖
@@ -97,7 +123,9 @@ export default function (bot, db, saveDB) {
         const expDate = new Date(redeemData.expires_at);
         if (Date.now() > expDate.getTime()) {
           delete sessions[userId];
-          return bot.sendMessage(chatId,
+          return sendWithDelete(
+            userId,
+            chatId,
             `◆◆  KODE KADALUARSA  ◆◆
 
 ┌─❖
@@ -143,7 +171,9 @@ export default function (bot, db, saveDB) {
       const daysLeft = Math.ceil((vipExpired - Date.now()) / (1000 * 60 * 60 * 24));
 
       delete sessions[userId];
-      return bot.sendMessage(chatId,
+      return sendWithDelete(
+        userId,
+        chatId,
         `◆◆  REDEEM SUKSES  ◆◆
 
 ┌─❖
