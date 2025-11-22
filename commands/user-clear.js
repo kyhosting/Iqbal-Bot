@@ -11,6 +11,9 @@ export default function (bot, db, saveDB) {
 │  Scroll ke atas untuk chat lama
 │
 │  Atau buka di device lain
+│
+│  Ketik 'done' untuk selesai
+│  Ketik 'batal' untuk batal
 └─❖`;
 
     await bot.sendMessage(chatId, message, { parse_mode: "HTML" });

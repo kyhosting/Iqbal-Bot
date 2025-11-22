@@ -46,6 +46,8 @@ export default function (bot, db, saveDB) {
       message += `└─❖\n`;
     });
 
+    message += `\n┌─❖\n│  Ketik 'done' untuk selesai\n│  Ketik 'batal' untuk batal\n└─❖`;
+
     await bot.sendMessage(chatId, message, { parse_mode: "HTML" });
   });
 }

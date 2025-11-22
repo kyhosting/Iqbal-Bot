@@ -11,6 +11,9 @@ export default function (bot, db, saveDB) {
 │  User ID: ${userId}
 │
 │  Chat ID: ${chatId}
+│
+│  Ketik 'done' untuk selesai
+│  Ketik 'batal' untuk batal
 └─❖`;
 
     await bot.sendMessage(chatId, message, { parse_mode: "HTML" });

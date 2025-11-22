@@ -32,6 +32,9 @@ export default function (bot, db, saveDB) {
 │  Harus join 2 grup untuk akses
 │
 │  Klik tombol di bawah
+│
+│  Ketik 'start' untuk refresh
+│  Ketik 'bantuan' untuk help
 └─❖`,
         { parse_mode: "HTML", reply_markup: verifyKeyboard }
       );

@@ -34,6 +34,9 @@ export default function (bot, db, saveDB) {
 │  Ekstrak semua nomor
 │
 │  Kirim file untuk start
+│
+│  Ketik 'done' untuk selesai
+│  Ketik 'batal' untuk batal
 └─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
   });
 

@@ -48,6 +48,9 @@ export default function (bot, db, saveDB) {
 │  🛡️ Management Panel
 │
 │  Pilih menu yang ingin digunakan
+│
+│  Ketik 'done' untuk selesai
+│  Ketik 'batal' untuk batal
 └─❖`,
       { parse_mode: "HTML", reply_markup: keyboard }
     );
@@ -84,6 +87,9 @@ export default function (bot, db, saveDB) {
 │  🛡️ Management Panel
 │
 │  Pilih menu yang ingin digunakan
+│
+│  Ketik 'done' untuk selesai
+│  Ketik 'batal' untuk batal
 └─❖`,
       { parse_mode: "HTML", reply_markup: keyboard }
     );

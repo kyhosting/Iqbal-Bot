@@ -29,6 +29,9 @@ export default function (bot, db, saveDB) {
 │  Cut VCF Advanced
 │
 │  Potong file sesuai range
+│
+│  Ketik 'done' untuk selesai
+│  Ketik 'batal' untuk batal
 └─❖`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
   });
 

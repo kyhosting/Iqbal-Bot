@@ -29,6 +29,9 @@ export default function (bot, db, saveDB) {
 │  Split VCF Advanced
 │
 │  Bagi file sesuai kontak
+│
+│  Ketik 'done' untuk selesai
+│  Ketik 'batal' untuk batal
 └─❖`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
   });
 

@@ -37,6 +37,9 @@ export default function (bot) {
 │  Ekstrak nomor dari kontak
 │
 │  Kirim file untuk start
+│
+│  Ketik 'done' untuk selesai
+│  Ketik 'batal' untuk batal
 └─❖`,
       { parse_mode: "HTML" }
     );

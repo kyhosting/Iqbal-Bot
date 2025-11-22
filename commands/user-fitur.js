@@ -81,6 +81,9 @@ export default function (bot) {
 │  Gunakan redeem code untuk akses!
 │
 │  Selamat menggunakan! 😊
+│
+│  Ketik 'fitur' untuk list fitur
+│  Ketik 'start' untuk mulai
 └─❖`;
 
     await bot.sendMessage(chatId, message);

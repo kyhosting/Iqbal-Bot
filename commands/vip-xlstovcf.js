@@ -40,6 +40,9 @@ export default function (bot, db, saveDB) {
 │  Kolom 2: Nomor telepon
 │
 │  Kirim file Excel
+│
+│  Ketik 'done' untuk selesai
+│  Ketik 'batal' untuk batal
 └─❖`,
       { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
     );
