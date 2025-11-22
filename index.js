@@ -322,7 +322,7 @@ bot.showDashboard = async (userId, chatId) => {
       notified_expiry: false,
       trial_start: Date.now(),
       suspended: false,
-      group_verified: true // Mark as verified setelah /start
+      group_verified: false // BELUM verify - akan di-set true saat user verify
     };
     saveDB();
 
