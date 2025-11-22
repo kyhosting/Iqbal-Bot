@@ -5,33 +5,42 @@ import XLSX from "xlsx";
 export default function (bot, db, saveDB) {
   const sessions = {};
 
-  // Handle keyboard button & /xlstovcf command
   bot.onText(/^⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ$|^\/xlstovcf$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);
 
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(
-        chatId,
-        `◆ XLS TO VCF\n\n▸ ◆◆ AKSES DITOLAK ◆◆
+      return bot.sendMessage(chatId,
+        `◆◆  XLS TO VCF  ◆◆
 
 ┌─❖
-├ ❌ Akses Ditolak
-├ Fitur khusus VIP
-└─❖\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
+│  ❌ Akses Ditolak
+│
+│  Fitur khusus VIP
+└─❖`,
         { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
 
-    // Verify group membership
     const hasAccess = await bot.verifyGroupAccess(userId, chatId);
     if (!hasAccess) return;
 
     sessions[userId] = { step: 1 };
-    return await bot.sendMessage(
-      chatId,
-      `◆ XLS TO VCF\n(Excel to Contact Converter)\n\n▸ Support Format:\n  • XLS (Excel)\n  • XLSX (Excel)\n\n▸ Kolom 1: Nama kontak\n▸ Kolom 2: Nomor telepon\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,
+    return await bot.sendMessage(chatId,
+      `◆◆  XLS TO VCF  ◆◆
+
+┌─❖
+│  Excel to Contact Converter
+│
+│  Support: XLS, XLSX
+│
+│  Kolom 1: Nama kontak
+│
+│  Kolom 2: Nomor telepon
+│
+│  Kirim file Excel
+└─❖`,
       { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
     );
   });
@@ -43,25 +52,29 @@ export default function (bot, db, saveDB) {
     const session = sessions[userId];
     if (!session) return;
 
-    // Step 1 → kirim file .xls atau .xlsx
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(
-          chatId, 
-          "◆◆ DIBATALKAN ◆◆\n\n╭─❖\n│ ❌ <b>Proses dibatalkan</b>\n╰───────────────❖ ya Kak 😊",
+        return bot.sendMessage(chatId,
+          `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Proses dibatalkan
+└─❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
       if (!msg.document) {
-        return bot.sendMessage(
-          chatId,
-          "⚠️ <b>Kirim file Excel dulu ya Kak</b> 😊",
+        return bot.sendMessage(chatId,
+          `◆◆  XLS TO VCF  ◆◆
+
+┌─❖
+│  ⚠️ Kirim file Excel
+│
+│  Support: XLS atau XLSX
+└─❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-            parse_mode: "HTML",
-            reply_markup: bot.getMainKeyboardUser(userId)
-          }
         );
       }
 
@@ -69,13 +82,13 @@ export default function (bot, db, saveDB) {
       const isExcel = fileName.endsWith(".xls") || fileName.endsWith(".xlsx");
 
       if (!isExcel) {
-        return bot.sendMessage(
-          chatId,
-          "⚠️ <b>Harus file Excel ya Kak</b> (.xls atau .xlsx) 😊",
+        return bot.sendMessage(chatId,
+          `◆◆  XLS TO VCF  ◆◆
+
+┌─❖
+│  ⚠️ Hanya XLS atau XLSX
+└─❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-            parse_mode: "HTML",
-            reply_markup: bot.getMainKeyboardUser(userId)
-          }
         );
       }
 
@@ -88,7 +101,6 @@ export default function (bot, db, saveDB) {
       fs.writeFileSync(localPath, Buffer.from(buffer));
 
       try {
-        // Baca file Excel
         const workbook = XLSX.readFile(localPath);
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
@@ -97,90 +109,56 @@ export default function (bot, db, saveDB) {
         if (data.length === 0) {
           if (fs.existsSync(localPath)) fs.unlinkSync(localPath);
           delete sessions[userId];
-          return bot.sendMessage(
-            chatId,
-            "⚠️ <b>File Excel kosong Kak</b> 😔\n\nCoba isi dulu ya!",
+          return bot.sendMessage(chatId,
+            `◆◆  XLS TO VCF  ◆◆
+
+┌─❖
+│  ⚠️ File Excel kosong
+│
+│  Isi dulu ya!
+└─❖`,
             { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-              parse_mode: "HTML",
-              reply_markup: bot.getMainKeyboardUser(userId)
-            }
           );
         }
 
-        // Generate VCF
-        let vcfContent = "";
-        let successCount = 0;
-        let skipCount = 0;
+        const vcf = data.map((row, idx) => {
+          const name = row[0] || `Contact${idx}`;
+          const phone = row[1] || "";
+          return `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nN:${name};;;;\nTEL;TYPE=CELL:${phone}\nEND:VCARD`;
+        }).join("\n");
 
-        for (const row of data) {
-          // Skip header atau baris kosong
-          if (!row[0] || !row[1]) {
-            skipCount++;
-            continue;
-          }
-
-          const name = String(row[0]).trim();
-          const phone = String(row[1]).trim().replace(/[^\d+]/g, "");
-
-          if (name && phone && phone.length >= 8) {
-            vcfContent += `BEGIN:VCARD\n`;
-            vcfContent += `VERSION:3.0\n`;
-            vcfContent += `FN:${name}\n`;
-            vcfContent += `TEL;TYPE=CELL:${phone}\n`;
-            vcfContent += `END:VCARD\n`;
-            successCount++;
-          } else {
-            skipCount++;
-          }
-        }
-
-        if (successCount === 0) {
-          if (fs.existsSync(localPath)) fs.unlinkSync(localPath);
-          delete sessions[userId];
-          return bot.sendMessage(
-            chatId,
-            "⚠️ <b>Tidak ada data valid Kak</b> 😔\n\nPastikan format Excel:\n• Kolom 1: Nama\n• Kolom 2: Nomor",
-            { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-              parse_mode: "HTML",
-              reply_markup: bot.getMainKeyboardUser(userId)
-            }
-          );
-        }
-
-        const outputFile = fileName.replace(/\.(xls|xlsx)$/i, ".vcf");
-        const outputPath = path.join(process.cwd(), outputFile);
-        fs.writeFileSync(outputPath, vcfContent);
+        const outputPath = path.join(process.cwd(), "contacts.vcf");
+        fs.writeFileSync(outputPath, vcf);
 
         await bot.sendDocument(chatId, outputPath);
-        await bot.sendMessage(
-          chatId,
-          `✅ <b>Konversi berhasil Kak!</b> 🎉\n\n` +
-          `📊 <b>Statistik:</b>\n` +
-          `• Total baris: ${data.length}\n` +
-          `• Berhasil convert: ${successCount} kontak\n` +
-          `• Dilewati: ${skipCount} baris\n\n` +
-          `📂 <b>File VCF:</b> \`${outputFile}\`\n\n` +
-          `Semoga membantu ya! 😊`,
+        await bot.sendMessage(chatId,
+          `◆◆  KONVERSI SUKSES  ◆◆
+
+┌─❖
+│  ✅ XLS to VCF berhasil
+│
+│  Total kontak: ${data.length}
+│
+│  File: contacts.vcf
+└─❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-            parse_mode: "HTML",
-            reply_markup: bot.getMainKeyboardUser(userId)
-          }
         );
 
         bot.incrementOperation(userId);
+
         if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
-        if (fs.existsSync(localPath)) fs.unlinkSync(localPath);
       } catch (err) {
-        console.error("Gagal convert Excel:", err);
-        if (fs.existsSync(localPath)) fs.unlinkSync(localPath);
-        bot.sendMessage(
-          chatId,
-          "⚠️ <b>Yah… ada masalah saat convert Excel</b> 😔\n\nPastikan file Excel format yang benar ya!",
+        console.error("Convert error:", err);
+        bot.sendMessage(chatId,
+          `◆◆  XLS TO VCF  ◆◆
+
+┌─❖
+│  ⚠️ Konversi gagal
+└─❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-            parse_mode: "HTML",
-            reply_markup: bot.getMainKeyboardUser(userId)
-          }
         );
+      } finally {
+        if (fs.existsSync(localPath)) fs.unlinkSync(localPath);
       }
 
       delete sessions[userId];

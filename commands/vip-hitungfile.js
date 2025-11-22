@@ -4,33 +4,42 @@ import path from "path";
 export default function (bot, db, saveDB) {
   const sessions = {};
 
-  // Handle keyboard button & /hitungfile command
   bot.onText(/^⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ$|^\/hitungfile$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);
 
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(
-        chatId,
-        `◆ HITUNG FILE\n\n▸ ◆◆ AKSES DITOLAK ◆◆
+      return bot.sendMessage(chatId,
+        `◆◆  HITUNG FILE  ◆◆
 
 ┌─❖
-├ ❌ Akses Ditolak
-├ Fitur khusus VIP
-└─❖\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
+│  ❌ Akses Ditolak
+│
+│  Fitur khusus VIP
+└─❖`,
         { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
 
-    // Verify group membership
     const hasAccess = await bot.verifyGroupAccess(userId, chatId);
     if (!hasAccess) return;
 
     sessions[userId] = { step: 1 };
-    return await bot.sendMessage(
-      chatId,
-      `◆ HITUNG FILE\n(Count Contacts)\n\n▸ Support Format:\n  • TXT (Text)\n  • VCF (Contact)\n\n▸ Hitung total kontak/nomor\n▸ Minimal 1 file\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,
+    return await bot.sendMessage(chatId,
+      `◆◆  HITUNG FILE  ◆◆
+
+┌─❖
+│  Count Contacts
+│
+│  Support Format: TXT, VCF
+│
+│  Hitung total kontak/nomor
+│
+│  Kirim file untuk start
+│
+│  Ketik 'batal' batalkan
+└─❖`,
       { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
     );
   });
@@ -42,25 +51,29 @@ export default function (bot, db, saveDB) {
     const session = sessions[userId];
     if (!session) return;
 
-    // Step 1 → kirim file
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(
-          chatId, 
-          "◆◆ DIBATALKAN ◆◆\n\n╭─❖\n│ ❌ <b>Proses dibatalkan</b>\n╰───────────────❖ ya Kak 😊",
+        return bot.sendMessage(chatId,
+          `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Proses dibatalkan
+└─❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
       if (!msg.document) {
-        return bot.sendMessage(
-          chatId, 
-          "⚠️ <b>Kirim file dulu ya Kak</b> 😊",
+        return bot.sendMessage(chatId,
+          `◆◆  HITUNG FILE  ◆◆
+
+┌─❖
+│  ⚠️ Kirim file dulu
+│
+│  Support: TXT atau VCF
+└─❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-            parse_mode: "HTML",
-            reply_markup: bot.getMainKeyboardUser(userId)
-          }
         );
       }
 
@@ -69,13 +82,13 @@ export default function (bot, db, saveDB) {
       const isVCF = fileName.endsWith(".vcf");
 
       if (!isTXT && !isVCF) {
-        return bot.sendMessage(
-          chatId,
-          "⚠️ <b>Hanya support TXT atau VCF ya Kak</b> 😊",
+        return bot.sendMessage(chatId,
+          `◆◆  HITUNG FILE  ◆◆
+
+┌─❖
+│  ⚠️ Hanya TXT atau VCF
+└─❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-            parse_mode: "HTML",
-            reply_markup: bot.getMainKeyboardUser(userId)
-          }
         );
       }
 
@@ -103,43 +116,37 @@ export default function (bot, db, saveDB) {
           unique = new Set(numbers).size;
         }
 
-        const duplicates = count - unique;
-        const fileSize = (msg.document.file_size / 1024).toFixed(2);
+        delete sessions[userId];
+        await bot.sendMessage(chatId,
+          `◆◆  HASIL HITUNG  ◆◆
 
-        await bot.sendMessage(
-          chatId,
-          `✅ <b>Berhasil hitung kontak Kak!</b> 📊\n\n` +
-          `📂 <b>File:</b> \`${fileName}\`\n` +
-          `📏 <b>Ukuran:</b> ${fileSize} KB\n\n` +
-          `📊 <b>Detail:</b>\n` +
-          `• Total kontak: <b>${count}</b>\n` +
-          `• Kontak unik: <b>${unique}</b>\n` +
-          `• Duplikat: <b>${duplicates}</b>\n\n` +
-          `Semoga membantu ya! 😊`,
+┌─❖
+│  📂 File: ${fileName}
+│
+│  📊 Total: ${count}
+│
+│  ✓ Unik: ${unique}
+│
+│  Type: ${isTXT ? "TXT" : "VCF"}
+└─❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-            parse_mode: "HTML",
-            reply_markup: bot.getMainKeyboardUser(userId)
-          }
         );
 
         bot.incrementOperation(userId);
-        fs.unlinkSync(localPath);
       } catch (err) {
-        console.error("Gagal hitung file:", err);
-        if (fs.existsSync(localPath)) {
-          fs.unlinkSync(localPath);
-        }
-        bot.sendMessage(
-          chatId,
-          "⚠️ <b>Yah… ada masalah saat hitung file</b> 😔\n\nCoba lagi ya Kak!",
-          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-            parse_mode: "HTML",
-            reply_markup: bot.getMainKeyboardUser(userId)
-          }
-        );
-      }
+        console.error("Count error:", err);
+        delete sessions[userId];
+        bot.sendMessage(chatId,
+          `◆◆  HITUNG FILE  ◆◆
 
-      delete sessions[userId];
+┌─❖
+│  ⚠️ Hitung gagal
+└─❖`,
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+        );
+      } finally {
+        if (fs.existsSync(localPath)) fs.unlinkSync(localPath);
+      }
     }
   });
 }
