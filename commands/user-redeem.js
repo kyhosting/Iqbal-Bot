@@ -119,9 +119,10 @@ export default function (bot, db, saveDB) {
         );
       }
 
-      if (redeemData.expires_at) {
-        const expDate = new Date(redeemData.expires_at);
-        if (Date.now() > expDate.getTime()) {
+      // Check if code has expired (based on duration from creation time)
+      if (redeemData.expires_in_ms && redeemData.created_at) {
+        const expiryTime = redeemData.created_at + redeemData.expires_in_ms;
+        if (Date.now() > expiryTime) {
           delete sessions[userId];
           return sendWithDelete(
             userId,
@@ -129,7 +130,7 @@ export default function (bot, db, saveDB) {
             `◆◆  KODE KADALUARSA  ◆◆
 
 ┌─❖
-│  Expired: ${expDate.toLocaleDateString('id-ID')}
+│  Code sudah expired
 │
 │  Kode sudah tidak berlaku
 └─❖`,
