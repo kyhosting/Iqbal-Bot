@@ -260,7 +260,7 @@ bot.showDashboard = async (userId, chatId) => {
     if (!config.owner.includes(userId)) {
       await bot.sendMessage(
         userId,
-        `🎁 *TRIAL 1 HARI GRATIS!*\n\nSelamat! Kamu sudah verifikasi grup 🎉\n\n✅ Akses trial selama 1 hari sudah aktif!\n⏰ Berlaku sampai: ${new Date(trialExpired).toLocaleDateString("id-ID")}\n\nNikmati semua fitur premium dulu ya Kak! 💎\nSetelah trial habis, beli VIP untuk terus akses 😊`,
+        `🎁 <b>TRIAL 1 HARI GRATIS!</b>\n\nSelamat! Kamu sudah verifikasi grup 🎉\n\n✅ Akses trial selama 1 hari sudah aktif!\n⏰ Berlaku sampai: ${new Date(trialExpired).toLocaleDateString("id-ID")}\n\nNikmati semua fitur premium dulu ya Kak! 💎\nSetelah trial habis, beli VIP untuk terus akses 😊`,
         { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       ).catch(() => {});
     }
@@ -277,7 +277,7 @@ bot.showDashboard = async (userId, chatId) => {
       const daysLeft = Math.ceil((user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24));
       await bot.sendMessage(
         userId,
-        `✅ *Akses Dipulihkan Kak!*\n\nKamu sudah join kedua grup 🎉\n\n✨ Trial/VIP kamu aktif kembali!\n⏰ Sisa: *${daysLeft} hari*\n\nLanjut nikmati fitur premium ya 😊`,
+        `✅ <b>Akses Dipulihkan Kak!</b>\n\nKamu sudah join kedua grup 🎉\n\n✨ Trial/VIP kamu aktif kembali!\n⏰ Sisa: <b>${daysLeft} hari</b>\n\nLanjut nikmati fitur premium ya 😊`,
         { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       ).catch(() => {});
     }
@@ -301,7 +301,7 @@ bot.showDashboard = async (userId, chatId) => {
   }
 
   // Caption dengan format EXACT (tidak boleh diubah sekalipun 1 huruf)
-  const caption = `🎌 iqbal ᴄᴠ ʙᴏᴛꜱ\n(by iqbaldev)\n\n╭─❖\n│ こんにちは、私は Iqbalʙᴏᴛ です。\n│ 私はファイル変換と管理を担当します。\n│ ✦ Created by: @Iqbaldev\n╰───────────────❖\n\n╭─❖ ꜱᴛᴀᴛᴜꜱ ᴀᴋᴄᴇꜱ\n│ ➤ Nama: *${user.first_name || "User"}*\n│ ➤ ID: \`${userId}\`\n│ ➤ Username: @${user.username || "-"}\n│ ➤ Role: *${role.toUpperCase()}*\n│ ➤ Status: *${status === "active" ? "✅ Aktif" : "❌ Tidak Aktif"}*\n│ ➤ Masa Aktif: *${expired}*\n│ ➤ Hari Tersisa: *${remaining}*\n│ ➤ Total Operasi: *${user.total_operation || 0}*\n╰───────────────❖\n\n╭─❖ ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ\n│ ➤ 📄 TXT 📇 VCF 📊 XLSX\n│ ➤ 他の形式も順次対応予定です。\n╰───────────────❖\n\n╭─❖ ᴍᴇɴᴜ ʙᴏᴛ\n│ ➤ ⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ\n│ ➤ ⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ\n│ ➤ ⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n│ ➤ ⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ\n│ ➤ ⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n│ ➤ ⛓️ ꜱᴘʟɪᴛ ꜰɪʟᴇ\n│ ➤ ⛓️ ɢᴀʙᴜɢ ꜰɪʟᴇ\n│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ\n│ ➤ ⛓️ ᴀᴍʙɪʟ ɴᴀᴍᴀ ꜰɪʟᴇ\n│ ➤ ⛓️ ʙᴜᴀᴛ ɴᴀᴍᴀ\n│ ➤ ⛓️ ᴀᴅᴍ & ɴᴀᴠʏ\n│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ\n│ ➤ ⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ\n╰───────────────❖\n\n💎 ご利用ありがとうございます。\nこのボットは常に進化しています ⚙️`;
+  const caption = `🎌 iqbal ᴄᴠ ʙᴏᴛꜱ\n(by iqbaldev)\n\n╭─❖\n│ こんにちは、私は Iqbalʙᴏᴛ です。\n│ 私はファイル変換と管理を担当します。\n│ ✦ Created by: @Iqbaldev\n╰───────────────❖\n\n╭─❖ ꜱᴛᴀᴛᴜꜱ ᴀᴋᴄᴇꜱ\n│ ➤ Nama: <b>${user.first_name || "User"}</b>\n│ ➤ ID: <code>${userId}</code>\n│ ➤ Username: @${user.username || "-"}\n│ ➤ Role: <b>${role.toUpperCase()}</b>\n│ ➤ Status: <b>${status === "active" ? "✅ Aktif" : "❌ Tidak Aktif"}</b>\n│ ➤ Masa Aktif: <b>${expired}</b>\n│ ➤ Hari Tersisa: <b>${remaining}</b>\n│ ➤ Total Operasi: <b>${user.total_operation || 0}</b>\n╰───────────────❖\n\n╭─❖ ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ\n│ ➤ 📄 TXT 📇 VCF 📊 XLSX\n│ ➤ 他の形式も順次対応予定です。\n╰───────────────❖\n\n╭─❖ ᴍᴇɴᴜ ʙᴏᴛ\n│ ➤ ⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ\n│ ➤ ⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ\n│ ➤ ⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n│ ➤ ⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ\n│ ➤ ⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n│ ➤ ⛓️ ꜱᴘʟɪᴛ ꜰɪʟᴇ\n│ ➤ ⛓️ ɢᴀʙᴜɢ ꜰɪʟᴇ\n│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ\n│ ➤ ⛓️ ᴀᴍʙɪʟ ɴᴀᴍᴀ ꜰɪʟᴇ\n│ ➤ ⛓️ ʙᴜᴀᴛ ɴᴀᴍᴀ\n│ ➤ ⛓️ ᴀᴅᴍ & ɴᴀᴠʏ\n│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ\n│ ➤ ⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ\n╰───────────────❖\n\n💎 ご利用ありがとうございます。\nこのボットは常に進化しています ⚙️`;
 
   try {
     const photos = await bot.getUserProfilePhotos(userId, { limit: 1 });
