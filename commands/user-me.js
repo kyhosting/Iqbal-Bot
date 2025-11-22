@@ -79,7 +79,12 @@ export default function (bot, db, saveDB) {
 │  Member Sejak: ${new Date().toLocaleDateString('id-ID')}
 └─❖
 
-💡 Upgrade VIP: /redeem KODE`;
+┌─❖
+│  💡 Upgrade VIP: /redeem KODE
+│
+│  Ketik 'me' untuk refresh
+│  Ketik 'start' untuk menu
+└─❖`;
 
     await bot.sendMessage(chatId, profileMessage, {
       parse_mode: "HTML",

@@ -47,6 +47,9 @@ export default function (bot) {
 │  Satu nomor per baris
 │
 │  Kirim file untuk start
+│
+│  Ketik 'done' untuk selesai
+│  Ketik 'batal' untuk batal
 └─❖`,
       { parse_mode: "HTML" }
     );
