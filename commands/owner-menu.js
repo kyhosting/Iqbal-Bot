@@ -251,7 +251,7 @@ export default function (bot, db, saveDB) {
         chatId,
         `🗑️ <b>Cara Hapus Kode</b>\n\n` +
         `Gunakan format:\n` +
-        `/deletecode <KODE>\n\n` +
+        `/deletecode KODE\n\n` +
         `Contoh:\n` +
         `/deletecode VIP123`,
         { parse_mode: "HTML" }
@@ -265,7 +265,7 @@ export default function (bot, db, saveDB) {
         chatId,
         `🎁 <b>Cara Set VIP Manual</b>\n\n` +
         `Gunakan format:\n` +
-        `/setvip <USER_ID> <DURASI_HARI>\n\n` +
+        `/setvip USER_ID DURASI_HARI\n\n` +
         `Contoh:\n` +
         `/setvip 123456789 30\n\n` +
         `Akan memberikan VIP selama 30 hari.`,
