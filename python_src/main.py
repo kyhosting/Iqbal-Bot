@@ -2,7 +2,7 @@
 """Iqbal CV Bot - Python Version (COMPLETE dengan semua 18 features)"""
 import asyncio
 import logging
-from telegram import Update, ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application, CommandHandler, MessageHandler, filters, 
     ContextTypes, ConversationHandler, CallbackQueryHandler
@@ -22,7 +22,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle /start command"""
+    """Handle /start command - MARKDOWN ONLY NO KEYBOARD"""
     user = update.effective_user
     user_id = user.id
     
@@ -38,7 +38,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # Get dashboard
     dashboard = format_dashboard(db_user)
-    keyboard = get_main_keyboard()
     
     try:
         # Try to get profile photo
@@ -49,27 +48,24 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 chat_id=user_id,
                 photo=photo.file_id,
                 caption=dashboard,
-                parse_mode="Markdown",
-                reply_markup=ReplyKeyboardMarkup(keyboard["keyboard"], resize_keyboard=True)
+                parse_mode="Markdown"
             )
         else:
             await context.bot.send_message(
                 chat_id=user_id,
                 text=dashboard,
-                parse_mode="Markdown",
-                reply_markup=ReplyKeyboardMarkup(keyboard["keyboard"], resize_keyboard=True)
+                parse_mode="Markdown"
             )
     except Exception as e:
         logger.error(f"Error sending start message: {e}")
         await context.bot.send_message(
             chat_id=user_id,
             text=dashboard,
-            parse_mode="Markdown",
-            reply_markup=ReplyKeyboardMarkup(keyboard["keyboard"], resize_keyboard=True)
+            parse_mode="Markdown"
         )
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle all message types"""
+    """Handle all message types - TEXT INPUT ONLY, NO KEYBOARDS"""
     text = update.message.text or ""
     user_id = update.effective_user.id
     
@@ -96,6 +92,19 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await button_commands[text](update, context)
         return
     
+    # Check text commands
+    if text.lower() == 'batal':
+        await update.message.reply_text("❌ *Dibatalkan ya Kak* 😊", parse_mode="Markdown")
+        from vip_commands import clear_session
+        clear_session(user_id)
+        return
+    
+    if text.lower() == 'done':
+        await update.message.reply_text("✅ *Selesai ya Kak!* 🎉", parse_mode="Markdown")
+        from vip_commands import clear_session
+        clear_session(user_id)
+        return
+    
     # Check if handling VIP command
     if update.message.document:
         await handle_file_message(update, context)
@@ -104,10 +113,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         from vip_commands import vip_sessions
         if user_id in vip_sessions and 'command' in vip_sessions[user_id]:
             await handle_text_message(update, context)
-        elif text.lower() == 'batal':
-            await update.message.reply_text("❌ *Dibatalkan ya Kak* 😊", parse_mode="Markdown")
-        else:
-            await update.message.reply_text("Gunakan tombol dibawah ya Kak! 😊")
 
 async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Log errors"""
