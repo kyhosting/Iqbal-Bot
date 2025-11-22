@@ -7,6 +7,35 @@ function generateRandomCode() {
   return code;
 }
 
+function parseDuration(str) {
+  const match = str.match(/^(\d+)([mhdw])$/i);
+  if (!match) return null;
+  
+  const value = parseInt(match[1]);
+  const unit = match[2].toLowerCase();
+  
+  const multipliers = {
+    'm': 60 * 1000,              // menit ke ms
+    'h': 60 * 60 * 1000,         // jam ke ms
+    'd': 24 * 60 * 60 * 1000,    // hari ke ms
+    'w': 7 * 24 * 60 * 60 * 1000 // minggu ke ms
+  };
+  
+  return value * multipliers[unit];
+}
+
+function formatDuration(ms) {
+  if (ms < 60 * 1000) {
+    return Math.floor(ms / 1000) + "s";
+  } else if (ms < 60 * 60 * 1000) {
+    return Math.floor(ms / (60 * 1000)) + "m";
+  } else if (ms < 24 * 60 * 60 * 1000) {
+    return Math.floor(ms / (60 * 60 * 1000)) + "h";
+  } else {
+    return Math.floor(ms / (24 * 60 * 60 * 1000)) + "d";
+  }
+}
+
 export default function (bot, db, saveDB) {
   const sessions = {};
   const userMessages = {};
@@ -127,10 +156,11 @@ export default function (bot, db, saveDB) {
         codes.forEach((code, i) => {
           const r = bot.redeemDB[code];
           const status = r.used_by ? "✅ Terpakai" : "⏳ Aktif";
+          const expTime = formatDuration(r.expires_in_ms);
           message += `│  ${i + 1}. ${code}\n`;
           message += `│     Status: ${status}\n`;
-          message += `│     Durasi: ${r.duration} hari\n`;
-          message += `│     Exp: ${r.expired}\n`;
+          message += `│     Durasi VIP: ${r.duration} hari\n`;
+          message += `│     Code Expired: ${expTime}\n`;
           if (i < codes.length - 1) message += `│\n`;
         });
         message += `└─❖`;
@@ -317,12 +347,20 @@ export default function (bot, db, saveDB) {
       sessions[userId].step = "create_code_expiry";
       const msg = await bot.sendMessage(
         chatId,
-        `◆◆  TANGGAL EXPIRED  ◆◆
+        `◆◆  CODE EXPIRED DURATION  ◆◆
 
 ┌─❖
-│  📅 Format: YYYY-MM-DD
+│  ⏰ Kapan code ini kadaluarsa?
 │
-│  Contoh: 2025-12-31
+│  Format: <angka><satuan>
+│  
+│  Satuan:
+│  • m = menit (contoh: 5m)
+│  • h = jam (contoh: 1h)
+│  • d = hari (contoh: 7d)
+│  • w = minggu (contoh: 2w)
+│
+│  Contoh: 7d, 1h, 30m
 │
 │  Ketik 'batal' untuk cancel
 └─❖`,
@@ -339,8 +377,21 @@ export default function (bot, db, saveDB) {
         await showOwnerMenu(userId, chatId, true);
         return;
       }
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) {
-        const msg = await bot.sendMessage(chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ Format harus YYYY-MM-DD!\n└─❖`, { parse_mode: "HTML" });
+      
+      const expiryMs = parseDuration(text);
+      if (!expiryMs) {
+        const msg = await bot.sendMessage(
+          chatId,
+          `◆◆  ERROR  ◆◆
+
+┌─❖
+│  ⚠️ Format salah!
+│
+│  Contoh yang benar:
+│  5m, 1h, 7d, 2w
+└─❖`,
+          { parse_mode: "HTML" }
+        );
         userMessages[userId] = msg.message_id;
         return;
       }
@@ -349,7 +400,8 @@ export default function (bot, db, saveDB) {
       bot.redeemDB[code] = {
         code,
         duration: session.duration,
-        expired: text,
+        expires_in_ms: expiryMs,
+        created_at: Date.now(),
         used_by: null
       };
       if (bot.saveRedeemDB) bot.saveRedeemDB();
@@ -370,8 +422,8 @@ export default function (bot, db, saveDB) {
 │  ✅ Kode berhasil dibuat
 │
 │  Kode: <code>${code}</code>
-│  Durasi: ${session.duration} hari
-│  Expired: ${text}
+│  Durasi VIP: ${session.duration} hari
+│  Code Expired: ${formatDuration(expiryMs)}
 └─❖`,
         { parse_mode: "HTML", reply_markup: backKeyboard }
       );
