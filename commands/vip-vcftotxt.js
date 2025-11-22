@@ -4,34 +4,40 @@ import path from "path";
 export default function (bot) {
   const sessions = {};
 
-  // Trigger dari keyboard button
   bot.onText(/^⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ$|^\/vcftotxt$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);
 
-    // Batasi akses hanya untuk owner/admin/vip/trial
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(
-        chatId,
-        `◆ VCF TO TXT\n\n▸ ◆◆ AKSES DITOLAK ◆◆
+      return bot.sendMessage(chatId,
+        `◆◆  VCF TO TXT  ◆◆
 
 ┌─❖
-├ ❌ Akses Ditolak
-├ Fitur khusus VIP
-└─❖\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
+│  ❌ Akses Ditolak
+│
+│  Fitur khusus VIP
+└─❖`,
         { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
 
-    // Verify group membership
     const hasAccess = await bot.verifyGroupAccess(userId, chatId);
     if (!hasAccess) return;
 
     sessions[userId] = { step: 1 };
-    return await bot.sendMessage(
-      chatId,
-      `◆ VCF TO TXT\n(Mengubah file vcf ke txt)\n\n▸ Support Format:\n  • VCF (Contact)\n\n▸ Kirim file VCF (bisa multiple)\n▸ Minimal 1 file\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,
+    return await bot.sendMessage(chatId,
+      `◆◆  VCF TO TXT  ◆◆
+
+┌─❖
+│  Convert VCF ke TXT
+│
+│  Support: VCF
+│
+│  Ekstrak nomor dari kontak
+│
+│  Kirim file untuk start
+└─❖`,
       { parse_mode: "HTML" }
     );
   });
@@ -43,15 +49,28 @@ export default function (bot) {
     const session = sessions[userId];
     if (!session) return;
 
-    // Step 1 → kirim file .vcf
     if (session.step === 1) {
-      if (/^batal$/i.test(text) || /^done$/i.test(text)) {
+      if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, "◆◆ DIBATALKAN ◆◆\n\n╭─❖\n│ ❌ <b>Proses dibatalkan</b>\n╰───────────────❖.", { parse_mode: "HTML" });
+        return bot.sendMessage(chatId,
+          `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Proses dibatalkan
+└─❖`,
+          { parse_mode: "HTML" }
+        );
       }
 
       if (!msg.document || !msg.document.file_name.endsWith(".vcf")) {
-        return bot.sendMessage(chatId, "⚠️ Kirim file dengan ekstensi .vcf!", { parse_mode: "HTML" });
+        return bot.sendMessage(chatId,
+          `◆◆  VCF TO TXT  ◆◆
+
+┌─❖
+│  ⚠️ Kirim file .vcf
+└─❖`,
+          { parse_mode: "HTML" }
+        );
       }
 
       const fileId = msg.document.file_id;
@@ -66,19 +85,32 @@ export default function (bot) {
       session.originalName = msg.document.file_name.replace(".vcf", "");
       session.step = 2;
 
-      return bot.sendMessage(
-        chatId,
-        `◆ VCF TO TXT\n\n▸ Nama File Output\n\nMasukkan nama file hasil konversi\n(Tanpa ekstensi .txt)\n\nKetik 'done' untuk skip\n\n◆`,
+      return bot.sendMessage(chatId,
+        `◆◆  VCF TO TXT  ◆◆
+
+┌─❖
+│  📝 Nama File Output
+│
+│  Masukkan nama file hasil
+│
+│  (Tanpa ekstensi)
+└─❖`,
         { parse_mode: "HTML" }
       );
     }
 
-    // Step 2 → input nama file output
     if (session.step === 2) {
       if (/^batal$/i.test(text)) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
-        return bot.sendMessage(chatId, "◆◆ DIBATALKAN ◆◆\n\n╭─❖\n│ ❌ <b>Proses dibatalkan</b>\n╰───────────────❖.", { parse_mode: "HTML" });
+        return bot.sendMessage(chatId,
+          `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Proses dibatalkan
+└─❖`,
+          { parse_mode: "HTML" }
+        );
       }
 
       const outputName = /^done$/i.test(text)
@@ -93,7 +125,14 @@ export default function (bot) {
         if (numbers.length === 0) {
           fs.unlinkSync(session.file);
           delete sessions[userId];
-          return bot.sendMessage(chatId, "⚠️ Tidak ditemukan nomor telepon di file!", { parse_mode: "HTML" });
+          return bot.sendMessage(chatId,
+            `◆◆  VCF TO TXT  ◆◆
+
+┌─❖
+│  ⚠️ Nomor tidak ditemukan
+└─❖`,
+            { parse_mode: "HTML" }
+          );
         }
 
         const outputFile = `${outputName}.txt`;
@@ -101,9 +140,16 @@ export default function (bot) {
         fs.writeFileSync(outputPath, numbers.join("\n"));
 
         await bot.sendDocument(chatId, outputPath);
-        await bot.sendMessage(
-          chatId,
-          `✅ <b>File TXT berhasil dibuat!</b>\n📂 <b>Nama file:</b> \`${outputFile}\``,
+        await bot.sendMessage(chatId,
+          `◆◆  KONVERSI SUKSES  ◆◆
+
+┌─❖
+│  ✅ TXT berhasil dibuat
+│
+│  File: ${outputFile}
+│
+│  Total: ${numbers.length} nomor
+└─❖`,
           { parse_mode: "HTML" }
         );
 
@@ -111,7 +157,14 @@ export default function (bot) {
         fs.unlinkSync(session.file);
       } catch (err) {
         console.error("Gagal convert:", err);
-        bot.sendMessage(chatId, "⚠️ Terjadi kesalahan saat konversi file.", { parse_mode: "HTML" });
+        bot.sendMessage(chatId,
+          `◆◆  VCF TO TXT  ◆◆
+
+┌─❖
+│  ⚠️ Konversi gagal
+└─❖`,
+          { parse_mode: "HTML" }
+        );
       }
 
       delete sessions[userId];
