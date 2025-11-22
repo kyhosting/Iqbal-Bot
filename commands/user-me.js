@@ -70,7 +70,7 @@ export default function (bot, db, saveDB) {
 
     await bot.sendMessage(chatId, profileMessage, {
       parse_mode: "Markdown",
-      reply_markup: bot.getMainKeyboard()
+      reply_markup: bot.getMainKeyboardUser(userId)
     });
   });
 }

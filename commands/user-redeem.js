@@ -14,7 +14,7 @@ export default function (bot, db, saveDB) {
       `Ketik \`batal\` untuk membatalkan.`,
       { 
         parse_mode: "Markdown",
-        reply_markup: bot.getMainKeyboard()
+        reply_markup: bot.getMainKeyboardUser(userId)
       }
     );
   });
@@ -32,7 +32,7 @@ export default function (bot, db, saveDB) {
       `Ketik \`batal\` untuk membatalkan.`,
       { 
         parse_mode: "Markdown",
-        reply_markup: bot.getMainKeyboard()
+        reply_markup: bot.getMainKeyboardUser(userId)
       }
     );
   });
@@ -52,7 +52,7 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId, 
           "❌ Proses dibatalkan ya Kak 😊",
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
@@ -68,7 +68,7 @@ export default function (bot, db, saveDB) {
           `Coba cek lagi ya 🙏`,
           { 
             parse_mode: "Markdown",
-            reply_markup: bot.getMainKeyboard()
+            reply_markup: bot.getMainKeyboardUser(userId)
           }
         );
       }
@@ -83,7 +83,7 @@ export default function (bot, db, saveDB) {
           `Coba minta kode baru ya!`,
           { 
             parse_mode: "Markdown",
-            reply_markup: bot.getMainKeyboard()
+            reply_markup: bot.getMainKeyboardUser(userId)
           }
         );
       }
@@ -99,7 +99,7 @@ export default function (bot, db, saveDB) {
             `Kode ini sudah expired sejak ${expDate.toLocaleDateString('id-ID')} 😔`,
             { 
               parse_mode: "Markdown",
-              reply_markup: bot.getMainKeyboard()
+              reply_markup: bot.getMainKeyboardUser(userId)
             }
           );
         }
@@ -147,7 +147,7 @@ export default function (bot, db, saveDB) {
         `Silakan nikmati semua fitur premium ya 😊`,
         { 
           parse_mode: "Markdown",
-          reply_markup: bot.getMainKeyboard()
+          reply_markup: bot.getMainKeyboardUser(userId)
         }
       );
 

@@ -15,11 +15,11 @@ export default function (bot, db, saveDB) {
     
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
     }
 
     sessions[userId] = { step: 1, files: [], fileType: null };
-    bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n(Gabung Multiple File)\n\n▸ Support Format:\n  • VCF (Contact)\n  • TXT (Text)\n  • XLS (Excel)\n\n▸ Kirim file yang mau digabung\n\n▸ Minimal 2 file\n▸ Semua file harus tipe sama\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n(Gabung Multiple File)\n\n▸ Support Format:\n  • VCF (Contact)\n  • TXT (Text)\n  • XLS (Excel)\n\n▸ Kirim file yang mau digabung\n\n▸ Minimal 2 file\n▸ Semua file harus tipe sama\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
   });
 
   bot.onText(/^\/gabungfile$/, async (msg) => {
@@ -31,11 +31,11 @@ export default function (bot, db, saveDB) {
     
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
     }
 
     sessions[userId] = { step: 1, files: [], fileType: null };
-    bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n(Gabung Multiple File)\n\n▸ Support Format:\n  • VCF (Contact)\n  • TXT (Text)\n  • XLS (Excel)\n\n▸ Kirim file yang mau digabung\n\n▸ Minimal 2 file\n▸ Semua file harus tipe sama\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n(Gabung Multiple File)\n\n▸ Support Format:\n  • VCF (Contact)\n  • TXT (Text)\n  • XLS (Excel)\n\n▸ Kirim file yang mau digabung\n\n▸ Minimal 2 file\n▸ Semua file harus tipe sama\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
   });
 
   bot.on("message", async (msg) => {
@@ -49,19 +49,19 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text)) {
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ❌ Proses Dibatalkan\n\nAda yg bisa dibantu lagi?\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ❌ Proses Dibatalkan\n\nAda yg bisa dibantu lagi?\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       if (/^done$/i.test(text)) {
         if (session.files.length < 2) {
-          return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ⚠️ File Kurang\n\nMinimal 2 file untuk digabung Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+          return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ⚠️ File Kurang\n\nMinimal 2 file untuk digabung Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
         }
         session.step = 2;
-        return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ Nama File Output\n\nMasukkan nama file hasil gabungan\n(Tanpa ekstensi)\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ Nama File Output\n\nMasukkan nama file hasil gabungan\n(Tanpa ekstensi)\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       if (!msg.document) {
-        return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ⚠️ Bukan File\n\nKirim file VCF, TXT, atau XLS ya Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ⚠️ Bukan File\n\nKirim file VCF, TXT, atau XLS ya Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       const fileName = msg.document.file_name || "";
@@ -70,12 +70,12 @@ export default function (bot, db, saveDB) {
       const isXls = fileName.endsWith(".xlsx") || fileName.endsWith(".xls");
 
       if (!isVcf && !isTxt && !isXls) {
-        return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ⚠️ Tipe File Salah\n\nHanya VCF, TXT, atau XLS\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ⚠️ Tipe File Salah\n\nHanya VCF, TXT, atau XLS\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       const currentType = isVcf ? "vcf" : isTxt ? "txt" : "xls";
       if (session.fileType && session.fileType !== currentType) {
-        return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ⚠️ Tipe File Berbeda\n\nSemua file harus tipe sama ya Kak\nSebelumnya: ${session.fileType.toUpperCase()}\nSekarang: ${currentType.toUpperCase()}\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ⚠️ Tipe File Berbeda\n\nSemua file harus tipe sama ya Kak\nSebelumnya: ${session.fileType.toUpperCase()}\nSekarang: ${currentType.toUpperCase()}\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       session.fileType = currentType;
@@ -90,10 +90,10 @@ export default function (bot, db, saveDB) {
         fs.writeFileSync(localPath, Buffer.from(buffer));
 
         session.files.push(localPath);
-        return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ✅ File Diterima\n\nFile: ${fileName}\nTotal: ${session.files.length}\n\nKirim file lagi atau ketik 'done'\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ✅ File Diterima\n\nFile: ${fileName}\nTotal: ${session.files.length}\n\nKirim file lagi atau ketik 'done'\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       } catch (err) {
         console.error("Download error:", err);
-        return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ⚠️ Gagal Download\n\nAda masalah saat download file\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ⚠️ Gagal Download\n\nAda masalah saat download file\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
     }
 
@@ -101,7 +101,7 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text)) {
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
-        return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ❌ Proses Dibatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ❌ Proses Dibatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       const outputName = text.trim().replace(/[^a-zA-Z0-9-_]/g, "_") || "gabungan";
@@ -118,12 +118,12 @@ export default function (bot, db, saveDB) {
         }
 
         await bot.sendDocument(chatId, outputFile);
-        await bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ - ✅ SUKSES\n\n▸ Nama File: ${outputName}${ext}\n▸ Total File: ${session.files.length}\n▸ Tipe: ${session.fileType.toUpperCase()}\n\n💎 Terima kasih sudah menggunakan bot ini 🙏\nJangan lupa support bot dengan subscribe channel 🤗\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        await bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ - ✅ SUKSES\n\n▸ Nama File: ${outputName}${ext}\n▸ Total File: ${session.files.length}\n▸ Tipe: ${session.fileType.toUpperCase()}\n\n💎 Terima kasih sudah menggunakan bot ini 🙏\nJangan lupa support bot dengan subscribe channel 🤗\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
         
         bot.incrementOperation(userId);
       } catch (err) {
         console.error("Merge error:", err);
-        bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ⚠️ Gabung Gagal\n\nAda masalah saat gabung file\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        bot.sendMessage(chatId, `◆ ɢᴀʙᴜɢ ꜰɪʟᴇ\n\n▸ ⚠️ Gabung Gagal\n\nAda masalah saat gabung file\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       for (const f of [...session.files, outputFile]) {

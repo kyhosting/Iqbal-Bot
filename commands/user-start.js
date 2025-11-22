@@ -134,7 +134,7 @@ async function showDashboard(bot, userId, chatId, db, saveDB) {
           `⏰ Berlaku sampai: ${new Date(trialExpired).toLocaleDateString("id-ID")}\n\n` +
           `Nikmati semua fitur premium dulu ya Kak! 💎\n` +
           `Setelah trial habis, beli VIP untuk terus akses 😊`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
       ).catch(() => {});
     }
   } else {
@@ -157,7 +157,7 @@ async function showDashboard(bot, userId, chatId, db, saveDB) {
           `✨ Trial/VIP kamu aktif kembali!\n` +
           `⏰ Sisa: *${daysLeft} hari*\n\n` +
           `Lanjut nikmati fitur premium ya 😊`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
       ).catch(() => {});
     }
   }
@@ -228,19 +228,19 @@ async function showDashboard(bot, userId, chatId, db, saveDB) {
       await bot.sendPhoto(chatId, fileId, {
         caption: caption,
         parse_mode: "Markdown",
-        reply_markup: bot.getMainKeyboard()
+        reply_markup: bot.getMainKeyboardUser(userId)
       });
     } else {
       await bot.sendMessage(chatId, caption, {
         parse_mode: "Markdown",
-        reply_markup: bot.getMainKeyboard()
+        reply_markup: bot.getMainKeyboardUser(userId)
       });
     }
   } catch (err) {
     console.error("Error getting profile photo:", err);
     await bot.sendMessage(chatId, caption, {
       parse_mode: "Markdown",
-      reply_markup: bot.getMainKeyboard()
+      reply_markup: bot.getMainKeyboardUser(userId)
     });
   }
 }

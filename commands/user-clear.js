@@ -62,7 +62,7 @@ export default function (bot, db, saveDB) {
         const freshMsg = await bot.sendMessage(
           chatId,
           `✨ *Chat Berhasil Dibersihkan!*\n\n💫 Siap melanjutkan dengan fresh start!\n\nGunakan /start untuk menu utama 😊`,
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
         );
 
         await bot.answerCallbackQuery(query.id, "✅ Chat berhasil dibersihkan!", true);

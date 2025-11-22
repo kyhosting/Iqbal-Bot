@@ -15,11 +15,11 @@ export default function (bot, db, saveDB) {
     
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(chatId, `◆ EKSTRAK NOMOR\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+      return bot.sendMessage(chatId, `◆ EKSTRAK NOMOR\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(chatId, `◆ EKSTRAK NOMOR\n(Extract Phone Numbers)\n\n▸ Support Format:\n  • VCF (Contact)\n  • TXT (Text)\n  • XLSX (Excel)\n  • CSV (Spreadsheet)\n\n▸ Ekstrak semua nomor telepon\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+    bot.sendMessage(chatId, `◆ EKSTRAK NOMOR\n(Extract Phone Numbers)\n\n▸ Support Format:\n  • VCF (Contact)\n  • TXT (Text)\n  • XLSX (Excel)\n  • CSV (Spreadsheet)\n\n▸ Ekstrak semua nomor telepon\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
   });
 
   bot.on("message", async (msg) => {
@@ -33,7 +33,7 @@ export default function (bot, db, saveDB) {
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, `❌ *Proses Dibatalkan*\n\nExtrak nomor dibatalkan. Klik menu untuk memulai ulang.`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `❌ *Proses Dibatalkan*\n\nExtrak nomor dibatalkan. Klik menu untuk memulai ulang.`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       if (!msg.document) {
@@ -77,7 +77,7 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text)) {
         try { fs.unlinkSync(session.localPath); } catch {}
         delete sessions[userId];
-        return bot.sendMessage(chatId, `❌ *Proses Dibatalkan*\n\nExtrak nomor dibatalkan. Klik menu untuk memulai ulang.`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `❌ *Proses Dibatalkan*\n\nExtrak nomor dibatalkan. Klik menu untuk memulai ulang.`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       const outputName = text.trim().replace(/[^a-zA-Z0-9-_]/g, "_") || "nomor_hasil";
@@ -100,7 +100,7 @@ export default function (bot, db, saveDB) {
         fs.writeFileSync(outputFile, uniqueNumbers.join("\n"));
 
         // Send ONE message with info + file + single success message
-        await bot.sendMessage(chatId, `✅ *EKSTRAK NOMOR SELESAI!*\n\n📄 File: \`${session.fileName}\`\n📊 Total Nomor: *${uniqueNumbers.length}*\n\n📝 Nomor-nomor Anda sudah di-extract dan disimpan ke file. Download file di bawah ini.\n\nSemoga membantu ya Kak! 😊`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        await bot.sendMessage(chatId, `✅ *EKSTRAK NOMOR SELESAI!*\n\n📄 File: \`${session.fileName}\`\n📊 Total Nomor: *${uniqueNumbers.length}*\n\n📝 Nomor-nomor Anda sudah di-extract dan disimpan ke file. Download file di bawah ini.\n\nSemoga membantu ya Kak! 😊`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
 
         // Send file
         await bot.sendDocument(chatId, outputFile);
@@ -115,7 +115,7 @@ export default function (bot, db, saveDB) {
         console.error("Extract error:", err);
         try { fs.unlinkSync(session.localPath); } catch {}
         delete sessions[userId];
-        return bot.sendMessage(chatId, `❌ *Ekstrak Gagal*\n\nAda kesalahan saat memproses file.\nCoba ulangi atau hubungi owner.`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `❌ *Ekstrak Gagal*\n\nAda kesalahan saat memproses file.\nCoba ulangi atau hubungi owner.`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
     }
   });

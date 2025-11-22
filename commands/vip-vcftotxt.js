@@ -15,7 +15,7 @@ export default function (bot) {
       return bot.sendMessage(
         chatId,
         `◆ VCF TO TXT\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
 

@@ -15,7 +15,7 @@ export default function (bot, db, saveDB) {
       return bot.sendMessage(
         chatId,
         `◆ XLS TO VCF\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
 
@@ -27,7 +27,7 @@ export default function (bot, db, saveDB) {
     return await bot.sendMessage(
       chatId,
       `◆ XLS TO VCF\n(Excel to Contact Converter)\n\n▸ Support Format:\n  • XLS (Excel)\n  • XLSX (Excel)\n\n▸ Kolom 1: Nama kontak\n▸ Kolom 2: Nomor telepon\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,
-      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
     );
   });
 
@@ -45,7 +45,7 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId, 
           "❌ Proses dibatalkan ya Kak 😊",
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
@@ -55,7 +55,7 @@ export default function (bot, db, saveDB) {
           "⚠️ *Kirim file Excel dulu ya Kak* 😊",
           { 
             parse_mode: "Markdown",
-            reply_markup: bot.getMainKeyboard()
+            reply_markup: bot.getMainKeyboardUser(userId)
           }
         );
       }
@@ -69,7 +69,7 @@ export default function (bot, db, saveDB) {
           "⚠️ *Harus file Excel ya Kak* (.xls atau .xlsx) 😊",
           { 
             parse_mode: "Markdown",
-            reply_markup: bot.getMainKeyboard()
+            reply_markup: bot.getMainKeyboardUser(userId)
           }
         );
       }
@@ -97,7 +97,7 @@ export default function (bot, db, saveDB) {
             "⚠️ *File Excel kosong Kak* 😔\n\nCoba isi dulu ya!",
             { 
               parse_mode: "Markdown",
-              reply_markup: bot.getMainKeyboard()
+              reply_markup: bot.getMainKeyboardUser(userId)
             }
           );
         }
@@ -137,7 +137,7 @@ export default function (bot, db, saveDB) {
             "⚠️ *Tidak ada data valid Kak* 😔\n\nPastikan format Excel:\n• Kolom 1: Nama\n• Kolom 2: Nomor",
             { 
               parse_mode: "Markdown",
-              reply_markup: bot.getMainKeyboard()
+              reply_markup: bot.getMainKeyboardUser(userId)
             }
           );
         }
@@ -158,7 +158,7 @@ export default function (bot, db, saveDB) {
           `Semoga membantu ya! 😊`,
           { 
             parse_mode: "Markdown",
-            reply_markup: bot.getMainKeyboard()
+            reply_markup: bot.getMainKeyboardUser(userId)
           }
         );
 
@@ -173,7 +173,7 @@ export default function (bot, db, saveDB) {
           "⚠️ *Yah… ada masalah saat convert Excel* 😔\n\nPastikan file Excel format yang benar ya!",
           { 
             parse_mode: "Markdown",
-            reply_markup: bot.getMainKeyboard()
+            reply_markup: bot.getMainKeyboardUser(userId)
           }
         );
       }
