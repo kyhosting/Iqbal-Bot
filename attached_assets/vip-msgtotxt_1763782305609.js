@@ -4,6 +4,7 @@ import path from "path";
 export default function (bot, db, saveDB) {
   const sessions = {};
 
+  // Handle keyboard button & /msgtotxt command
   bot.onText(/^⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ$|^\/msgtotxt$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;

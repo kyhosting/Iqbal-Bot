@@ -4,11 +4,13 @@ import path from "path";
 export default function (bot) {
   const sessions = {};
 
+  // Trigger dari keyboard button
   bot.onText(/^⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ$|^\/vcftotxt$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);
 
+    // Batasi akses hanya untuk owner/admin/vip/trial
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
@@ -17,6 +19,7 @@ export default function (bot) {
       );
     }
 
+    // Verify group membership
     const hasAccess = await bot.verifyGroupAccess(userId, chatId);
     if (!hasAccess) return;
 
@@ -35,6 +38,7 @@ export default function (bot) {
     const session = sessions[userId];
     if (!session) return;
 
+    // Step 1 → kirim file .vcf
     if (session.step === 1) {
       if (/^batal$/i.test(text) || /^done$/i.test(text)) {
         delete sessions[userId];
@@ -64,6 +68,7 @@ export default function (bot) {
       );
     }
 
+    // Step 2 → input nama file output
     if (session.step === 2) {
       if (/^batal$/i.test(text)) {
         fs.unlinkSync(session.file);
