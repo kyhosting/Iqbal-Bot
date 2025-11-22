@@ -11,7 +11,7 @@ export default function (bot, db, saveDB) {
     if (!groupCheck.verified) {
       return bot.sendMessage(
         chatId,
-        `◆◆ BANTUAN ◆◆\n\n╭─❖\n│ ⚠️ <b>Akses Ditolak</b>\n│ ➤ Harus join grup terlebih dahulu\n╰───────────────❖`,
+        `◆◆ BANTUAN ◆◆\n\n┌─❖\n├ ⚠️ <b>Akses Ditolak</b>\n├ ➤ Harus join grup terlebih dahulu\n└─❖`,
         { parse_mode: "HTML" }
       );
     }
@@ -34,7 +34,7 @@ export default function (bot, db, saveDB) {
       ]
     };
 
-    const message = `◆◆ MENU BANTUAN ◆◆\n\n╭─❖\n│ 🆘 <b>Ada Yang Bisa Dibantu?</b>\n│ ➤ 🐞 Lapor Bug - Laporkan bug\n│ ➤ ⚠️ Bot Error - Laporkan error\n│ ➤ 🛠️ Request Fitur - Usulkan fitur\n│ ➤ 💎 Beli VIP - Lihat paket\n│ ➤ 💬 Chat Owner - Hubungi owner\n╰───────────────❖`;
+    const message = `◆◆ MENU BANTUAN ◆◆\n\n┌─❖\n├ 🆘 <b>Ada Yang Bisa Dibantu?</b>\n├ ➤ 🐞 Lapor Bug - Laporkan bug\n├ ➤ ⚠️ Bot Error - Laporkan error\n├ ➤ 🛠️ Request Fitur - Usulkan fitur\n├ ➤ 💎 Beli VIP - Lihat paket\n├ ➤ 💬 Chat Owner - Hubungi owner\n└─❖`;
 
     await bot.sendMessage(chatId, message, {
       parse_mode: "HTML",
@@ -65,18 +65,18 @@ export default function (bot, db, saveDB) {
         ]
       };
 
-      let message = `◆◆ PAKET VIP ◆◆\n\n╭─❖\n│ 💎 <b>TERSEDIA</b>\n`;
-      message += `│ ➤ VIP 7 Hari: 15K\n`;
-      message += `│ ➤ VIP 30 Hari: 35K (POPULER)\n`;
-      message += `│ ➤ VIP 1 Tahun: 100K\n`;
-      message += `╰───────────────❖\n\n`;
-      message += `╭─❖\n│ ✨ <b>FITUR VIP</b>\n`;
-      message += `│ ✓ Konversi file tanpa batas\n`;
-      message += `│ ✓ Ekstrak nomor unlimited\n`;
-      message += `│ ✓ Gabung & split file\n`;
-      message += `│ ✓ Rapikan & clean data\n`;
-      message += `│ ✓ Rename & manage file\n`;
-      message += `╰───────────────❖`;
+      let message = `◆◆ PAKET VIP ◆◆\n\n┌─❖\n├ 💎 <b>TERSEDIA</b>\n`;
+      message += `├ ➤ VIP 7 Hari: 15K\n`;
+      message += `├ ➤ VIP 30 Hari: 35K (POPULER)\n`;
+      message += `├ ➤ VIP 1 Tahun: 100K\n`;
+      message += `└─❖\n\n`;
+      message += `┌─❖\n├ ✨ <b>FITUR VIP</b>\n`;
+      message += `├ ✓ Konversi file tanpa batas\n`;
+      message += `├ ✓ Ekstrak nomor unlimited\n`;
+      message += `├ ✓ Gabung & split file\n`;
+      message += `├ ✓ Rapikan & clean data\n`;
+      message += `├ ✓ Rename & manage file\n`;
+      message += `└─❖`;
 
       await bot.deleteMessage(chatId, query.message.message_id).catch(() => {});
       await bot.sendMessage(chatId, message, {
@@ -104,7 +104,7 @@ export default function (bot, db, saveDB) {
         ]
       };
 
-      const message = `◆◆ MENU BANTUAN ◆◆\n\n╭─❖\n│ 🆘 <b>Ada Yang Bisa Dibantu?</b>\n│ ➤ 🐞 Lapor Bug - Laporkan bug\n│ ➤ ⚠️ Bot Error - Laporkan error\n│ ➤ 🛠️ Request Fitur - Usulkan fitur\n│ ➤ 💎 Beli VIP - Lihat paket\n│ ➤ 💬 Chat Owner - Hubungi owner\n╰───────────────❖`;
+      const message = `◆◆ MENU BANTUAN ◆◆\n\n┌─❖\n├ 🆘 <b>Ada Yang Bisa Dibantu?</b>\n├ ➤ 🐞 Lapor Bug - Laporkan bug\n├ ➤ ⚠️ Bot Error - Laporkan error\n├ ➤ 🛠️ Request Fitur - Usulkan fitur\n├ ➤ 💎 Beli VIP - Lihat paket\n├ ➤ 💬 Chat Owner - Hubungi owner\n└─❖`;
 
       await bot.deleteMessage(chatId, query.message.message_id).catch(() => {});
       await bot.sendMessage(chatId, message, {

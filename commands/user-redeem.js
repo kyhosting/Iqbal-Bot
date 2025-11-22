@@ -9,11 +9,11 @@ export default function (bot, db, saveDB) {
     bot.sendMessage(
       chatId,
       `◆◆ REDEEM CODE SYSTEM ◆◆\n\n` +
-      `╭─❖\n` +
-      `│ 🎁 <b>Input Kode Redeem</b>\n` +
-      `│ ➤ Masukkan kode redeem kamu\n` +
-      `│ ➤ Ketik <code>batal</code> untuk membatalkan\n` +
-      `╰───────────────❖`,
+      `┌─❖\n` +
+      `├ 🎁 <b>Input Kode Redeem</b>\n` +
+      `├ ➤ Masukkan kode redeem kamu\n` +
+      `├ ➤ Ketik <code>batal</code> untuk membatalkan\n` +
+      `└─❖`,
       { 
         parse_mode: "HTML",
         reply_markup: bot.getMainKeyboardUser(userId)
@@ -29,11 +29,11 @@ export default function (bot, db, saveDB) {
     bot.sendMessage(
       chatId,
       `◆◆ REDEEM CODE SYSTEM ◆◆\n\n` +
-      `╭─❖\n` +
-      `│ 🎁 <b>Input Kode Redeem</b>\n` +
-      `│ ➤ Masukkan kode redeem kamu\n` +
-      `│ ➤ Ketik <code>batal</code> untuk membatalkan\n` +
-      `╰───────────────❖`,
+      `┌─❖\n` +
+      `├ 🎁 <b>Input Kode Redeem</b>\n` +
+      `├ ➤ Masukkan kode redeem kamu\n` +
+      `├ ➤ Ketik <code>batal</code> untuk membatalkan\n` +
+      `└─❖`,
       { 
         parse_mode: "HTML",
         reply_markup: bot.getMainKeyboardUser(userId)
@@ -54,7 +54,7 @@ export default function (bot, db, saveDB) {
         delete sessions[userId];
         return bot.sendMessage(
           chatId, 
-          `❌ <b>Proses dibatalkan</b>\n\n╭─❖\n│ ➤ Redeem gagal\n╰───────────────❖`,
+          `❌ <b>Proses dibatalkan</b>\n\n┌─❖\n├ ➤ Redeem gagal\n└─❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
@@ -66,7 +66,7 @@ export default function (bot, db, saveDB) {
         delete sessions[userId];
         return bot.sendMessage(
           chatId,
-          `❌ <b>Kode Tidak Valid</b>\n\n◆◆ ERROR ◆◆\n\n╭─❖\n│ ➤ Kode: <code>${code}</code>\n│ ➤ Status: Tidak ditemukan\n│ ➤ Coba cek lagi ya 🙏\n╰───────────────❖`,
+          `❌ <b>Kode Tidak Valid</b>\n\n◆◆ ERROR ◆◆\n\n┌─❖\n├ ➤ Kode: <code>${code}</code>\n├ ➤ Status: Tidak ditemukan\n├ ➤ Coba cek lagi ya 🙏\n└─❖`,
           { 
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboardUser(userId)
@@ -78,7 +78,7 @@ export default function (bot, db, saveDB) {
         delete sessions[userId];
         return bot.sendMessage(
           chatId,
-          `❌ <b>Kode Sudah Digunakan</b>\n\n◆◆ ERROR ◆◆\n\n╭─❖\n│ ➤ Kode sudah dipakai user lain\n│ ➤ Silakan minta kode baru\n╰───────────────❖`,
+          `❌ <b>Kode Sudah Digunakan</b>\n\n◆◆ ERROR ◆◆\n\n┌─❖\n├ ➤ Kode sudah dipakai user lain\n├ ➤ Silakan minta kode baru\n└─❖`,
           { 
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboardUser(userId)
@@ -92,7 +92,7 @@ export default function (bot, db, saveDB) {
           delete sessions[userId];
           return bot.sendMessage(
             chatId,
-            `❌ <b>Kode Kadaluarsa</b>\n\n◆◆ EXPIRED ◆◆\n\n╭─❖\n│ ➤ Expired: ${expDate.toLocaleDateString('id-ID')}\n│ ➤ Kode sudah tidak berlaku\n╰───────────────❖`,
+            `❌ <b>Kode Kadaluarsa</b>\n\n◆◆ EXPIRED ◆◆\n\n┌─❖\n├ ➤ Expired: ${expDate.toLocaleDateString('id-ID')}\n├ ➤ Kode sudah tidak berlaku\n└─❖`,
             { 
               parse_mode: "HTML",
               reply_markup: bot.getMainKeyboardUser(userId)
@@ -132,7 +132,7 @@ export default function (bot, db, saveDB) {
 
       await bot.sendMessage(
         chatId,
-        `✅ <b>Redeem Berhasil!</b>\n\n◆◆ VIP ACTIVATED ◆◆\n\n╭─❖\n│ 💎 <b>Status</b>\n│ ➤ Kode: <code>${code}</code>\n│ ➤ Status: <b>VIP AKTIF</b>\n│ ➤ Berlaku: ${expiredDate.toLocaleDateString('id-ID')}\n│ ➤ Durasi: <b>${duration} hari</b>\n╰───────────────❖\n\n✨ Nikmati semua fitur premium ya 😊`,
+        `✅ <b>Redeem Berhasil!</b>\n\n◆◆ VIP ACTIVATED ◆◆\n\n┌─❖\n├ 💎 <b>Status</b>\n├ ➤ Kode: <code>${code}</code>\n├ ➤ Status: <b>VIP AKTIF</b>\n├ ➤ Berlaku: ${expiredDate.toLocaleDateString('id-ID')}\n├ ➤ Durasi: <b>${duration} hari</b>\n└─❖\n\n✨ Nikmati semua fitur premium ya 😊`,
         { 
           parse_mode: "HTML",
           reply_markup: bot.getMainKeyboardUser(userId)

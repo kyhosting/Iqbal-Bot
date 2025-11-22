@@ -24,7 +24,7 @@ export default function (bot, db, saveDB) {
 
       return bot.sendMessage(
         chatId,
-        `◆◆ VERIFIKASI GRUP ◆◆\n\n╭─❖\n│ ⚠️ <b>Akses Ditolak</b>\n│ ➤ Harus join 2 grup untuk akses\n│ ➤ Klik tombol di bawah\n╰───────────────❖`,
+        `◆◆ VERIFIKASI GRUP ◆◆\n\n┌─❖\n├ ⚠️ <b>Akses Ditolak</b>\n├ ➤ Harus join 2 grup untuk akses\n├ ➤ Klik tombol di bawah\n└─❖`,
         { parse_mode: "HTML", reply_markup: verifyKeyboard }
       );
     }
@@ -37,7 +37,7 @@ export default function (bot, db, saveDB) {
 
     return bot.sendMessage(
       chatId,
-      `◆◆ VERIFIKASI GRUP ◆◆\n\n╭─❖\n│ ⚠️ <b>Akses Ditolak</b>\n│ ➤ Harus join 2 grup untuk akses\n│ ➤ Klik tombol di bawah\n╰───────────────❖`,
+      `◆◆ VERIFIKASI GRUP ◆◆\n\n┌─❖\n├ ⚠️ <b>Akses Ditolak</b>\n├ ➤ Harus join 2 grup untuk akses\n├ ➤ Klik tombol di bawah\n└─❖`,
       { parse_mode: "HTML", reply_markup: verifyKeyboard }
     );
   });
@@ -72,7 +72,7 @@ export default function (bot, db, saveDB) {
           await bot.deleteMessage(chatId, messageId).catch(() => {});
           await bot.sendMessage(
             chatId,
-            `◆◆ JOIN GRUP ◆◆\n\n╭─❖\n│ 📱 <b>Group Wajib Diikuti</b>\n│ ➤ @agentviber12 (Grup Utama)\n│ ➤ @channelviber (Channel CV)\n│ ➤ Klik tombol di bawah untuk join\n╰───────────────❖`,
+            `◆◆ JOIN GRUP ◆◆\n\n┌─❖\n├ 📱 <b>Group Wajib Diikuti</b>\n├ ➤ @agentviber12 (Grup Utama)\n├ ➤ @channelviber (Channel CV)\n├ ➤ Klik tombol di bawah untuk join\n└─❖`,
             { parse_mode: "HTML", reply_markup: joinKeyboard }
           );
         } catch (err) {

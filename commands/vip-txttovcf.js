@@ -25,7 +25,12 @@ export default function (bot) {
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
-        `◆ TXT TO VCF\n\n▸ ◆◆ AKSES DITOLAK ◆◆\n\n╭─❖\n│ ❌ <b>Akses Ditolak</b>\n│ ➤ Fitur khusus VIP\n╰───────────────❖\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
+        `◆ TXT TO VCF\n\n▸ ◆◆ AKSES DITOLAK ◆◆
+
+┌─❖
+├ ❌ Akses Ditolak
+├ Fitur khusus VIP
+└─❖\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
         { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
