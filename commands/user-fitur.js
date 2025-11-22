@@ -16,6 +16,20 @@ export default function (bot) {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
 
+    const hasAccess = await bot.checkGroupOwnerVipAccess(userId, chatId);
+    if (!hasAccess) {
+      return trackMessage(
+        userId,
+        chatId,
+        `◆◆  AKSES DITOLAK  ◆◆
+
+┌─❖
+│  ❌ Fitur grup hanya untuk VIP users kak!
+└─❖`,
+        { parse_mode: "HTML" }
+      );
+    }
+
     const message = `◆◆  FITUR BOT IQBAL CV  ◆◆
 
 ┌─❖

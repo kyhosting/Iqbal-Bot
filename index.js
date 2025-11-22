@@ -243,6 +243,31 @@ bot.incrementOperation = (userId) => {
   }
 };
 
+// ===== HELPER: CHECK GROUP ACCESS (Only Owner & VIP in Groups) =====
+bot.checkGroupOwnerVipAccess = async (userId, chatId) => {
+  // DM/Private chat - no restriction
+  let chat;
+  try {
+    chat = await bot.getChat(chatId);
+  } catch (e) {
+    return true; // Allow if can't determine
+  }
+
+  // If not a group, allow
+  if (chat.type !== 'group' && chat.type !== 'supergroup') {
+    return true;
+  }
+
+  // In a group - check if owner or vip
+  const role = bot.getRole(userId);
+  
+  if (!['owner', 'vip'].includes(role)) {
+    return false; // Block non-owner/vip users in groups
+  }
+  
+  return true; // Allow owner/vip in groups
+};
+
 // Attach bot references
 bot.redeemDB = redeemDB;
 bot.saveRedeemDB = saveRedeemDB;
