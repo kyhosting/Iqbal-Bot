@@ -14,7 +14,7 @@ export default function (bot, db, saveDB) {
       return bot.sendMessage(
         chatId,
         `◆ RENAME KONTAK\n\n▸ ❌ Akses Ditolak\n\nFitur ini khusus untuk VIP Kak\n\n◆`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
 
@@ -26,7 +26,7 @@ export default function (bot, db, saveDB) {
     return await bot.sendMessage(
       chatId,
       `◆ RENAME KONTAK\n(Rename All Contacts)\n\n▸ Support Format:\n  • VCF (Contact)\n\n▸ Ubah nama semua kontak\n▸ Dalam file VCF\n\n▸ Ketik 'done' setelah selesai\n▸ Ketik 'batal' untuk membatalkan\n\n◆`,
-      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
     );
   });
 
@@ -44,7 +44,7 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId, 
           "❌ Proses dibatalkan ya Kak 😊",
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
@@ -54,7 +54,7 @@ export default function (bot, db, saveDB) {
           "⚠️ *Harus file VCF ya Kak* 😊\n\nCoba kirim file dengan ekstensi .vcf",
           { 
             parse_mode: "Markdown",
-            reply_markup: bot.getMainKeyboard()
+            reply_markup: bot.getMainKeyboardUser(userId)
           }
         );
       }
@@ -80,7 +80,7 @@ export default function (bot, db, saveDB) {
         `✗ Ketik \`batal\` untuk membatalkan`,
         { 
           parse_mode: "Markdown",
-          reply_markup: bot.getMainKeyboard()
+          reply_markup: bot.getMainKeyboardUser(userId)
         }
       );
     }
@@ -93,7 +93,7 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId, 
           "❌ Proses dibatalkan ya Kak 😊",
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
@@ -103,7 +103,7 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(
           chatId, 
           "❌ Nama kontak tidak boleh kosong Kak 😊\n\nCoba lagi ya!",
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboard() }
+          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
@@ -132,7 +132,7 @@ export default function (bot, db, saveDB) {
           `Semoga membantu ya! 😊`,
           { 
             parse_mode: "Markdown",
-            reply_markup: bot.getMainKeyboard()
+            reply_markup: bot.getMainKeyboardUser(userId)
           }
         );
 
@@ -146,7 +146,7 @@ export default function (bot, db, saveDB) {
           "⚠️ *Yah… ada masalah saat rename kontak* 😔\n\nCoba lagi ya Kak!",
           { 
             parse_mode: "Markdown",
-            reply_markup: bot.getMainKeyboard()
+            reply_markup: bot.getMainKeyboardUser(userId)
           }
         );
       }
