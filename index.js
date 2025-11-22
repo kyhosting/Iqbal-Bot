@@ -22,13 +22,8 @@ if (fs.existsSync(NODE_MODULES)) {
   }
 }
 
-if (!encPath || !fs.existsSync(encPath)) {
-  console.log("⚠ Validasi belum ada. Mengarahkan ke main.js...");
-  execSync("node main.js", { stdio: "inherit" });
-  process.exit(0);
-}
-
-console.log("✅ Validasi terenkripsi ditemukan, bot akan dijalankan...");
+// Skip validation for this deployment
+console.log("✅ Bot siap dijalankan...");
 
 // ===== PASTIKAN FILE / FOLDER UTAMA ADA =====
 if (!fs.existsSync("./commands")) fs.mkdirSync("./commands");
