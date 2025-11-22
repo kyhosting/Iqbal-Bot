@@ -19,7 +19,7 @@ export default function (bot, db, saveDB) {
   }
   
   // Handle keyboard button "⛓️MENU OWNER"
-  bot.onText(/^⛓️MENU OWNER$/i, (msg) => {
+  bot.onText(/^⛓️MENU OWNER$/i, async (msg) => {
     const userId = msg.from.id;
     const chatId = msg.chat.id;
 
