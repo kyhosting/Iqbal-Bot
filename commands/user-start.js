@@ -106,17 +106,7 @@ export default function (bot, db, saveDB) {
           await bot.deleteMessage(chatId, messageId).catch(() => {});
           await bot.sendMessage(
             chatId,
-            `◆◆  JOIN GRUP  ◆◆
-
-┌─❖
-│  📱 Group Wajib Diikuti
-│
-│  @agentviber12 (Grup Utama)
-│
-│  @channelviber (Channel CV)
-│
-│  Klik tombol di bawah untuk join
-└─❖`,
+            `❌ Harus join kedua grup dulu Kak`,
             { parse_mode: "HTML", reply_markup: joinKeyboard }
           );
         } catch (err) {
