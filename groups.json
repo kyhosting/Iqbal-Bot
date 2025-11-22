@@ -1,3 +1,8 @@
 {
-  "groups": {}
+  "groups": {
+    "default": {
+      "welcome": "🎌 <b>Selamat Datang Kak {name}! 👋</b>\n\nWelcome ke grup kita yang asik! 😊\n\nJangan lupa baca /rules dulu ya sebelum nge-chat.\n\nHappy chatting! 🚀",
+      "rules": "┌─❖\n│  <b>📋 RULES GRUP KITA</b>\n│\n│  1️⃣  <b>Jaga Sopan Santun</b>\n│  Teman-teman semua baik hati, kita jaga\n│  lingkungan yang positif dan ramah.\n│\n│  2️⃣  <b>Tidak Spam / Flood</b>\n│  Satu pesan itu cukup! Jangan pengulang.\n│  Beri kesempatan teman lain bicara.\n│\n│  3️⃣  <b>Tidak Share Link Sembarangan</b>\n│  Link bisa dibaca kemudian. Prioritas\n│  diskusi group dulu, ok? 😊\n│\n│  4️⃣  <b>Jaga Bahasa</b>\n│  Kita grup yang cool tapi tetap jaga\n│  bahasa yang baik dan sopan ya.\n│\n│  5️⃣  <b>Tidak NSFW / Konten Porno</b>\n│  Ini group keluarga, jaga konten ya!\n│\n│  6️⃣  <b>Hormati Admin & Moderator</b>\n│  Mereka kerja keras untuk grup ini.\n│  Turuti instruksi mereka dengan baik.\n│\n│  7️⃣  <b>On-Topic Discussions</b>\n│  Chat santai boleh, tapi jangan terus\n│  melenceng jauh dari topik grup.\n│\n│  <b>🎯 REWARD: Tertib = Nyaman</b>\n│  Grup yang tertib = nyaman untuk semua.\n│  Yuk kita jaga bersama! 💪\n└─❖"
+    }
+  }
 }
