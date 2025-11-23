@@ -4,7 +4,7 @@ import XLSX from "xlsx";
 
 export default function (bot, db, saveDB) {
   const sessions = {};
-  const panelMessages = {}; // Simpan message_id dari panel yang sudah dikirim
+  const panelData = {}; // Simpan {messageId, chatId} untuk EDIT pesan
 
   bot.onText(/^⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ ⛓️$|^⛓️ GABUNG FILE ⛓️$/i, async (msg) => {
     const chatId = msg.chat.id;
@@ -28,8 +28,8 @@ export default function (bot, db, saveDB) {
     }
 
     // Initialize session
-    sessions[userId] = { step: 1, files: [], fileType: null, chatId: chatId };
-    panelMessages[userId] = null; // Reset panel message ID
+    sessions[userId] = { step: 1, files: [], fileNames: [], fileType: null, chatId: chatId };
+    panelData[userId] = null; // Reset panel data
 
     await bot.sendMessage(chatId, 
       `◆◆  GABUNG FILE  ◆◆
@@ -64,7 +64,7 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text)) {
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
-        delete panelMessages[userId];
+        delete panelData[userId];
         
         await bot.sendMessage(chatId, 
           `◆◆  DIBATALKAN  ◆◆
@@ -168,23 +168,39 @@ export default function (bot, db, saveDB) {
         const localPath = path.join(process.cwd(), fileName);
         fs.writeFileSync(localPath, Buffer.from(buffer));
         session.files.push(localPath);
+        session.fileNames.push(fileName);
 
-        // HANYA kirim panel jika belum ada
-        if (panelMessages[userId] === null) {
-          const panelText = `◆◆  GABUNG FILE  ◆◆
+        // Generate panel text dengan daftar file
+        const fileList = session.fileNames.map((fn, i) => `  ${i + 1}. ${fn}`).join("\n");
+        const panelText = `✦✦  GABUNG FILE  ✦✦
 
-┌─❖
+┌──────────────────❖
 │  ✅ ${session.files.length} file diterima
+│
+│  📄 File diterima:
+${fileList}
 │
 │  Kirim file lagi atau ketik:
 │  • done  — proses & kirim hasil
 │  • batal — batalkan
-└─❖`;
-          
+└──────────────────❖`;
+
+        // HANYA kirim panel jika belum ada (file pertama)
+        if (panelData[userId] === null) {
           const sentMsg = await bot.sendMessage(chatId, panelText, { parse_mode: "HTML" });
-          panelMessages[userId] = sentMsg.message_id;
+          panelData[userId] = { messageId: sentMsg.message_id, chatId: chatId };
+        } else {
+          // Jika sudah ada panel, EDIT pesan yang ada
+          try {
+            await bot.editMessageText(panelText, {
+              chat_id: panelData[userId].chatId,
+              message_id: panelData[userId].messageId,
+              parse_mode: "HTML"
+            });
+          } catch (e) {
+            console.error("Error editing panel:", e);
+          }
         }
-        // Jika panel sudah ada, JANGAN kirim pesan apapun
         return;
       } catch (e) {
         console.error(e);
@@ -204,7 +220,7 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text)) {
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
-        delete panelMessages[userId];
+        delete panelData[userId];
         
         return bot.sendMessage(chatId, 
           `◆◆  DIBATALKAN  ◆◆
@@ -250,7 +266,7 @@ export default function (bot, db, saveDB) {
 
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
-        delete panelMessages[userId];
+        delete panelData[userId];
 
         bot.incrementOperation(userId);
         return bot.sendMessage(chatId, 
@@ -268,7 +284,7 @@ export default function (bot, db, saveDB) {
         console.error(e);
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
-        delete panelMessages[userId];
+        delete panelData[userId];
         
         return bot.sendMessage(chatId, 
           `◆◆  ERROR  ◆◆
