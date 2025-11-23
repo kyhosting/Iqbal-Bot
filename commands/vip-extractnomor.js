@@ -113,14 +113,14 @@ export default function (bot, db, saveDB) {
         session.fileName = fileName;
         session.fileType = isVcf ? "vcf" : isTxt ? "txt" : isCsv ? "csv" : "xls";
 
-        return trackMessage(userId, chatId, `◆◆  EKSTRAK NOMOR  ◆◆
+        return trackMessage(userId, chatId, `◆◆  ⛓️ ᴇꜱᴛʀᴀᴋ ɴᴏᴍᴏʀ ⛓️  ◆◆
 
 ┌─❖
-│  ✅ File diterima
+│  ⏳ Processing...
 │
-│  📝 Nama file output?
-│
-│  (Tanpa ekstensi)
+│  Perintah:
+│  • done  — proses & kirim hasil file
+│  • batal — batalkan proses
 └─❖`, { parse_mode: "HTML" });
       } catch (err) {
         console.error("Download error:", err);
@@ -134,6 +134,40 @@ export default function (bot, db, saveDB) {
     }
 
     if (session.step === 2) {
+      if (/^batal$/i.test(text)) {
+        try { fs.unlinkSync(session.localPath); } catch {}
+        delete sessions[userId];
+        return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Proses dibatalkan
+└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+      }
+
+      if (!/^done$/i.test(text)) {
+        return trackMessage(
+          userId,
+          chatId,
+          `◆◆  ⛓️ ᴇꜱᴛʀᴀᴋ ɴᴏᴍᴏʀ ⛓️  ◆◆
+
+┌─❖
+│  ⚠️ Ketik 'done' atau 'batal'
+└─❖`,
+          { parse_mode: "HTML" }
+        );
+      }
+
+      session.step = 3;
+      return trackMessage(userId, chatId, `◆◆  EKSTRAK NOMOR  ◆◆
+
+┌─❖
+│  📝 Nama file output?
+│
+│  (Tanpa ekstensi)
+└─❖`, { parse_mode: "HTML" });
+    }
+
+    if (session.step === 3) {
       if (/^batal$/i.test(text)) {
         try { fs.unlinkSync(session.localPath); } catch {}
         delete sessions[userId];

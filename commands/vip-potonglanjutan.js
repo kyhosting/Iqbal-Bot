@@ -93,10 +93,9 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ⏳ Processing...
 │
-│  📎 Masukkan nama file output
-│
-│  Ketik 'skip' pakai nama lama
-│  Ketik 'batal' batalkan
+│  Perintah:
+│  • done  — proses & kirim hasil file
+│  • batal — batalkan proses
 └─❖`,  { parse_mode: "HTML" });
       return;
     }
@@ -112,8 +111,44 @@ export default function (bot, db, saveDB) {
 └─❖`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
+      if (!/^done$/i.test(text)) {
+        return trackMessage(
+          userId,
+          chatId,
+          `◆◆  ⛓️ ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛ ⛓️  ◆◆
+
+┌─❖
+│  ⚠️ Ketik 'done' atau 'batal'
+└─❖`,
+          { parse_mode: "HTML" }
+        );
+      }
+
+      session.step = 3;
+      trackMessage(userId, chatId, `◆◆  POTONG LANJUTAN  ◆◆
+
+┌─❖
+│  📎 Masukkan nama file output
+│
+│  Ketik 'skip' pakai nama lama
+│  Ketik 'batal' batalkan
+└─❖`,  { parse_mode: "HTML" });
+      return;
+    }
+
+    if (session.step === 3) {
+      if (/^batal$/i.test(text)) {
+        fs.unlinkSync(session.file);
+        delete sessions[userId];
+        return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Proses dibatalkan
+└─❖`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+      }
+
       session.newFileName = /^skip$/i.test(text) || !text ? session.originalName : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
-      session.step = session.splitCounter === 1 ? 3 : 5;
+      session.step = session.splitCounter === 1 ? 4 : 6;
 
       if (session.splitCounter === 1) {
         bot.sendMessage(chatId, `🔢 Masukkan angka awal penomoran kontak ya Kak`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
