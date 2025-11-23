@@ -186,7 +186,7 @@ export default function (bot, db, saveDB) {
 
       // Role display - dinamis berdasarkan user role
       let roleText = "👤 user biasa";
-      if (userData.role === "owner") roleText = "👑 owner";
+      if (config.owner.includes(userId)) roleText = "👑 owner";
       else if (userData.role === "admin") roleText = "🔐 admin";
       else if (userData.role === "vip") roleText = "💎 vip";
       else if (userData.role === "trial") roleText = "⭐ trial";
@@ -195,7 +195,8 @@ export default function (bot, db, saveDB) {
 
       // Status display - dinamis berdasarkan user status
       let statusText = "👤 regular";
-      if (userData.suspended) statusText = "⚠️ suspended";
+      if (config.owner.includes(userId)) statusText = "👑 owner active";
+      else if (userData.suspended) statusText = "⚠️ suspended";
       else if (userData.role === "vip" && userData.vip_expired > now) statusText = "🔥 vip active";
       else if (userData.role === "trial" && userData.vip_expired > now) statusText = "⭐ trial active";
       else if (userData.role === "redeem_code") statusText = "🎁 redeem code";
