@@ -98,17 +98,17 @@ export default function (bot, db, saveDB) {
           );
         }
         session.step = 2;
-        return bot.sendMessage(chatId, 
-          `◆◆  GABUNG FILE  ◆◆
+        return trackMessage(chatId, userId,
+          `◆◆  ⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ ⛓️  ◆◆
 
 ┌─❖
-│  📝 Nama File Output
+│  ⏳ Processing...
 │
-│  Masukkan nama file hasil
-│
-│  (Tanpa ekstensi)
+│  Perintah:
+│  • done  — proses & kirim hasil file
+│  • batal — batalkan proses
 └─❖`, 
-          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "HTML" }
         );
       }
 
@@ -198,6 +198,50 @@ export default function (bot, db, saveDB) {
     }
 
     if (session.step === 2) {
+      if (/^batal$/i.test(text)) {
+        for (const f of session.files) try { fs.unlinkSync(f); } catch {}
+        delete sessions[userId];
+        return sendWithDelete(userId, chatId, 
+          `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Proses Dibatalkan
+└─❖`, 
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+        );
+      }
+
+      if (!/^done$/i.test(text)) {
+        return trackMessage(userId, chatId,
+          `◆◆  ⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ ⛓️  ◆◆
+
+┌─❖
+│  ⏳ Processing...
+│
+│  Perintah:
+│  • done  — proses & kirim hasil file
+│  • batal — batalkan proses
+└─❖`, 
+          { parse_mode: "HTML" }
+        );
+      }
+
+      session.step = 3;
+      return trackMessage(userId, chatId,
+        `◆◆  GABUNG FILE  ◆◆
+
+┌─❖
+│  📝 Nama File Output
+│
+│  Masukkan nama file hasil
+│
+│  (Tanpa ekstensi)
+└─❖`, 
+        { parse_mode: "HTML" }
+      );
+    }
+
+    if (session.step === 3) {
       if (/^batal$/i.test(text)) {
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
