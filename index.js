@@ -245,6 +245,102 @@ bot.sendTempMessage = async (chatId, text, deleteAfter = 10000) => {
   }
 };
 
+// ===== INCREMENT OPERATION COUNTER =====
+bot.incrementOperation = (userId) => {
+  try {
+    if (!db.users) db.users = {};
+    if (!db.users[userId]) {
+      db.users[userId] = {
+        id: userId,
+        username: "",
+        first_name: "",
+        last_name: "",
+        role: "user",
+        vip_expired: 0,
+        status: "active",
+        total_operation: 0
+      };
+    }
+    db.users[userId].total_operation = (db.users[userId].total_operation || 0) + 1;
+    saveDB();
+    return db.users[userId].total_operation;
+  } catch (err) {
+    console.error("Error incrementing operation:", err);
+    return 0;
+  }
+};
+
+// ===== EXPOSE REDEEM DB & SAVE FUNCTION =====
+bot.redeemDB = redeemDB;
+bot.saveRedeemDB = saveRedeemDB;
+
+// ===== CHECK IF OWNER OR VIP ACCESS =====
+bot.checkGroupOwnerVipAccess = async (userId, chatId) => {
+  try {
+    const isOwner = config.owner && config.owner.includes(userId);
+    const role = bot.getRole(userId);
+    return isOwner || ["admin", "vip"].includes(role);
+  } catch (err) {
+    return false;
+  }
+};
+
+// ===== SHOW DASHBOARD =====
+bot.showDashboard = async (userId, chatId) => {
+  try {
+    const role = bot.getRole(userId);
+    const isOwner = config.owner && config.owner.includes(userId);
+    
+    let roleText = "👤 User";
+    if (isOwner) roleText = "👑 Owner";
+    else if (role === "admin") roleText = "🔐 Admin";
+    else if (role === "vip") roleText = "💎 VIP";
+    else if (role === "trial") roleText = "⭐ Trial";
+    
+    const user = db.users[userId] || {};
+    const vipDaysLeft = user.vip_expired > Date.now() 
+      ? Math.ceil((user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24))
+      : 0;
+    
+    const dashboardMsg = `◆◆  DASHBOARD  ◆◆
+
+┌─❖
+│  ${roleText}
+│
+│  📊 Stats:
+│  • Operations: ${user.total_operation || 0}
+${user.vip_expired > Date.now() ? `│  • VIP Days: ${vipDaysLeft}` : ""}
+│
+│  🎯 Choose feature:
+│  • Conversion
+│  • File Tools
+│  • VIP Features
+│
+│  Ketik 'fitur' untuk daftar lengkap
+└─❖`;
+
+    return bot.sendMessage(chatId, dashboardMsg, {
+      parse_mode: "HTML",
+      reply_markup: bot.getMainKeyboardUser(userId)
+    });
+  } catch (err) {
+    console.error("Error showing dashboard:", err);
+  }
+};
+
+// ===== DOWNLOAD FILE FROM TELEGRAM =====
+bot.downloadFile = async (fileId) => {
+  try {
+    const file = await bot.getFile(fileId);
+    const fileUrl = `https://api.telegram.org/file/bot${bot.token}/${file.file_path}`;
+    const res = await fetch(fileUrl);
+    return Buffer.from(await res.arrayBuffer());
+  } catch (err) {
+    console.error("Error downloading file:", err);
+    return null;
+  }
+};
+
 // ===== LOAD COMMANDS =====
 async function loadCommands() {
   const commandsPath = path.join(process.cwd(), "commands");
