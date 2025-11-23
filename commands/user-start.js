@@ -10,7 +10,7 @@ export default function (bot, db, saveDB) {
       } catch (e) {}
     }
     const msg = await bot.sendMessage(chatId, text, options);
-    userMessages[userId] = msg.messageid;
+    userMessages[userId] = msg.message_id;
     return msg;
   }
 
@@ -26,22 +26,22 @@ export default function (bot, db, saveDB) {
 
     // ===== CHECK GROUP VERIFIED FLAG FIRST =====
     // Jika user sudah pernah verify group → langsung tampilkan dashboard
-    if (user && user.groupverified && !user.suspended) {
+    if (user && user.group_verified && !user.suspended) {
       return bot.showDashboard(userId, chatId);
     }
 
     // User suspended (keluar dari grup) → force re-verify
     if (user && user.suspended) {
       const verifyKeyboard = {
-        inlinekeyboard: [
-          [{ text: "✅ Verifikasi Sekarang", callbackdata: "verifyjoin" }]
+        inline_keyboard: [
+          [{ text: "✅ Verifikasi Sekarang", callback_data: "verify_join" }]
         ]
       };
 
       return trackMessage(
         userId,
         chatId,
-        ◆◆  VERIFIKASI GRUP  ◆◆
+        `◆◆  VERIFIKASI GRUP  ◆◆
 
 ┌─❖
 │  ⚠️ Akses Ditolak
@@ -52,22 +52,22 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'start' untuk refresh
 │  Ketik 'bantuan' untuk help
-└─❖,
-        { parsemode: "Markdown", replymarkup: verifyKeyboard }
+└─❖`,
+        { parse_mode: "Markdown", reply_markup: verifyKeyboard }
       );
     }
 
     // User belum pernah verify atau belum ada → tanya verifikasi
     const verifyKeyboard = {
-      inlinekeyboard: [
-        [{ text: "✅ Verifikasi Sekarang", callbackdata: "verifyjoin" }]
+      inline_keyboard: [
+        [{ text: "✅ Verifikasi Sekarang", callback_data: "verify_join" }]
       ]
     };
 
     return trackMessage(
       userId,
       chatId,
-      ◆◆  VERIFIKASI GRUP  ◆◆
+      `◆◆  VERIFIKASI GRUP  ◆◆
 
 ┌─❖
 │  ⚠️ Akses Ditolak
@@ -75,34 +75,34 @@ export default function (bot, db, saveDB) {
 │  Harus join 2 grup untuk akses
 │
 │  Klik tombol di bawah
-└─❖,
-      { parsemode: "Markdown", replymarkup: verifyKeyboard }
+└─❖`,
+      { parse_mode: "Markdown", reply_markup: verifyKeyboard }
     );
   });
 
-  bot.on("callbackquery", async (query) => {
+  bot.on("callback_query", async (query) => {
     const userId = query.from.id;
     const chatId = query.message.chat.id;
-    const messageId = query.message.messageid;
+    const messageId = query.message.message_id;
 
-    if (query.data === "verifyjoin") {
+    if (query.data === "verify_join") {
       await bot.answerCallbackQuery(query.id);
 
       const groupCheck = await bot.checkGroupMembership(userId);
 
       if (!groupCheck.verified) {
-        const groupMainDeeplink = https://t.me/agentviber12?join;
-        const groupCvDeeplink = https://t.me/channelviber?join;
+        const groupMainDeeplink = `https://t.me/agentviber12?join`;
+        const groupCvDeeplink = `https://t.me/channelviber?join`;
 
         const joinKeyboard = {
-          inlinekeyboard: [
+          inline_keyboard: [
             [
               { text: "📱 @agentviber12", url: groupMainDeeplink }
             ],
             [
               { text: "📱 @channelviber", url: groupCvDeeplink }
             ],
-            [{ text: "✅ Sudah Join", callbackdata: "verifyagain" }]
+            [{ text: "✅ Sudah Join", callback_data: "verify_again" }]
           ]
         };
 
@@ -110,11 +110,11 @@ export default function (bot, db, saveDB) {
           await bot.deleteMessage(chatId, messageId).catch(() => {});
           await bot.sendMessage(
             chatId,
-            ❌ Harus join kedua grup dulu Kak,
-            { parsemode: "Markdown", replymarkup: joinKeyboard }
+            `❌ Harus join kedua grup dulu Kak`,
+            { parse_mode: "Markdown", reply_markup: joinKeyboard }
           );
         } catch (err) {
-          console.error("Error di verifyjoin:", err);
+          console.error("Error di verify_join:", err);
         }
       } else {
         try {
@@ -125,22 +125,22 @@ export default function (bot, db, saveDB) {
             db.users[userId] = {
               id: userId,
               username: chatUser.username || "",
-              firstname: chatUser.firstname || "User",
-              lastname: chatUser.lastname || "",
+              first_name: chatUser.first_name || "User",
+              last_name: chatUser.last_name || "",
               role: "trial",
-              vipexpired: Date.now() + 1  24  60  60  1000,
+              vip_expired: Date.now() + 1 * 24 * 60 * 60 * 1000,
               status: "active",
-              totaloperation: 0,
-              notifiedexpiry: false,
-              trialstart: Date.now(),
+              total_operation: 0,
+              notified_expiry: false,
+              trial_start: Date.now(),
               suspended: false,
-              groupverified: true // SET FLAG SETELAH VERIFY BERHASIL!
+              group_verified: true // SET FLAG SETELAH VERIFY BERHASIL!
             };
           } else {
-            db.users[userId].groupverified = true;
+            db.users[userId].group_verified = true;
             db.users[userId].suspended = false;
-            if (!db.users[userId].vipexpired) {
-              db.users[userId].vipexpired = Date.now() + 1  24  60  60  1000;
+            if (!db.users[userId].vip_expired) {
+              db.users[userId].vip_expired = Date.now() + 1 * 24 * 60 * 60 * 1000;
               db.users[userId].role = "trial";
             }
           }
@@ -149,7 +149,7 @@ export default function (bot, db, saveDB) {
           await bot.deleteMessage(chatId, messageId).catch(() => {});
           await bot.showDashboard(userId, chatId);
         } catch (err) {
-          console.error("Error di verifyjoin (already joined):", err);
+          console.error("Error di verify_join (already joined):", err);
         }
       }
     }
@@ -163,22 +163,22 @@ export default function (bot, db, saveDB) {
         db.users[userId] = {
           id: userId,
           username: (await bot.getChat(userId)).username || "unknown",
-          firstname: (await bot.getChat(userId)).firstname || "User",
-          lastname: (await bot.getChat(userId)).lastname || "",
+          first_name: (await bot.getChat(userId)).first_name || "User",
+          last_name: (await bot.getChat(userId)).last_name || "",
           role: "user",
-          vipexpired: Date.now() + 7  24  60  60  1000,
+          vip_expired: Date.now() + 7 * 24 * 60 * 60 * 1000,
           status: "active",
-          totaloperation: 0
+          total_operation: 0
         };
         saveDB();
       }
 
       const userData = db.users[userId];
       const now = Date.now();
-      const isVip = userData.role === "vip" && userData.vipexpired > now;
-      const remainingMs = Math.max(0, userData.vipexpired - now);
-      const remainingDays = Math.ceil(remainingMs / (24  60  60  1000));
-      const expiredDate = new Date(userData.vipexpired).toLocaleDateString("id-ID", {
+      const isVip = userData.role === "vip" && userData.vip_expired > now;
+      const remainingMs = Math.max(0, userData.vip_expired - now);
+      const remainingDays = Math.ceil(remainingMs / (24 * 60 * 60 * 1000));
+      const expiredDate = new Date(userData.vip_expired).toLocaleDateString("id-ID", {
         year: "numeric",
         month: "long",
         day: "numeric"
@@ -189,7 +189,7 @@ export default function (bot, db, saveDB) {
       const username = userData.username || "unknown";
 
       // Buat caption dengan format MARKDOWN yang tepat
-      const caption = 🎌 iqbal ᴄᴠ ʙᴏᴛꜱ
+      const caption = `🎌 *iqbal ᴄᴠ ʙᴏᴛꜱ*
 (by iqbaldev)
 
 ╭─❖
@@ -198,23 +198,23 @@ export default function (bot, db, saveDB) {
 │ ✦ Created by: @Iqbaldev
 ╰───────────────❖
 
-╭─❖ ꜱᴛᴀᴛᴜꜱ ᴀᴋᴄᴇꜱ
-│ ➤ Nama: ${userData.firstname || "User"}
-│ ➤ ID: \${userId}
+╭─❖ *ꜱᴛᴀᴛᴜꜱ ᴀᴋᴄᴇꜱ*
+│ ➤ Nama: *${userData.first_name || "User"}*
+│ ➤ ID: \`${userId}\`
 │ ➤ Username: @${username}
-│ ➤ Role: ${roleText}
-│ ➤ Status: ${statusText}
-│ ➤ Masa Aktif: ${expiredDate}
-│ ➤ Hari Tersisa: ${remainingDays} hari
-│ ➤ Total Operasi: ${userData.totaloperation}
+│ ➤ Role: *${roleText}*
+│ ➤ Status: *${statusText}*
+│ ➤ Masa Aktif: *${expiredDate}*
+│ ➤ Hari Tersisa: *${remainingDays} hari*
+│ ➤ Total Operasi: *${userData.total_operation}*
 ╰───────────────❖
 
-╭─❖ ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ
+╭─❖ *ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ*
 │ ➤ 📄 TXT 📇 VCF 📊 XLSX
 │ ➤ 他の形式も順次対応予定です。
 ╰───────────────❖
 
-╭─❖ ᴍᴇɴᴜ ʙᴏᴛ*
+╭─❖ *ᴍᴇɴᴜ ʙᴏᴛ*
 │ ➤ ⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ
 │ ➤ ⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ
 │ ➤ ⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ
@@ -231,18 +231,18 @@ export default function (bot, db, saveDB) {
 ╰───────────────❖
 
 💎 ご利用ありがとうございます。
-このボットは常に進化しています ⚙️;
+このボットは常に進化しています ⚙️`;
 
       // Get profile photo
       let photoSent = false;
       try {
         const userPhotos = await bot.getUserProfilePhotos(userId, { limit: 1 });
-        if (userPhotos.totalcount > 0) {
-          const photoId = userPhotos.photos[0][0].fileid;
+        if (userPhotos.total_count > 0) {
+          const photoId = userPhotos.photos[0][0].file_id;
           await bot.sendPhoto(chatId, photoId, {
             caption: caption,
-            parsemode: "Markdown",
-            replymarkup: bot.getMainKeyboardUser(userId)
+            parse_mode: "Markdown",
+            reply_markup: bot.getMainKeyboardUser(userId)
           });
           photoSent = true;
         }
@@ -253,13 +253,13 @@ export default function (bot, db, saveDB) {
       // Jika tidak ada foto, kirim text saja
       if (!photoSent) {
         await bot.sendMessage(chatId, caption, {
-          parsemode: "Markdown",
-          replymarkup: bot.getMainKeyboardUser(userId)
+          parse_mode: "Markdown",
+          reply_markup: bot.getMainKeyboardUser(userId)
         });
       }
     } catch (err) {
       console.error("Error di showDashboard:", err);
-      await bot.sendMessage(chatId, "❌ Error loading dashboard", { parsemode: "Markdown" });
+      await bot.sendMessage(chatId, "❌ Error loading dashboard", { parse_mode: "Markdown" });
     }
   };
 }

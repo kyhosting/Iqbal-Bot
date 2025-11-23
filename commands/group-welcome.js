@@ -9,7 +9,7 @@ export default function (bot, db, saveDB) {
       } catch (e) {}
     }
     const msg = await bot.sendMessage(chatId, text, options);
-    userMessages[userId] = msg.messageid;
+    userMessages[userId] = msg.message_id;
     return msg;
   }
 
@@ -26,16 +26,16 @@ export default function (bot, db, saveDB) {
         return trackMessage(
           userId,
           chatId,
-          ❌ Hanya admin grup yang bisa set welcome message,
-          { parsemode: "Markdown" }
+          `❌ Hanya admin grup yang bisa set welcome message`,
+          { parse_mode: "Markdown" }
         );
       }
     } catch (e) {
       return trackMessage(
         userId,
         chatId,
-        ❌ Error checking admin status,
-        { parsemode: "Markdown" }
+        `❌ Error checking admin status`,
+        { parse_mode: "Markdown" }
       );
     }
 
@@ -45,8 +45,8 @@ export default function (bot, db, saveDB) {
       return trackMessage(
         userId,
         chatId,
-        ❌ Fitur grup hanya untuk VIP users kak!,
-        { parsemode: "Markdown" }
+        `❌ Fitur grup hanya untuk VIP users kak!`,
+        { parse_mode: "Markdown" }
       );
     }
 
@@ -54,7 +54,7 @@ export default function (bot, db, saveDB) {
     trackMessage(
       userId,
       chatId,
-      ◆◆  SET WELCOME MESSAGE  ◆◆
+      `◆◆  SET WELCOME MESSAGE  ◆◆
 
 ┌─❖
 │  👋 Masukkan welcome message
@@ -65,8 +65,8 @@ export default function (bot, db, saveDB) {
 │  {group} = nama grup
 │
 │  Ketik 'batal' untuk cancel
-└─❖,
-      { parsemode: "Markdown" }
+└─❖`,
+      { parse_mode: "Markdown" }
     );
   });
 
@@ -82,16 +82,16 @@ export default function (bot, db, saveDB) {
         return trackMessage(
           userId,
           chatId,
-          ❌ Hanya admin grup yang bisa set rules,
-          { parsemode: "Markdown" }
+          `❌ Hanya admin grup yang bisa set rules`,
+          { parse_mode: "Markdown" }
         );
       }
     } catch (e) {
       return trackMessage(
         userId,
         chatId,
-        ❌ Error checking admin status,
-        { parsemode: "Markdown" }
+        `❌ Error checking admin status`,
+        { parse_mode: "Markdown" }
       );
     }
 
@@ -101,8 +101,8 @@ export default function (bot, db, saveDB) {
       return trackMessage(
         userId,
         chatId,
-        ❌ Fitur grup hanya untuk VIP users kak!,
-        { parsemode: "Markdown" }
+        `❌ Fitur grup hanya untuk VIP users kak!`,
+        { parse_mode: "Markdown" }
       );
     }
 
@@ -110,7 +110,7 @@ export default function (bot, db, saveDB) {
     trackMessage(
       userId,
       chatId,
-      ◆◆  SET GROUP RULES  ◆◆
+      `◆◆  SET GROUP RULES  ◆◆
 
 ┌─❖
 │  📋 Masukkan rules grup
@@ -121,8 +121,8 @@ export default function (bot, db, saveDB) {
 │  3. Jaga sopan santun
 │
 │  Ketik 'batal' untuk cancel
-└─❖,
-      { parsemode: "Markdown" }
+└─❖`,
+      { parse_mode: "Markdown" }
     );
   });
 
@@ -137,25 +137,25 @@ export default function (bot, db, saveDB) {
     if (!groupSettings.rules) {
       return bot.sendMessage(
         chatId,
-        ◆◆  RULES  ◆◆
+        `◆◆  RULES  ◆◆
 
 ┌─❖
 │  ℹ️ Belum ada rules
 │
 │  Admin bisa set dengan /setrules
-└─❖,
-        { parsemode: "Markdown" }
+└─❖`,
+        { parse_mode: "Markdown" }
       );
     }
 
     bot.sendMessage(
       chatId,
-      ◆◆  RULES GRUP  ◆◆
+      `◆◆  RULES GRUP  ◆◆
 
 ┌─❖
 ${groupSettings.rules}
-└─❖,
-      { parsemode: "Markdown" }
+└─❖`,
+      { parse_mode: "Markdown" }
     );
   });
 
@@ -178,8 +178,8 @@ ${groupSettings.rules}
         return trackMessage(
           userId,
           chatId,
-          ❌ Dibatalkan,
-          { parsemode: "Markdown" }
+          `❌ Dibatalkan`,
+          { parse_mode: "Markdown" }
         );
       }
 
@@ -195,8 +195,8 @@ ${groupSettings.rules}
       trackMessage(
         userId,
         chatId,
-        ✅ Welcome message berhasil diset!,
-        { parsemode: "Markdown" }
+        `✅ Welcome message berhasil diset!`,
+        { parse_mode: "Markdown" }
       );
     }
 
@@ -207,8 +207,8 @@ ${groupSettings.rules}
         return trackMessage(
           userId,
           chatId,
-          ❌ Dibatalkan,
-          { parsemode: "Markdown" }
+          `❌ Dibatalkan`,
+          { parse_mode: "Markdown" }
         );
       }
 
@@ -224,7 +224,7 @@ ${groupSettings.rules}
       trackMessage(
         userId,
         chatId,
-        ✅ Rules berhasil diset!,
+        `✅ Rules berhasil diset!`,
         { parse_mode: "Markdown" }
       );
     }

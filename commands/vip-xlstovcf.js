@@ -6,8 +6,8 @@ function createVcfEntry(phone, name) {
   return [
     "BEGIN:VCARD",
     "VERSION:3.0",
-    FN:${name},
-    TEL;TYPE=CELL:+${phone.replace(/\D/g, "")},
+    `FN:${name}`,
+    `TEL;TYPE=CELL:+${phone.replace(/\D/g, "")}`,
     "END:VCARD",
   ].join("\n");
 }
@@ -23,7 +23,7 @@ export default function (bot, db, saveDB) {
       } catch (e) {}
     }
     const msg = await bot.sendMessage(chatId, text, options);
-    userMessages[userId] = msg.messageid;
+    userMessages[userId] = msg.message_id;
     return msg;
   }
 
@@ -39,14 +39,14 @@ export default function (bot, db, saveDB) {
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
-        ◆◆  XLS TO VCF  ◆◆
+        `◆◆  XLS TO VCF  ◆◆
 
 ┌─❖
 │  ❌ Akses Ditolak
 │
 │  Fitur khusus VIP
-└─❖,
-        { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) }
+└─❖`,
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
 
@@ -57,7 +57,7 @@ export default function (bot, db, saveDB) {
     return await trackMessage(
       userId,
       chatId,
-      ◆◆  XLS TO VCF  ◆◆
+      `◆◆  XLS TO VCF  ◆◆
 
 ┌─❖
 │  Excel to Contact Converter
@@ -72,8 +72,8 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'done' selesai
 │  Ketik 'batal' batalkan
-└─❖,
-      { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) }
+└─❖`,
+      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
     );
   });
 
@@ -91,47 +91,47 @@ export default function (bot, db, saveDB) {
         return sendWithDelete(
           userId,
           chatId,
-          ◆◆  DIBATALKAN  ◆◆
+          `◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
 │  ❌ Proses dibatalkan
-└─❖,
-          { parsemode: "Markdown" }
+└─❖`,
+          { parse_mode: "Markdown" }
         );
       }
 
       if (!msg.document) {
         return bot.sendMessage(
           chatId,
-          ◆◆  XLS TO VCF  ◆◆
+          `◆◆  XLS TO VCF  ◆◆
 
 ┌─❖
 │  ⚠️ Kirim file Excel
 │
 │  Support: XLS atau XLSX
-└─❖,
-          { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) }
+└─❖`,
+          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
-      const fileName = msg.document.filename;
+      const fileName = msg.document.file_name;
       const isExcel = fileName.endsWith(".xls") || fileName.endsWith(".xlsx");
 
       if (!isExcel) {
         return bot.sendMessage(
           chatId,
-          ◆◆  XLS TO VCF  ◆◆
+          `◆◆  XLS TO VCF  ◆◆
 
 ┌─❖
 │  ⚠️ Hanya XLS atau XLSX
-└─❖,
-          { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) }
+└─❖`,
+          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
-      const fileId = msg.document.fileid;
+      const fileId = msg.document.file_id;
       const file = await bot.getFile(fileId);
-      const filePath = https://api.telegram.org/file/bot${bot.token}/${file.filepath};
+      const filePath = `https://api.telegram.org/file/bot${bot.token}/${file.file_path}`;
       const res = await fetch(filePath);
       const buffer = await res.arrayBuffer();
       const localPath = path.join(process.cwd(), fileName);
@@ -141,21 +141,21 @@ export default function (bot, db, saveDB) {
         const workbook = XLSX.readFile(localPath);
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
-        const data = XLSX.utils.sheettojson(sheet, { header: 1 });
+        const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
         if (data.length === 0) {
           if (fs.existsSync(localPath)) fs.unlinkSync(localPath);
           delete sessions[userId];
           return bot.sendMessage(
             chatId,
-            ◆◆  XLS TO VCF  ◆◆
+            `◆◆  XLS TO VCF  ◆◆
 
 ┌─❖
 │  ⚠️ File Excel kosong
 │
 │  Isi dulu ya!
-└─❖,
-            { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) }
+└─❖`,
+            { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
           );
         }
 
@@ -165,7 +165,7 @@ export default function (bot, db, saveDB) {
 
         return bot.sendMessage(
           chatId,
-          ◆◆  XLS TO VCF  ◆◆
+          `◆◆  XLS TO VCF  ◆◆
 
 ┌─❖
 │  📝 Nama File Output
@@ -173,20 +173,20 @@ export default function (bot, db, saveDB) {
 │  Masukkan nama file
 │
 │  (Tanpa ekstensi)
-└─❖,
-          { parsemode: "Markdown" }
+└─❖`,
+          { parse_mode: "Markdown" }
         );
       } catch (e) {
         if (fs.existsSync(localPath)) fs.unlinkSync(localPath);
         delete sessions[userId];
         return bot.sendMessage(
           chatId,
-          ◆◆  ERROR  ◆◆
+          `◆◆  ERROR  ◆◆
 
 ┌─❖
 │  ❌ File tidak valid
-└─❖,
-          { parsemode: "Markdown" }
+└─❖`,
+          { parse_mode: "Markdown" }
         );
       }
     }
@@ -198,18 +198,18 @@ export default function (bot, db, saveDB) {
         return sendWithDelete(
           userId,
           chatId,
-          ◆◆  DIBATALKAN  ◆◆
+          `◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
 │  ❌ Proses dibatalkan
-└─❖,
-          { parsemode: "Markdown" }
+└─❖`,
+          { parse_mode: "Markdown" }
         );
       }
 
       const fileName = /^done$/i.test(text)
         ? "contacts"
-        : text.trim().replace(/[^a-zA-Z0-9-]/g, "");
+        : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
 
       try {
         const vcfEntries = session.data
@@ -220,11 +220,11 @@ export default function (bot, db, saveDB) {
           .filter((e) => e);
 
         const vcfContent = vcfEntries.join("\n\n");
-        const outputPath = path.join(process.cwd(), ${fileName}.vcf);
+        const outputPath = path.join(process.cwd(), `${fileName}.vcf`);
         fs.writeFileSync(outputPath, vcfContent);
 
         await bot.sendDocument(chatId, outputPath, {}, {
-          filename: ${fileName}.vcf,
+          filename: `${fileName}.vcf`,
         });
 
         bot.incrementOperation(userId);
@@ -235,14 +235,14 @@ export default function (bot, db, saveDB) {
         return sendWithDelete(
           userId,
           chatId,
-          ◆◆  SUKSES  ◆◆
+          `◆◆  SUKSES  ◆◆
 
 ┌─❖
 │  ✅ File VCF dibuat
 │
 │  ${vcfEntries.length} kontak
-└─❖,
-          { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) }
+└─❖`,
+          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       } catch (e) {
         if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
@@ -250,11 +250,11 @@ export default function (bot, db, saveDB) {
         return sendWithDelete(
           userId,
           chatId,
-          ◆◆  ERROR  ◆◆
+          `◆◆  ERROR  ◆◆
 
 ┌─❖
 │  ❌ Ada masalah
-└─❖,
+└─❖`,
           { parse_mode: "Markdown" }
         );
       }

@@ -13,7 +13,7 @@ export default function (bot, db, saveDB) {
       } catch (e) {}
     }
     const msg = await bot.sendMessage(chatId, text, options);
-    userMessages[userId] = msg.messageid;
+    userMessages[userId] = msg.message_id;
     return msg;
   }
 
@@ -30,17 +30,17 @@ export default function (bot, db, saveDB) {
     
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return trackMessage(userId, chatId, ◆◆  CEK KONTAK  ◆◆
+      return trackMessage(userId, chatId, `◆◆  CEK KONTAK  ◆◆
 
 ┌─❖
 │  ❌ Akses Ditolak
 │
 │  Fitur khusus VIP
-└─❖,  { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) });
+└─❖`,  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
     }
 
     sessions[userId] = { step: 1 };
-    trackMessage(userId, chatId, ◆◆  CEK KONTAK  ◆◆
+    trackMessage(userId, chatId, `◆◆  CEK KONTAK  ◆◆
 
 ┌─❖
 │  Detail Kontak
@@ -49,7 +49,7 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'done' untuk selesai
 │  Ketik 'batal' untuk batal
-└─❖,  { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) });
+└─❖`,  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
   });
 
   bot.on("message", async (msg) => {
@@ -62,28 +62,28 @@ export default function (bot, db, saveDB) {
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return sendWithDelete(userId, chatId, ◆◆  DIBATALKAN  ◆◆
+        return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
 │  ❌ Proses dibatalkan
-└─❖,  { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) });
+└─❖`,  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
-      if (!msg.document || !msg.document.filename.endsWith(".vcf")) {
-        return trackMessage(userId, chatId, ◆◆  CEK KONTAK  ◆◆
+      if (!msg.document || !msg.document.file_name.endsWith(".vcf")) {
+        return trackMessage(userId, chatId, `◆◆  CEK KONTAK  ◆◆
 
 ┌─❖
 │  ⚠️ Kirim file VCF
-└─❖,  { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) });
+└─❖`,  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       try {
-        const fileId = msg.document.fileid;
+        const fileId = msg.document.file_id;
         const file = await bot.getFile(fileId);
-        const fileUrl = https://api.telegram.org/file/bot${bot.token}/${file.filepath};
+        const fileUrl = `https://api.telegram.org/file/bot${bot.token}/${file.file_path}`;
         const res = await fetch(fileUrl);
         const buffer = Buffer.from(await res.arrayBuffer());
-        const localPath = path.join(process.cwd(), msg.document.filename);
+        const localPath = path.join(process.cwd(), msg.document.file_name);
 
         fs.writeFileSync(localPath, buffer);
         session.file = localPath;
@@ -99,19 +99,19 @@ export default function (bot, db, saveDB) {
         if (total === 0) {
           fs.unlinkSync(localPath);
           delete sessions[userId];
-          return trackMessage(userId, chatId, "⚠️ Tidak ditemukan nama kontak di file ini Kak 😔",  { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) });
+          return trackMessage(userId, chatId, "⚠️ Tidak ditemukan nama kontak di file ini Kak 😔",  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
         }
 
-        let hasil = 📋 Daftar Kontak:\n\n📊 Total: ${total} kontak\n\n;
-        hasil += namaKontak.slice(0, 100).map((nama, i) => ${i + 1}. ${nama}).join("\n");
+        let hasil = `📋 Daftar Kontak:\n\n📊 *Total: ${total} kontak*\n\n`;
+        hasil += namaKontak.slice(0, 100).map((nama, i) => `${i + 1}. ${nama}`).join("\n");
 
-        if (total > 100) hasil += \n\n⚠️ Ditampilkan 100 dari ${total} kontak.;
+        if (total > 100) hasil += `\n\n⚠️ Ditampilkan 100 dari ${total} kontak.`;
 
-        await bot.sendMessage(chatId, hasil,  { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) });
+        await bot.sendMessage(chatId, hasil,  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
         bot.incrementOperation(userId);
 
         if (total > 100) {
-          const txtPath = path.join(process.cwd(), namakontak${Date.now()}.txt);
+          const txtPath = path.join(process.cwd(), `nama_kontak_${Date.now()}.txt`);
           fs.writeFileSync(txtPath, namaKontak.join("\n"));
           await bot.sendDocument(chatId, txtPath);
           fs.unlinkSync(txtPath);
@@ -121,7 +121,7 @@ export default function (bot, db, saveDB) {
         delete sessions[userId];
       } catch (err) {
         console.error("Gagal memproses VCF:", err);
-        bot.sendMessage(chatId, "⚠️ Yah… gagal baca file VCF 😔\n\nPastikan formatnya benar ya!",  { parsemode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
+        bot.sendMessage(chatId, "⚠️ Yah… gagal baca file VCF 😔\n\nPastikan formatnya benar ya!",  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
         try {
           if (session.file) fs.unlinkSync(session.file);
         } catch {}

@@ -10,7 +10,7 @@ export default function (bot, db, saveDB) {
       } catch (e) {}
     }
     const msg = await bot.sendMessage(chatId, text, options);
-    userMessages[userId] = msg.messageid;
+    userMessages[userId] = msg.message_id;
     return msg;
   }
 
@@ -23,12 +23,12 @@ export default function (bot, db, saveDB) {
       return trackMessage(
         userId,
         chatId,
-        ◆◆  AKSES DITOLAK  ◆◆
+        `◆◆  AKSES DITOLAK  ◆◆
 
 ┌─❖
 │  ❌ Fitur grup hanya untuk owner/VIP users kak!
-└─❖,
-        { parsemode: "Markdown" }
+└─❖`,
+        { parse_mode: "Markdown" }
       );
     }
 
@@ -36,49 +36,49 @@ export default function (bot, db, saveDB) {
       return trackMessage(
         userId,
         chatId,
-        ◆◆  VIP LIST  ◆◆
+        `◆◆  VIP LIST  ◆◆
 
 ┌─❖
 │  ❌ Akses Ditolak
 │
 │  Command khusus owner
-└─❖,
-        { parsemode: "Markdown" }
+└─❖`,
+        { parse_mode: "Markdown" }
       );
     }
 
     const vipUsers = Object.values(db.users).filter(
-      (u) => u.role === "vip" && u.vipexpired > Date.now()
+      (u) => u.role === "vip" && u.vip_expired > Date.now()
     );
 
     if (vipUsers.length === 0) {
       return trackMessage(
         userId,
         chatId,
-        ◆◆  DAFTAR VIP USER  ◆◆
+        `◆◆  DAFTAR VIP USER  ◆◆
 
 ┌─❖
 │  ℹ️ Status
 │
 │  Belum ada user VIP
-└─❖,
-        { parsemode: "Markdown" }
+└─❖`,
+        { parse_mode: "Markdown" }
       );
     }
 
-    let message = ◆◆  DAFTAR VIP USER (${vipUsers.length})  ◆◆\n\n;
+    let message = `◆◆  DAFTAR VIP USER (${vipUsers.length})  ◆◆\n\n`;
     vipUsers.forEach((user, i) => {
-      const exp = new Date(user.vipexpired).toLocaleDateString("id-ID");
-      message += ┌─❖ ${i + 1}\n;
-      message += │  Nama: ${user.firstname}\n;
-      message += │  ID: ${user.id}\n;
-      message += │  Username: @${user.username || "-"}\n;
-      message += │  Expired: ${exp}\n;
-      message += └─❖\n;
+      const exp = new Date(user.vip_expired).toLocaleDateString("id-ID");
+      message += `┌─❖ ${i + 1}\n`;
+      message += `│  Nama: ${user.first_name}\n`;
+      message += `│  ID: ${user.id}\n`;
+      message += `│  Username: @${user.username || "-"}\n`;
+      message += `│  Expired: ${exp}\n`;
+      message += `└─❖\n`;
     });
 
-    message += \n┌─❖\n│  Ketik 'done' untuk selesai\n│  Ketik 'batal' untuk batal\n└─❖;
+    message += `\n┌─❖\n│  Ketik 'done' untuk selesai\n│  Ketik 'batal' untuk batal\n└─❖`;
 
-    await trackMessage(userId, chatId, message, { parsemode: "Markdown" });
+    await trackMessage(userId, chatId, message, { parse_mode: "Markdown" });
   });
 }
