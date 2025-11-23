@@ -99,16 +99,12 @@ export default function (bot, db, saveDB) {
         }
         session.step = 2;
         return trackMessage(userId, chatId,
-          `◆◆  ⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ ⛓️  ◆◆
+          `◆◆  GABUNG FILE  ◆◆
 
 ┌─❖
-│  ⏳ Processing...
-│
 │  📝 Nama File Output
 │
-│  Masukkan nama file hasil
-│  (Tanpa ekstensi)
-│
+│  Ketik 'skip' pakai nama otomatis
 │  Ketik 'batal' batalkan
 └─❖`, 
           { parse_mode: "HTML" }
@@ -176,16 +172,15 @@ export default function (bot, db, saveDB) {
         fs.writeFileSync(localPath, Buffer.from(buffer));
         session.files.push(localPath);
 
-        session.step = 2;
-        return trackMessage(userId, chatId,
-          `◆◆  ⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ ⛓️  ◆◆
+        return bot.sendMessage(chatId, 
+          `◆◆  GABUNG FILE  ◆◆
 
 ┌─❖
-│  ⏳ Processing...
+│  ✅ File ${session.files.length} diterima
 │
-│  Perintah:
-│  • done  — proses & kirim hasil file
-│  • batal — batalkan proses
+│  Kirim file lagi atau ketik:
+│  • done  — proses & kirim hasil
+│  • batal — batalkan
 └─❖`, 
           { parse_mode: "HTML" }
         );
@@ -203,45 +198,6 @@ export default function (bot, db, saveDB) {
     }
 
     if (session.step === 2) {
-      if (/^batal$/i.test(text)) {
-        for (const f of session.files) try { fs.unlinkSync(f); } catch {}
-        delete sessions[userId];
-        return sendWithDelete(userId, chatId, 
-          `◆◆  DIBATALKAN  ◆◆
-
-┌─❖
-│  ❌ Proses dibatalkan
-└─❖`, 
-          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-        );
-      }
-
-      if (!/^done$/i.test(text)) {
-        return trackMessage(userId, chatId,
-          `◆◆  ⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ ⛓️  ◆◆
-
-┌─❖
-│  ⚠️ Ketik 'done' atau 'batal'
-└─❖`,
-          { parse_mode: "HTML" }
-        );
-      }
-
-      session.step = 3;
-      return trackMessage(userId, chatId,
-        `◆◆  GABUNG FILE  ◆◆
-
-┌─❖
-│  📝 Nama File Output
-│
-│  Ketik 'skip' pakai nama otomatis
-│  Ketik 'batal' batalkan
-└─❖`,
-        { parse_mode: "HTML" }
-      );
-    }
-
-    if (session.step === 3) {
       if (/^batal$/i.test(text)) {
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
