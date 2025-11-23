@@ -9,7 +9,7 @@ export default function (bot, db, saveDB) {
       } catch (e) {}
     }
     const msg = await bot.sendMessage(chatId, text, options);
-    userMessages[userId] = msg.message_id;
+    userMessages[userId] = msg.messageid;
     return msg;
   }
 
@@ -26,12 +26,12 @@ export default function (bot, db, saveDB) {
       return trackMessage(
         userId,
         chatId,
-        `◆◆  AKSES DITOLAK  ◆◆
+        ◆◆  AKSES DITOLAK  ◆◆
 
 ┌─❖
 │  ❌ Fitur grup hanya untuk VIP users kak!
-└─❖`,
-        { parse_mode: "Markdown" }
+└─❖,
+        { parsemode: "Markdown" }
       );
     }
 
@@ -39,7 +39,7 @@ export default function (bot, db, saveDB) {
     trackMessage(
       userId,
       chatId,
-      `◆◆  REDEEM CODE SYSTEM  ◆◆
+      ◆◆  REDEEM CODE SYSTEM  ◆◆
 
 ┌─❖
 │  🎁 Input Kode Redeem
@@ -47,8 +47,8 @@ export default function (bot, db, saveDB) {
 │  Masukkan kode redeem kamu
 │
 │  Ketik 'batal' untuk membatalkan
-└─❖`,
-      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+└─❖,
+      { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) }
     );
   });
 
@@ -66,12 +66,12 @@ export default function (bot, db, saveDB) {
         return sendWithDelete(
           userId,
           chatId,
-          `◆◆  DIBATALKAN  ◆◆
+          ◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
 │  ❌ Redeem dibatalkan
-└─❖`,
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+└─❖,
+          { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) }
         );
       }
 
@@ -83,7 +83,7 @@ export default function (bot, db, saveDB) {
         return sendWithDelete(
           userId,
           chatId,
-          `◆◆  KODE TIDAK VALID  ◆◆
+          ◆◆  KODE TIDAK VALID  ◆◆
 
 ┌─❖
 │  Kode: ${code}
@@ -91,84 +91,84 @@ export default function (bot, db, saveDB) {
 │  Status: Tidak ditemukan
 │
 │  Coba cek lagi ya 🙏
-└─❖`,
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+└─❖,
+          { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) }
         );
       }
 
-      if (redeemData.used_by) {
+      if (redeemData.usedby) {
         delete sessions[userId];
         return sendWithDelete(
           userId,
           chatId,
-          `◆◆  KODE SUDAH DIGUNAKAN  ◆◆
+          ◆◆  KODE SUDAH DIGUNAKAN  ◆◆
 
 ┌─❖
 │  Kode sudah dipakai user lain
 │
 │  Silakan minta kode baru
-└─❖`,
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+└─❖,
+          { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) }
         );
       }
 
       // Check if code has expired (based on duration from creation time)
-      if (redeemData.expires_in_ms && redeemData.created_at) {
-        const expiryTime = redeemData.created_at + redeemData.expires_in_ms;
+      if (redeemData.expiresinms && redeemData.createdat) {
+        const expiryTime = redeemData.createdat + redeemData.expiresinms;
         if (Date.now() > expiryTime) {
           delete sessions[userId];
           return sendWithDelete(
             userId,
             chatId,
-            `◆◆  KODE KADALUARSA  ◆◆
+            ◆◆  KODE KADALUARSA  ◆◆
 
 ┌─❖
 │  Code sudah expired
 │
 │  Kode sudah tidak berlaku
-└─❖`,
-            { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+└─❖,
+            { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) }
           );
         }
       }
 
       let duration = redeemData.duration || 30;
-      let vipExpired = Date.now() + (duration * 24 * 60 * 60 * 1000);
+      let vipExpired = Date.now() + (duration  24  60  60  1000);
 
       const user = db.users[userId] || {};
-      if (user.vip_expired && user.vip_expired > Date.now()) {
-        vipExpired = user.vip_expired + (duration * 24 * 60 * 60 * 1000);
+      if (user.vipexpired && user.vipexpired > Date.now()) {
+        vipExpired = user.vipexpired + (duration  24  60  60  1000);
       }
 
-      redeemData.used_by = userId;
-      redeemData.used_date = new Date().toLocaleDateString('id-ID');
+      redeemData.usedby = userId;
+      redeemData.useddate = new Date().toLocaleDateString('id-ID');
       bot.saveRedeemDB();
 
       if (!db.users[userId]) {
         db.users[userId] = {
           id: userId,
           username: "",
-          first_name: "",
-          last_name: "",
+          firstname: "",
+          lastname: "",
           role: "vip",
-          vip_expired: vipExpired,
+          vipexpired: vipExpired,
           status: "active",
-          total_operation: 0
+          totaloperation: 0
         };
       } else {
         db.users[userId].role = "vip";
-        db.users[userId].vip_expired = vipExpired;
+        db.users[userId].vipexpired = vipExpired;
         db.users[userId].status = "active";
       }
       saveDB();
 
-      const daysLeft = Math.ceil((vipExpired - Date.now()) / (1000 * 60 * 60 * 24));
+      const daysLeft = Math.ceil((vipExpired - Date.now()) / (1000  60  60 * 24));
 
       delete sessions[userId];
       return sendWithDelete(
         userId,
         chatId,
-        `◆◆  REDEEM SUKSES  ◆◆
+        ◆◆  REDEEM SUKSES  ◆◆
 
 ┌─❖
 │  ✅ VIP Activated!
@@ -180,8 +180,8 @@ export default function (bot, db, saveDB) {
 │  Sisa: ${daysLeft} hari
 │
 │  💎 Selamat bersenang-senang!
-└─❖`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+└─❖,
+        { parsemode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
   });

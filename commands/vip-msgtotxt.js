@@ -12,7 +12,7 @@ export default function (bot, db, saveDB) {
       } catch (e) {}
     }
     const msg = await bot.sendMessage(chatId, text, options);
-    userMessages[userId] = msg.message_id;
+    userMessages[userId] = msg.messageid;
     return msg;
   }
 
@@ -31,14 +31,14 @@ export default function (bot, db, saveDB) {
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
-        `◆◆  MSG TO TXT  ◆◆
+        ◆◆  MSG TO TXT  ◆◆
 
 ┌─❖
 │  ❌ Akses Ditolak
 │
 │  Fitur khusus VIP
-└─❖`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+└─❖,
+        { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) }
       );
     }
 
@@ -46,7 +46,7 @@ export default function (bot, db, saveDB) {
     trackMessage(
       userId,
       chatId,
-      `◆◆  MSG TO TXT  ◆◆
+      ◆◆  MSG TO TXT  ◆◆
 
 ┌─❖
 │  Message to File
@@ -56,8 +56,8 @@ export default function (bot, db, saveDB) {
 │  Simpan jadi file TXT
 │
 │  Ketik 'batal' batalkan
-└─❖`,
-      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+└─❖,
+      { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) }
     );
   });
 
@@ -76,12 +76,12 @@ export default function (bot, db, saveDB) {
         return sendWithDelete(
           userId,
           chatId,
-          `◆◆  DIBATALKAN  ◆◆
+          ◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
 │  ❌ Proses dibatalkan
-└─❖`,
-          { parse_mode: "Markdown" }
+└─❖,
+          { parsemode: "Markdown" }
         );
       }
 
@@ -89,7 +89,7 @@ export default function (bot, db, saveDB) {
       session.step = 2;
       return bot.sendMessage(
         chatId,
-        `◆◆  MSG TO TXT  ◆◆
+        ◆◆  MSG TO TXT  ◆◆
 
 ┌─❖
 │  📝 Nama File
@@ -97,8 +97,8 @@ export default function (bot, db, saveDB) {
 │  Masukkan nama file
 │
 │  (Tanpa ekstensi .txt)
-└─❖`,
-        { parse_mode: "Markdown" }
+└─❖,
+        { parsemode: "Markdown" }
       );
     }
 
@@ -108,16 +108,16 @@ export default function (bot, db, saveDB) {
         return sendWithDelete(
           userId,
           chatId,
-          `◆◆  DIBATALKAN  ◆◆
+          ◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
 │  ❌ Proses dibatalkan
-└─❖`,
-          { parse_mode: "Markdown" }
+└─❖,
+          { parsemode: "Markdown" }
         );
       }
 
-      const filename = text.replace(/[^a-zA-Z0-9-_]/g, "_") + ".txt";
+      const filename = text.replace(/[^a-zA-Z0-9-]/g, "") + ".txt";
       const filepath = path.join(process.cwd(), filename);
 
       try {
@@ -128,14 +128,14 @@ export default function (bot, db, saveDB) {
         await trackMessage(
           userId,
           chatId,
-          `◆◆  FILE SUKSES  ◆◆
+          ◆◆  FILE SUKSES  ◆◆
 
 ┌─❖
 │  ✅ File TXT dibuat
 │
 │  📄 ${filename}
-└─❖`,
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+└─❖,
+          { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) }
         );
 
         bot.incrementOperation(userId);
@@ -146,11 +146,11 @@ export default function (bot, db, saveDB) {
         return sendWithDelete(
           userId,
           chatId,
-          `◆◆  ERROR  ◆◆
+          ◆◆  ERROR  ◆◆
 
 ┌─❖
 │  ❌ Ada masalah
-└─❖`,
+└─❖,
           { parse_mode: "Markdown" }
         );
       }

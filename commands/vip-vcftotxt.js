@@ -12,7 +12,7 @@ export default function (bot, db, saveDB) {
       } catch (e) {}
     }
     const msg = await bot.sendMessage(chatId, text, options);
-    userMessages[userId] = msg.message_id;
+    userMessages[userId] = msg.messageid;
     return msg;
   }
 
@@ -28,14 +28,14 @@ export default function (bot, db, saveDB) {
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
       return bot.sendMessage(
         chatId,
-        `◆◆  VCF TO TXT  ◆◆
+        ◆◆  VCF TO TXT  ◆◆
 
 ┌─❖
 │  ❌ Akses Ditolak
 │
 │  Fitur khusus VIP
-└─❖`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+└─❖,
+        { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) }
       );
     }
 
@@ -46,7 +46,7 @@ export default function (bot, db, saveDB) {
     return await trackMessage(
       userId,
       chatId,
-      `◆◆  VCF TO TXT  ◆◆
+      ◆◆  VCF TO TXT  ◆◆
 
 ┌─❖
 │  Convert VCF ke TXT
@@ -59,8 +59,8 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'done' selesai
 │  Ketik 'batal' batalkan
-└─❖`,
-      { parse_mode: "Markdown" }
+└─❖,
+      { parsemode: "Markdown" }
     );
   });
 
@@ -78,42 +78,42 @@ export default function (bot, db, saveDB) {
         return sendWithDelete(
           userId,
           chatId,
-          `◆◆  DIBATALKAN  ◆◆
+          ◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
 │  ❌ Proses dibatalkan
-└─❖`,
-          { parse_mode: "Markdown" }
+└─❖,
+          { parsemode: "Markdown" }
         );
       }
 
-      if (!msg.document || !msg.document.file_name.endsWith(".vcf")) {
+      if (!msg.document || !msg.document.filename.endsWith(".vcf")) {
         return bot.sendMessage(
           chatId,
-          `◆◆  VCF TO TXT  ◆◆
+          ◆◆  VCF TO TXT  ◆◆
 
 ┌─❖
 │  ⚠️ Kirim file .vcf
-└─❖`,
-          { parse_mode: "Markdown" }
+└─❖,
+          { parsemode: "Markdown" }
         );
       }
 
-      const fileId = msg.document.file_id;
+      const fileId = msg.document.fileid;
       const file = await bot.getFile(fileId);
-      const filePath = `https://api.telegram.org/file/bot${bot.token}/${file.file_path}`;
+      const filePath = https://api.telegram.org/file/bot${bot.token}/${file.filepath};
       const res = await fetch(filePath);
       const buffer = await res.arrayBuffer();
-      const localPath = path.join(process.cwd(), msg.document.file_name);
+      const localPath = path.join(process.cwd(), msg.document.filename);
       fs.writeFileSync(localPath, Buffer.from(buffer));
 
       session.file = localPath;
-      session.originalName = msg.document.file_name.replace(".vcf", "");
+      session.originalName = msg.document.filename.replace(".vcf", "");
       session.step = 2;
 
       return bot.sendMessage(
         chatId,
-        `◆◆  VCF TO TXT  ◆◆
+        ◆◆  VCF TO TXT  ◆◆
 
 ┌─❖
 │  📝 Nama File Output
@@ -121,8 +121,8 @@ export default function (bot, db, saveDB) {
 │  Masukkan nama file
 │
 │  (Tanpa ekstensi)
-└─❖`,
-        { parse_mode: "Markdown" }
+└─❖,
+        { parsemode: "Markdown" }
       );
     }
 
@@ -133,43 +133,43 @@ export default function (bot, db, saveDB) {
         return sendWithDelete(
           userId,
           chatId,
-          `◆◆  DIBATALKAN  ◆◆
+          ◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
 │  ❌ Proses dibatalkan
-└─❖`,
-          { parse_mode: "Markdown" }
+└─❖,
+          { parsemode: "Markdown" }
         );
       }
 
       const outputName = /^done$/i.test(text)
         ? session.originalName
-        : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
+        : text.trim().replace(/[^a-zA-Z0-9-]/g, "");
 
       try {
         const content = fs.readFileSync(session.file, "utf8");
-        const matches = content.match(/TEL;[^:]*:(\+?\d+)/g) || [];
-        const numbers = matches.map((m) => m.replace(/.*:/, ""));
+        const matches = content.match(/TEL;[^:]:(\+?\d+)/g) || [];
+        const numbers = matches.map((m) => m.replace(/.:/, ""));
 
         if (numbers.length === 0) {
           if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
           delete sessions[userId];
           return bot.sendMessage(
             chatId,
-            `◆◆  VCF TO TXT  ◆◆
+            ◆◆  VCF TO TXT  ◆◆
 
 ┌─❖
 │  ⚠️ Tidak ada nomor ditemukan
-└─❖`,
-            { parse_mode: "Markdown" }
+└─❖,
+            { parsemode: "Markdown" }
           );
         }
 
-        const outputPath = path.join(process.cwd(), `${outputName}.txt`);
+        const outputPath = path.join(process.cwd(), ${outputName}.txt);
         fs.writeFileSync(outputPath, numbers.join("\n"));
 
         await bot.sendDocument(chatId, outputPath, {}, {
-          filename: `${outputName}.txt`,
+          filename: ${outputName}.txt,
         });
 
         bot.incrementOperation(userId);
@@ -180,14 +180,14 @@ export default function (bot, db, saveDB) {
         return sendWithDelete(
           userId,
           chatId,
-          `◆◆  SUKSES  ◆◆
+          ◆◆  SUKSES  ◆◆
 
 ┌─❖
 │  ✅ File TXT dibuat
 │
 │  ${numbers.length} nomor
-└─❖`,
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+└─❖,
+          { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) }
         );
       } catch (e) {
         if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
@@ -195,11 +195,11 @@ export default function (bot, db, saveDB) {
         return sendWithDelete(
           userId,
           chatId,
-          `◆◆  ERROR  ◆◆
+          ◆◆  ERROR  ◆◆
 
 ┌─❖
 │  ❌ Ada masalah
-└─❖`,
+└─❖,
           { parse_mode: "Markdown" }
         );
       }

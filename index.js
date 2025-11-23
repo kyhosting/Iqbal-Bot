@@ -65,14 +65,14 @@ function delay(ms) {
 bot.getMainKeyboard = () => {
   return {
     keyboard: [
-      ['⛓️ TXT TO VCF ⛓️', '⛓️ VCF TO TXT ⛓️'],
-      ['⛓️ XLS TO VCF ⛓️', '⛓️ MSG TO TXT ⛓️'],
-      ['⛓️ BAGI LANJUT ⛓️', '⛓️ ESTRAK NOMOR ⛓️'],
-      ['⛓️ GABUNG FILE ⛓️'],
-      ['⛓️ POTONG LANJUT ⛓️', '⛓️ CREATE ADMIN ⛓️'],
-      ['⛓️ CEK KONTAK ⛓️', '⛓️ HITUNG FILE ⛓️'],
-      ['⛓️ RENAME KONTAK ⛓️', '⛓️ RENAME FILE ⛓️'],
-      ['🎁 REDEEM CODE', '⛓️ MENU OWNER ⛓️']
+      ['⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ', '⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ'],
+      ['⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ', '⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ'],
+      ['⛓️ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ', '⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ'],
+      ['⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ', '⛓️ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛ'],
+      ['⛓️ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ', '⛓️CEK KONTAK'],
+      ['⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ', '⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ'],
+      ['⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ', '🎁 Redeem Code'],
+      ['⛓️MENU OWNER']
     ],
     resize_keyboard: true,
     one_time_keyboard: false
@@ -82,20 +82,18 @@ bot.getMainKeyboard = () => {
 // ===== KEYBOARD HELPER FOR USER (Filter berdasarkan role) =====
 bot.getMainKeyboardUser = (userId) => {
   const baseKeyboard = [
-    ['⛓️ TXT TO VCF ⛓️', '⛓️ VCF TO TXT ⛓️'],
-    ['⛓️ XLS TO VCF ⛓️', '⛓️ MSG TO TXT ⛓️'],
-    ['⛓️ BAGI LANJUT ⛓️', '⛓️ ESTRAK NOMOR ⛓️'],
-    ['⛓️ GABUNG FILE ⛓️'],
-    ['⛓️ POTONG LANJUT ⛓️', '⛓️ CREATE ADMIN ⛓️'],
-    ['⛓️ CEK KONTAK ⛓️', '⛓️ HITUNG FILE ⛓️'],
-    ['⛓️ RENAME KONTAK ⛓️', '⛓️ RENAME FILE ⛓️']
+    ['⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ', '⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ'],
+    ['⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ', '⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ'],
+    ['⛓️ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ', '⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ'],
+    ['⛓️ ɢᴀʙᴜɢ ꜰɪʟᴇ', '⛓️ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛ'],
+    ['⛓️ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ', '⛓️CEK KONTAK'],
+    ['⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ', '⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ'],
+    ['⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ', '🎁 Redeem Code']
   ];
   
   // Tambah MENU OWNER hanya untuk owner
   if (config.owner.includes(userId)) {
-    baseKeyboard.push(['🎁 REDEEM CODE', '⛓️ MENU OWNER ⛓️']);
-  } else {
-    baseKeyboard.push(['🎁 REDEEM CODE']);
+    baseKeyboard.push(['⛓️MENU OWNER']);
   }
   
   return {
@@ -150,7 +148,7 @@ bot.getRole = (userId) => {
     user.notified_expiry = false;
     saveDB();
     bot.sendMessage(userId, `⏰ *Masa Trial/VIP kamu sudah habis Kak*\nSekarang kembali jadi user biasa ya 😊`, {
-      parse_mode: "Markdown",
+      parse_mode: "HTML",
       reply_markup: bot.getMainKeyboard()
     }).catch(() => {});
   }
@@ -168,7 +166,7 @@ bot.deleteAndSend = async (query, newText, newMarkup = null) => {
     await delay(300);
     
     // Send new message
-    const options = { parse_mode: "Markdown" };
+    const options = { parse_mode: "HTML" };
     if (newMarkup) options.reply_markup = newMarkup;
     
     await bot.sendMessage(query.message.chat.id, newText, options);
@@ -182,43 +180,7 @@ bot.verifyGroupAccess = async (userId, chatId) => {
   // Skip check for owner
   if (config.owner.includes(userId)) return true;
   
-  const user = db.users[userId];
-  
-  // Check if user is suspended (keluar dari grup)
-  if (user && user.suspended) {
-    const groupMainDeeplink = `https://t.me/agentviber12?join`;
-    const groupCvDeeplink = `https://t.me/channelviber?join`;
-
-    const rejoinKeyboard = {
-      inline_keyboard: [
-        [{ text: "📱 @agentviber12", url: groupMainDeeplink }],
-        [{ text: "📱 @channelviber", url: groupCvDeeplink }]
-      ]
-    };
-    
-    // Show remaining days if active
-    let remainingText = "";
-    if (user.vip_expired && user.vip_expired > Date.now()) {
-      const daysLeft = Math.ceil((user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24));
-      remainingText = `\n\n✨ Sisa akses kamu: *${daysLeft} hari*\nJoin kembali untuk aktifkan!`;
-    }
-    
-    await bot.sendMessage(
-      chatId,
-      `❌ *Akses Dicabut Sementara Kak!*\n\nKamu keluar dari salah satu grup 😢${remainingText}`,
-      { parse_mode: "Markdown", reply_markup: rejoinKeyboard }
-    );
-    
-    return false;
-  }
-  
-  // ===== VERIFICATION CACHING =====
-  // Jika user sudah pernah verify dan tidak suspended → skip check, langsung allow
-  if (user && user.group_verified) {
-    return true;
-  }
-  
-  // Jika belum verify → check group membership
+  // Check group membership
   const groupCheck = await bot.checkGroupMembership(userId);
   
   if (!groupCheck.verified) {
@@ -236,35 +198,10 @@ bot.verifyGroupAccess = async (userId, chatId) => {
     await bot.sendMessage(
       chatId,
       `⚠️ Wajib join 2 grup untuk akses`,
-       { parse_mode: "Markdown", reply_markup: joinKeyboard }
+      { reply_markup: joinKeyboard }
     );
     
     return false;
-  }
-  
-  // Verified! Mark flag untuk tidak perlu verify lagi
-  // IMPORTANT: Buat user jika belum ada, baru set flag
-  if (!user) {
-    const trialExpired = Date.now() + 1 * 24 * 60 * 60 * 1000;
-    db.users[userId] = {
-      id: userId,
-      username: "",
-      first_name: "",
-      last_name: "",
-      role: config.owner.includes(userId) ? "owner" : "trial",
-      vip_expired: config.owner.includes(userId) ? 0 : trialExpired,
-      status: "active",
-      total_operation: 0,
-      notified_expiry: false,
-      trial_start: Date.now(),
-      suspended: false,
-      group_verified: true // Set verified saat pertama verify berhasil
-    };
-    saveDB();
-  } else {
-    // User sudah ada, set flag
-    user.group_verified = true;
-    saveDB();
   }
   
   return true;
@@ -275,31 +212,6 @@ bot.incrementOperation = (userId) => {
     db.users[userId].total_operation = (db.users[userId].total_operation || 0) + 1;
     saveDB();
   }
-};
-
-// ===== HELPER: CHECK GROUP ACCESS (Only Owner & VIP in Groups) =====
-bot.checkGroupOwnerVipAccess = async (userId, chatId) => {
-  // DM/Private chat - no restriction
-  let chat;
-  try {
-    chat = await bot.getChat(chatId);
-  } catch (e) {
-    return true; // Allow if can't determine
-  }
-
-  // If not a group, allow
-  if (chat.type !== 'group' && chat.type !== 'supergroup') {
-    return true;
-  }
-
-  // In a group - check if owner or vip
-  const role = bot.getRole(userId);
-  
-  if (!['owner', 'vip'].includes(role)) {
-    return false; // Block non-owner/vip users in groups
-  }
-  
-  return true; // Allow owner/vip in groups
 };
 
 // Attach bot references
@@ -340,8 +252,7 @@ bot.showDashboard = async (userId, chatId) => {
       total_operation: 0,
       notified_expiry: false,
       trial_start: Date.now(),
-      suspended: false,
-      group_verified: false // BELUM verify - akan di-set true saat user verify
+      suspended: false
     };
     saveDB();
 
@@ -350,7 +261,7 @@ bot.showDashboard = async (userId, chatId) => {
       await bot.sendMessage(
         userId,
         `🎁 *TRIAL 1 HARI GRATIS!*\n\nSelamat! Kamu sudah verifikasi grup 🎉\n\n✅ Akses trial selama 1 hari sudah aktif!\n⏰ Berlaku sampai: ${new Date(trialExpired).toLocaleDateString("id-ID")}\n\nNikmati semua fitur premium dulu ya Kak! 💎\nSetelah trial habis, beli VIP untuk terus akses 😊`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       ).catch(() => {});
     }
   } else {
@@ -358,7 +269,6 @@ bot.showDashboard = async (userId, chatId) => {
     if (user.suspended && user.vip_expired && user.vip_expired > Date.now()) {
       user.suspended = false;
       user.status = "active";
-      user.group_verified = true; // Restore verification flag
       if (!user.role || user.role === "user") {
         user.role = user.trial_start ? "trial" : "vip";
       }
@@ -368,7 +278,7 @@ bot.showDashboard = async (userId, chatId) => {
       await bot.sendMessage(
         userId,
         `✅ *Akses Dipulihkan Kak!*\n\nKamu sudah join kedua grup 🎉\n\n✨ Trial/VIP kamu aktif kembali!\n⏰ Sisa: *${daysLeft} hari*\n\nLanjut nikmati fitur premium ya 😊`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       ).catch(() => {});
     }
   }
@@ -391,7 +301,7 @@ bot.showDashboard = async (userId, chatId) => {
   }
 
   // Caption dengan format EXACT (tidak boleh diubah sekalipun 1 huruf)
-  const caption = `🎌 iqbal ᴄᴠ ʙᴏᴛꜱ\n(by iqbaldev)\n\n╭─❖\n│ こんにちは、私は Iqbalʙᴏᴛ です。\n│ 私はファイル変換と管理を担当します。\n│ ✦ Created by: @Iqbaldev\n╰───────────────❖\n\n╭─❖ ꜱᴛᴀᴛᴜꜱ ᴀᴋᴄᴇꜱ\n│ ➤ Nama: *${user.first_name || "User"}*\n│ ➤ ID: \\\`${userId}\\\`\n│ ➤ Username: @${user.username || "-"}\n│ ➤ Role: *${role.toUpperCase()}*\n│ ➤ Status: *${status === "active" ? "✅ Aktif" : "❌ Tidak Aktif"}*\n│ ➤ Masa Aktif: *${expired}*\n│ ➤ Hari Tersisa: *${remaining}*\n│ ➤ Total Operasi: *${user.total_operation || 0}*\n╰───────────────❖\n\n╭─❖ ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ\n│ ➤ 📄 TXT 📇 VCF 📊 XLSX\n│ ➤ 他の形式も順次対応予定です。\n╰───────────────❖\n\n╭─❖ ᴍᴇɴᴜ ʙᴏᴛ\n│ ➤ ⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ\n│ ➤ ⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ\n│ ➤ ⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n│ ➤ ⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ\n│ ➤ ⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n│ ➤ ⛓️ ꜱᴘʟɪᴛ ꜰɪʟᴇ\n│ ➤ ⛓️ GABUNG FILE\n│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ\n│ ➤ ⛓️ ᴀᴍʙɪʟ ɴᴀᴍᴀ ꜰɪʟᴇ\n│ ➤ ⛓️ ʙᴜᴀᴛ ɴᴀᴍᴀ\n│ ➤ ⛓️ ᴀᴅᴍ & ɴᴀᴠʏ\n│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ\n│ ➤ ⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ\n╰───────────────❖\n\n💎 ご利用ありがとうございます。\nこのボットは常に進化しています ⚙️`;
+  const caption = `🎌 iqbal ᴄᴠ ʙᴏᴛꜱ\n(by iqbaldev)\n\n╭─❖\n│ こんにちは、私は Iqbalʙᴏᴛ です。\n│ 私はファイル変換と管理を担当します。\n│ ✦ Created by: @Iqbaldev\n╰───────────────❖\n\n╭─❖ ꜱᴛᴀᴛᴜꜱ ᴀᴋᴄᴇꜱ\n│ ➤ Nama: *${user.first_name || "User"}*\n│ ➤ ID: \`${userId}\`\n│ ➤ Username: @${user.username || "-"}\n│ ➤ Role: *${role.toUpperCase()}*\n│ ➤ Status: *${status === "active" ? "✅ Aktif" : "❌ Tidak Aktif"}*\n│ ➤ Masa Aktif: *${expired}*\n│ ➤ Hari Tersisa: *${remaining}*\n│ ➤ Total Operasi: *${user.total_operation || 0}*\n╰───────────────❖\n\n╭─❖ ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ\n│ ➤ 📄 TXT 📇 VCF 📊 XLSX\n│ ➤ 他の形式も順次対応予定です。\n╰───────────────❖\n\n╭─❖ ᴍᴇɴᴜ ʙᴏᴛ\n│ ➤ ⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ\n│ ➤ ⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ\n│ ➤ ⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n│ ➤ ⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ\n│ ➤ ⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n│ ➤ ⛓️ ꜱᴘʟɪᴛ ꜰɪʟᴇ\n│ ➤ ⛓️ ɢᴀʙᴜɢ ꜰɪʟᴇ\n│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ\n│ ➤ ⛓️ ᴀᴍʙɪʟ ɴᴀᴍᴀ ꜰɪʟᴇ\n│ ➤ ⛓️ ʙᴜᴀᴛ ɴᴀᴍᴀ\n│ ➤ ⛓️ ᴀᴅᴍ & ɴᴀᴠʏ\n│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ\n│ ➤ ⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ\n╰───────────────❖\n\n💎 ご利用ありがとうございます。\nこのボットは常に進化しています ⚙️`;
 
   try {
     const photos = await bot.getUserProfilePhotos(userId, { limit: 1 });
@@ -399,186 +309,23 @@ bot.showDashboard = async (userId, chatId) => {
       const fileId = photos.photos[0][0].file_id;
       await bot.sendPhoto(chatId, fileId, {
         caption: caption,
-        parse_mode: "Markdown",
+        parse_mode: "HTML",
         reply_markup: bot.getMainKeyboardUser(userId)
       });
     } else {
       await bot.sendMessage(chatId, caption, {
-        parse_mode: "Markdown",
+        parse_mode: "HTML",
         reply_markup: bot.getMainKeyboardUser(userId)
       });
     }
   } catch (err) {
     console.error("Error getting profile photo:", err);
     await bot.sendMessage(chatId, caption, {
-      parse_mode: "Markdown",
+      parse_mode: "HTML",
       reply_markup: bot.getMainKeyboardUser(userId)
     });
   }
 };
-
-// ===== AUTO-SUSPEND WHEN USER LEAVES GROUP =====
-bot.on("my_chat_member", async (update) => {
-  try {
-    const userId = update.from.id;
-    const chatId = update.chat.id;
-    const newStatus = update.new_chat_member.status;
-    const oldStatus = update.old_chat_member.status;
-    
-    // Only process if user LEFT (status changed from member to left/kicked)
-    if ((oldStatus === "member" || oldStatus === "administrator" || oldStatus === "creator") &&
-        (newStatus === "left" || newStatus === "kicked")) {
-      
-      // Check if user exists in database
-      if (db.users[userId]) {
-        const user = db.users[userId];
-        
-        // Check if user still in both groups or NOT
-        const groupCheck = await bot.checkGroupMembership(userId);
-        
-        // If user is NOT verified (not in both groups) → SUSPEND ACCESS
-        if (!groupCheck.verified) {
-          // SUSPEND: Set flag but PRESERVE vip_expired
-          user.suspended = true;
-          user.status = "suspended";
-          user.group_verified = false; // Reset verification flag - wajib verify ulang
-          // vip_expired TIDAK direset - tetap tersimpan!
-          saveDB();
-          
-          // Notify user about suspension
-          const groupMainDeeplink = `https://t.me/agentviber12?join`;
-          const groupCvDeeplink = `https://t.me/channelviber?join`;
-          
-          const rejoinKeyboard = {
-            inline_keyboard: [
-              [{ text: "📱 @agentviber12", url: groupMainDeeplink }],
-              [{ text: "📱 @channelviber", url: groupCvDeeplink }]
-            ]
-          };
-          
-          // Show remaining days if VIP/trial still active
-          let remainingText = "";
-          if (user.vip_expired && user.vip_expired > Date.now()) {
-            const daysLeft = Math.ceil((user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24));
-            remainingText = `\n\n✨ Sisa akses kamu masih ada: *${daysLeft} hari*\n\nJoin kembali ke grup untuk aktifkan akses!`;
-          }
-          
-          await bot.sendMessage(
-            userId,
-            `❌ *Akses Dicabut Sementara Kak!*\n\nKamu keluar dari salah satu grup 😢${remainingText}`,
-            { parse_mode: "Markdown", reply_markup: rejoinKeyboard }
-          ).catch(() => {});
-          
-          console.log(`⚠️ [SUSPENDED] User ${userId} left group - access suspended`);
-        }
-      }
-    }
-  } catch (err) {
-    console.error("Error in my_chat_member handler:", err);
-  }
-});
-
-// ===== MESSAGE MONITORING: ANTI-LINK, ANTI-SPAM, ANTI-TOXSI =====
-bot.on("message", async (msg) => {
-  try {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-    const text = msg.text || msg.caption || "";
-    const messageId = msg.message_id;
-    
-    // Skip private messages dan skip bot commands
-    if (msg.chat.type === "private" || /^\//.test(text)) return;
-    
-    // Get group settings
-    const groupsDB = JSON.parse(fs.readFileSync("groups.json"));
-    const groupSettings = groupsDB.groups[chatId] || {};
-    
-    // ANTI-LINK: Delete messages with links
-    const hasLink = /(http|https|t\.me|telegram)/gi.test(text);
-    if (hasLink && groupSettings.antiLink !== false) {
-      try {
-        await bot.deleteMessage(chatId, messageId).catch(() => {});
-        await bot.sendMessage(
-          chatId,
-          `⛔ *Link dilarang di grup ini!*\n\n@${msg.from.username || "user"}, link tidak boleh di-share di sini.`,
-          { parse_mode: "Markdown" }
-        ).then(m => {
-          setTimeout(() => bot.deleteMessage(chatId, m.message_id).catch(() => {}), 3000);
-        });
-        return;
-      } catch (e) {}
-    }
-    
-    // ANTI-SPAM: Detect rapid messages (more than 5 messages in 10 seconds)
-    if (!bot.userMessageCount) bot.userMessageCount = {};
-    if (!bot.userMessageCount[userId]) {
-      bot.userMessageCount[userId] = [];
-    }
-    
-    const now = Date.now();
-    bot.userMessageCount[userId].push(now);
-    bot.userMessageCount[userId] = bot.userMessageCount[userId].filter(t => now - t < 10000);
-    
-    if (bot.userMessageCount[userId].length > 5 && groupSettings.antiSpam !== false) {
-      try {
-        await bot.deleteMessage(chatId, messageId).catch(() => {});
-        await bot.sendMessage(
-          chatId,
-          `⛔ *Spam terdeteksi!*\n\n@${msg.from.username || "user"}, jangan spam pesan!`,
-          { parse_mode: "Markdown" }
-        ).then(m => {
-          setTimeout(() => bot.deleteMessage(chatId, m.message_id).catch(() => {}), 3000);
-        });
-        return;
-      } catch (e) {}
-    }
-    
-    // ANTI-TOXSI: Detect offensive words
-    const toxsiWords = ["anjing", "babi", "kontol", "goblok", "tolol", "kacau", "bangsat"];
-    const hasToxsi = toxsiWords.some(word => text.toLowerCase().includes(word));
-    
-    if (hasToxsi && groupSettings.antiToxsi !== false) {
-      try {
-        await bot.deleteMessage(chatId, messageId).catch(() => {});
-        await bot.sendMessage(
-          chatId,
-          `⛔ *Bahasa tidak sopan!*\n\n@${msg.from.username || "user"}, jaga bahasa kamu di grup ini!`,
-          { parse_mode: "Markdown" }
-        ).then(m => {
-          setTimeout(() => bot.deleteMessage(chatId, m.message_id).catch(() => {}), 3000);
-        });
-        return;
-      } catch (e) {}
-    }
-  } catch (err) {
-    console.error("Error in message monitoring:", err);
-  }
-});
-
-// ===== NEW MEMBER GREETING =====
-bot.on("new_chat_members", async (msg) => {
-  try {
-    const chatId = msg.chat.id;
-    
-    // Get group settings and welcome message
-    const groupsDB = JSON.parse(fs.readFileSync("groups.json"));
-    const groupSettings = groupsDB.groups[chatId] || {};
-    
-    if (!groupSettings.welcome) return;
-    
-    // Send welcome message for each new member
-    for (const member of msg.new_chat_members) {
-      let welcomeMsg = groupSettings.welcome;
-      welcomeMsg = welcomeMsg.replace(/{user}/g, `@${member.username || member.first_name}`);
-      welcomeMsg = welcomeMsg.replace(/{name}/g, member.first_name);
-      welcomeMsg = welcomeMsg.replace(/{group}/g, msg.chat.title);
-      
-      await bot.sendMessage(chatId, welcomeMsg, { parse_mode: "Markdown" });
-    }
-  } catch (err) {
-    console.error("Error in new member greeting:", err);
-  }
-});
 
 // ===== GLOBAL CALLBACK: Verify Again (dari inline button join) =====
 bot.on("callback_query", async (query) => {
