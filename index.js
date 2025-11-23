@@ -79,6 +79,37 @@ bot.getMainKeyboard = () => {
   };
 };
 
+// ===== KEYBOARD HELPER WITH USER ROLE =====
+bot.getMainKeyboardUser = (userId) => {
+  try {
+    const isOwner = config.owner && config.owner.includes(userId);
+    const buttons = [
+      ['⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ', '⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ'],
+      ['⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ', '⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ'],
+      ['⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ', '⛓️ ʙᴀɢɪ ᴠᴄꜰ'],
+      ['⛓️ ɢᴀʙᴜɴɢ ᴛxᴛ', '⛓️ ɢᴀʙᴜɴɢ ᴠᴄꜰ'],
+      ['⛓️ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛ', '⛓️ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ'],
+      ['⛓️CEK KONTAK', '⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ'],
+      ['⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ', '⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ'],
+      ['🎁 Redeem Code']
+    ];
+    
+    // Only show MENU OWNER for owner role
+    if (isOwner) {
+      buttons.push(['⛓️MENU OWNER']);
+    }
+    
+    return {
+      keyboard: buttons,
+      resize_keyboard: true,
+      one_time_keyboard: false
+    };
+  } catch (err) {
+    // Fallback to default keyboard
+    return bot.getMainKeyboard();
+  }
+};
+
 // ===== GROUP VERIFICATION =====
 bot.checkGroupMembership = async (userId) => {
   try {
