@@ -13,7 +13,7 @@
 import fs from "fs";
 import path from "path";
 
-export default function (bot, db, saveDB) {
+export default function (bot, db, redeemDB, saveDB, saveRedeemDB) {
   const sessions = {};
   const userMessages = {};
 

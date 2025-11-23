@@ -11,6 +11,6 @@
  */
 
 // Feature BAGI VCF sudah dihapus
-export default function (bot, db, saveDB) {
+export default function (bot, db, redeemDB, saveDB, saveRedeemDB) {
   // Disabled
 }

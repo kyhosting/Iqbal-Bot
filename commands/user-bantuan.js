@@ -12,7 +12,7 @@
 
 import config from "../config.js";
 
-export default function (bot, db, saveDB) {
+export default function (bot, db, redeemDB, saveDB, saveRedeemDB) {
   const OWNER_USERNAME = config.ownerUsername;
   const userMessages = {};
 
