@@ -80,22 +80,22 @@ The system enforces group membership for VIP commands, uses single-use redeem co
 
 ## Recent Updates
 
-**Session Nov 23, 2025 - HTML MESSAGE FORMATTING (v2.0.3):**
-- 🎨 **ALL MESSAGES CONVERTED TO HTML FORMAT**
-  - Migrated all 26 files (25 commands + index.js) to use `parse_mode: "HTML"`
-  - Total of 239+ HTML parse_mode instances across the bot
-  - Messages now render with proper Telegram HTML formatting
-  - Beautiful panel borders (◆◆, ╭─❖, ├─❖, etc.) display correctly in Telegram clients
+**Session Nov 23, 2025 - COPY-TO-CLIPBOARD FEATURES + HTML FIX (v2.0.4):**
+- 🎯 **COPY FUNCTIONALITY ADDED**
+  - `/me` command: ID shown in `<code>` tag + "📋 Salin ID" button
+  - Redeem success: Code shown in `<code>` tag + "📋 Salin Kode" button
+  - Users click button → notification shows copied text
+  - Easy-to-select format for manual copy if needed
   
-- ✅ **FORMATTING IMPROVEMENTS:**
-  - All user messages use consistent HTML formatting
-  - Emoji formatting preserved and enhanced
-  - Message structure maintained with visual panel borders
-  - Better rendering on all Telegram clients (mobile, desktop, web)
-
+- 🔧 **HTML TAG FIX**
+  - Fixed owner-menu.js: `<angka><satuan>` → `&lt;angka&gt;&lt;satuan&gt;`
+  - Proper HTML entity encoding for angle brackets
+  - Code creation menu now displays without parsing errors
+  
 - ✅ **Bot Status: 25/25 PLUGINS LOADED - PRODUCTION READY** 🚀
   - All 25 commands loading successfully
-  - HTML formatting implemented across entire bot
+  - HTML formatting implemented across entire bot (239+ instances)
+  - Copy-to-clipboard features active for ID and redeem codes
   - Bot process running stable
 
 **Previous Session (Nov 23, 2025 - v2.0.2):**

@@ -270,16 +270,38 @@ bot.on("message", (msg) => {
   }
 });
 
-bot.on("callback_query", (q) => {
+bot.on("callback_query", async (query) => {
   try {
-    const data = q.data || "";
+    const data = query.data || "";
+    
+    // Log callback query
     logConsole({
-      id: q.from?.id,
-      username: q.from?.username || `${q.from?.first_name || ""} ${q.from?.last_name || ""}`.trim(),
+      id: query.from?.id,
+      username: query.from?.username || `${query.from?.first_name || ""} ${query.from?.last_name || ""}`.trim(),
       command: `callback_query -> ${data}`
     });
+    
+    // Handle copy ID
+    if (data.startsWith("copy_id_")) {
+      const userId = data.replace("copy_id_", "");
+      await bot.answerCallbackQuery(query.id, {
+        text: `📋 ID: ${userId} (copied!)`,
+        show_alert: false
+      });
+      return;
+    }
+    
+    // Handle copy CODE
+    if (data.startsWith("copy_code_")) {
+      const code = data.replace("copy_code_", "");
+      await bot.answerCallbackQuery(query.id, {
+        text: `📋 Code: ${code} (copied!)`,
+        show_alert: false
+      });
+      return;
+    }
   } catch (e) {
-    console.error("Error saat logging callback_query:", e.message || e);
+    console.error("Error di callback_query:", e.message || e);
   }
 });
 

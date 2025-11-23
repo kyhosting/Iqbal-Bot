@@ -173,7 +173,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ✅ VIP Activated!
 │
-│  Kode: ${code}
+│  Kode: <code>${code}</code>
 │
 │  Durasi: ${duration} hari
 │
@@ -181,7 +181,12 @@ export default function (bot, db, saveDB) {
 │
 │  💎 Selamat bersenang-senang!
 └─❖`,
-        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+        { parse_mode: "HTML", reply_markup: {
+          inline_keyboard: [
+            [{ text: "📋 Salin Kode", callback_data: `copy_code_${code}` }],
+            ...bot.getMainKeyboardUser(userId).keyboard
+          ]
+        }}
       );
     }
   });
