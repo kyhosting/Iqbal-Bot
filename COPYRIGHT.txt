@@ -1,0 +1,105 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║                    🎌 IQBAL CV BOT - OFFICIAL PROJECT 🎌                     ║
+║                                                                              ║
+║  📌 PROJECT INFORMATION                                                      ║
+║  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ║
+║  Project Name:    Iqbal CV Bot                                              ║
+║  Version:         2.1.0                                                     ║
+║  Type:            Telegram File Converter & Contact Manager Bot             ║
+║  Status:          Production Ready ✅                                        ║
+║  License:         MIT (Keep Credits Intact)                                 ║
+║                                                                              ║
+║  👥 OFFICIAL CREATORS                                                        ║
+║  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ║
+║  Lead Developer:      KIKI FZL                                              ║
+║  Co-Developer:        IQBAL DEV (Partner/Support)                           ║
+║  Full Credit Name:    KIKI FZL & PARTNER/SUPPORT IQBAL DEV                  ║
+║  Telegram Handle:     @Iqbaldev                                             ║
+║  GitHub:              https://github.com/kyhosting/Iqbal-Bot                ║
+║                                                                              ║
+║  ⚖️  LEGAL NOTICE                                                            ║
+║  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ║
+║  Copyright © 2025 KIKI FZL & IQBAL DEV                                      ║
+║  All Rights Reserved                                                        ║
+║                                                                              ║
+║  🔐 PROTECTION & RESTRICTIONS                                               ║
+║  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ║
+║                                                                              ║
+║  ✅ ALLOWED:                                                                 ║
+║    • Use this bot for personal purposes                                     ║
+║    • Use this bot for commercial purposes                                   ║
+║    • Modify the code for your own use                                       ║
+║    • Deploy on any hosting platform                                         ║
+║    • Create derivative works with proper attribution                        ║
+║                                                                              ║
+║  ❌ NOT ALLOWED:                                                             ║
+║    • Remove or hide copyright notices                                       ║
+║    • Remove watermarks or credits                                           ║
+║    • Rename project without permission                                      ║
+║    • Claim authorship of original code                                      ║
+║    • Redistribute without mentioning original creators                      ║
+║    • Commercial use without attribution                                     ║
+║    • Use for illegal/malicious purposes                                     ║
+║                                                                              ║
+║  🚫 ANTI-PIRACY MEASURES                                                    ║
+║  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ║
+║  This project contains:                                                     ║
+║    • Copyright headers in all source files                                  ║
+║    • Watermarks in configuration files                                      ║
+║    • Copyright notices in command files                                     ║
+║    • Console startup messages with credits                                  ║
+║    • Built-in protection against unauthorized redistribution                ║
+║                                                                              ║
+║  Violations will result in:                                                 ║
+║    • DMCA takedown notices                                                  ║
+║    • GitHub strikes/repository removal                                      ║
+║    • Legal action against violators                                         ║
+║    • Cease & desist orders                                                  ║
+║                                                                              ║
+║  📋 USAGE GUIDELINES                                                         ║
+║  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ║
+║  When using this bot, you MUST:                                             ║
+║    1. Keep all copyright notices intact                                     ║
+║    2. Mention "KIFZL & IQBAL DEV" in any public use                         ║
+║    3. Link to original repository                                           ║
+║    4. Not claim as your own creation                                        ║
+║    5. Maintain the watermark in config.js                                   ║
+║                                                                              ║
+║  📌 REQUIRED CREDITS IN:                                                     ║
+║    • README.md - Must mention KIFZL & IQBAL DEV                             ║
+║    • config.js - Watermark must remain                                      ║
+║    • index.js - Header must remain                                          ║
+║    • All command files - Keep copyright headers                             ║
+║    • LICENSE file - Keep unchanged                                          ║
+║    • Any derivative work - Clearly mark as based on Iqbal CV Bot            ║
+║                                                                              ║
+║  🔗 OFFICIAL LINKS                                                           ║
+║  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ║
+║  GitHub:       https://github.com/kyhosting/Iqbal-Bot                       ║
+║  Telegram:     @Iqbaldev                                                    ║
+║  Report Issues: GitHub Issues / Telegram DM                                 ║
+║                                                                              ║
+║  📞 CONTACT FOR VIOLATIONS                                                   ║
+║  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ║
+║  Report Copyright Violations:                                               ║
+║    • Telegram: @Iqbaldev                                                    ║
+║    • GitHub: https://github.com/kyhosting/Iqbal-Bot/issues                  ║
+║    • Email: (Contact via Telegram for abuse reports)                        ║
+║                                                                              ║
+║  🎁 VERSION INFORMATION                                                      ║
+║  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ║
+║  Current Version: 2.1.0                                                     ║
+║  Release Date: November 23, 2025                                            ║
+║  Last Updated: November 23, 2025                                            ║
+║  Status: Production Ready ✅                                                 ║
+║  Support: Active ✅                                                          ║
+║                                                                              ║
+║  ✨ Thank you for respecting our work!                                       ║
+║                                                                              ║
+║  Made with ❤️  by KIKI FZL & PARTNER/SUPPORT IQBAL DEV                      ║
+║  こんにちは 🎌                                                               ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+WATERMARK: 🎌 IQBAL CV BOT - OFFICIAL VERSION BY KIFZL & IQBAL DEV 🎌
