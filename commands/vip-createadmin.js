@@ -90,13 +90,14 @@ export default function (bot, db, saveDB) {
 
       session.numbers = numbers;
       session.step = 2;
-      return trackMessage(userId, chatId, `◆◆  CREATE ADMIN  ◆◆
+      return trackMessage(userId, chatId, `◆◆  ⛓️ ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ ⛓️  ◆◆
 
 ┌─❖
 │  ⏳ Processing...
 │
-│  Ketik 'done' untuk proses
-│  Ketik 'batal' untuk batalkan
+│  Perintah:
+│  • done  — proses & kirim hasil file
+│  • batal — batalkan proses
 └─❖`,  { parse_mode: "HTML" });
     }
 
