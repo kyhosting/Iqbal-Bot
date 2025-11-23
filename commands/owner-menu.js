@@ -59,8 +59,9 @@ export default function (bot, db, saveDB) {
     const keyboard = {
       inline_keyboard: [
         [{ text: "➕ Buat Kode", callback_data: "owner_create_code" }, { text: "📋 Lihat Kode", callback_data: "owner_list_codes" }],
-        [{ text: "🗑️ Hapus Kode", callback_data: "owner_delete_code" }, { text: "👥 Lihat User", callback_data: "owner_list_users" }],
-        [{ text: "📢 Broadcast", callback_data: "owner_broadcast" }, { text: "🎁 Set VIP Manual", callback_data: "owner_set_vip" }],
+        [{ text: "🗑️ Hapus Kode", callback_data: "owner_delete_code" }, { text: "👥 Lihat User VIP", callback_data: "owner_list_users" }],
+        [{ text: "📊 Semua User", callback_data: "owner_list_all_users" }, { text: "🎁 Set VIP Manual", callback_data: "owner_set_vip" }],
+        [{ text: "📢 Broadcast", callback_data: "owner_broadcast" }],
         [{ text: "◀️ Kembali ke Menu Biasa", callback_data: "kembali_menu_biasa" }]
       ]
     };
@@ -254,6 +255,40 @@ export default function (bot, db, saveDB) {
           message += `│     ID: ${user.id}\n`;
           message += `│     Exp: ${exp}\n`;
           if (i < vipUsers.length - 1) message += `│\n`;
+        });
+        message += `└─❖`;
+      }
+
+      const backKeyboard = {
+        inline_keyboard: [
+          [{ text: "◀️ Kembali ke Menu", callback_data: "owner_back_menu" }]
+        ]
+      };
+
+      await bot.answerCallbackQuery(query.id);
+      await bot.sendMessage(chatId, message, { parse_mode: "Markdown", reply_markup: backKeyboard });
+    }
+
+    // LIST ALL USERS
+    else if (data === "owner_list_all_users") {
+      const allUsers = Object.values(db.users);
+      let message = `◆◆  DAFTAR SEMUA USER (${allUsers.length})  ◆◆\n\n`;
+      if (allUsers.length === 0) {
+        message += `┌─❖\n│  ℹ️ Belum ada user\n└─❖`;
+      } else {
+        message += `┌─❖\n`;
+        allUsers.forEach((user, i) => {
+          const role = user.role === "owner" ? "👑 OWNER" : user.role === "vip" ? "💎 VIP" : "👤 USER";
+          const status = user.status === "active" ? "✅ Active" : user.status === "suspended" ? "⛔ Suspended" : "⏸️ Inactive";
+          const vipExp = user.vip_expired && user.vip_expired > Date.now() ? new Date(user.vip_expired).toLocaleDateString("id-ID") : "❌ Expired";
+          
+          message += `│  ${i + 1}. ${user.first_name}\n`;
+          message += `│     ID: ${user.id}\n`;
+          message += `│     Role: ${role}\n`;
+          message += `│     Status: ${status}\n`;
+          message += `│     VIP Exp: ${vipExp}\n`;
+          message += `│     Operasi: ${user.total_operation || 0}\n`;
+          if (i < allUsers.length - 1) message += `│\n`;
         });
         message += `└─❖`;
       }

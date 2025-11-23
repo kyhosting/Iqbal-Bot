@@ -91,8 +91,14 @@ The system enforces group membership for VIP commands, uses single-use redeem co
   - `⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ ⛓️` - Rename downloaded files
   
 - 🔧 **FIXED: Regex Pattern Matching**
-  - Updated 6 command files to match new trailing emoji format
-  - Fixed imports and VCF reconstruction in rename command
+  - Updated 10 command files to match new trailing emoji format
+  - All button text now match command regex patterns
   - All 25 commands now properly registered and working
+
+- 🎁 **NEW OWNER FEATURE: List All Users**
+  - Added `📊 Semua User` button to owner management panel
+  - Shows complete user list with: Role (Owner/VIP/User), Status, VIP Expiry, Operation Count
+  - Display format: Name | ID | Role | Status | VIP Expiry | Total Operations
+  - Original "👥 Lihat User" renamed to "👥 Lihat User VIP" (shows only active VIP users)
   
 - ✅ **Bot Status: 25/25 PLUGINS LOADED - PRODUCTION READY** 🚀
