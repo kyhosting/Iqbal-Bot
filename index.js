@@ -79,6 +79,44 @@ if (encPath && !fs.existsSync(encPath)) {
 
 console.log("✅ Bot siap dijalankan...");
 
+// ===== VALIDATE BOT TOKEN =====
+if (!config.token || config.token === "YOUR_BOT_TOKEN_HERE") {
+  console.error(`
+╔════════════════════════════════════════════════════════════╗
+║                   ❌ ERROR: INVALID TOKEN                  ║
+╚════════════════════════════════════════════════════════════╝
+
+🚫 Bot token is not configured!
+
+📝 STEPS TO FIX:
+
+1. Edit config.js:
+   nano config.js
+
+2. Find this line:
+   token: "YOUR_BOT_TOKEN_HERE",
+
+3. Get your token from @BotFather on Telegram:
+   - Open Telegram → Search: @BotFather
+   - Type: /newbot
+   - Follow instructions
+   - Copy the token (format: 1234567890:ABCDefghijklmnop...)
+
+4. Replace the token:
+   token: "YOUR_TOKEN_HERE",
+            ↑
+            Paste your real token here
+
+5. Save file (Ctrl+X → Y → Enter)
+
+6. Run bot again:
+   npm start
+
+🎌 For detailed guide, see: TERMUX_SETUP.md
+  `);
+  process.exit(1);
+}
+
 // ===== PASTIKAN FILE / FOLDER UTAMA ADA =====
 if (!fs.existsSync("./commands")) fs.mkdirSync("./commands");
 if (!fs.existsSync("./database.json")) {
