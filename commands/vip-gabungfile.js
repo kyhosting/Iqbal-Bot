@@ -182,26 +182,8 @@ export default function (bot, db, saveDB) {
 │  • batal — batalkan
 └─❖`;
 
-        // Jika ini file pertama, kirim pesan baru
-        if (session.files.length === 1) {
-          const sentMsg = await bot.sendMessage(chatId, panelText, { parse_mode: "HTML" });
-          session.panelMessageId = sentMsg.message_id;
-          return;
-        }
-
-        // Jika sudah ada file sebelumnya, edit pesan yang ada
-        if (session.panelMessageId) {
-          try {
-            await bot.editMessageText(panelText, {
-              chat_id: chatId,
-              message_id: session.panelMessageId,
-              parse_mode: "HTML"
-            });
-          } catch (e) {
-            console.error("Error editing message:", e);
-          }
-        }
-        return;
+        // Gunakan trackMessage untuk selalu update pesan yang sama
+        return trackMessage(userId, chatId, panelText, { parse_mode: "HTML" });
       } catch (e) {
         console.error(e);
         return bot.sendMessage(chatId, 
