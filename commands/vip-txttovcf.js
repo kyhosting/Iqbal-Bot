@@ -157,109 +157,92 @@ export default function (bot, db, saveDB) {
         : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
 
       session.step = 3;
-      const keyboard = {
-        inline_keyboard: [
-          [
-            { text: "✅ Done", callback_data: `txttovcf_done_${userId}` },
-            { text: "❌ Batal", callback_data: `txttovcf_batal_${userId}` }
-          ]
-        ]
-      };
       return bot.sendMessage(
         chatId,
         `◆◆  TXT TO VCF  ◆◆
 
 ┌─❖
 │  ⏳ Processing...
+│
+│  Ketik 'done' untuk proses
+│  Ketik 'batal' untuk batalkan
 └─❖`,
-        { parse_mode: "HTML", reply_markup: keyboard }
+        { parse_mode: "HTML" }
       );
     }
 
-  });
-
-  bot.on("callback_query", async (query) => {
-    const userId = query.from.id;
-    const chatId = query.message.chat.id;
-    const data = query.data;
-    const session = sessions[userId];
-
-    // Handle DONE button
-    if (data === `txttovcf_done_${userId}`) {
-      await bot.answerCallbackQuery(query.id);
-      if (!session || session.step !== 3) return;
-
-      try {
-        const content = fs.readFileSync(session.file, "utf8");
-        const lines = content.split("\n").filter((l) => l.trim());
-        const vcfEntries = lines.map((line) => {
-          const parts = line.split("◆");
-          const name = parts[0]?.trim() || "Kontak";
-          const phone = parts[1]?.trim() || "0";
-          return createVcfEntry(phone, name);
-        });
-
-        const vcfContent = vcfEntries.join("\n\n");
-        const outputPath = path.join(
-          process.cwd(),
-          `${session.newFileName}.vcf`
-        );
-        fs.writeFileSync(outputPath, vcfContent);
-
-        await bot.sendDocument(chatId, outputPath, {}, {
-          filename: `${session.newFileName}.vcf`,
-        });
-
-        bot.incrementOperation(userId);
-        if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
-        if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
-
-        delete sessions[userId];
-        return sendWithDelete(
-          userId,
-          chatId,
-          `◆◆  SUKSES  ◆◆
-
-┌─❖
-│  ✅ File VCF dibuat
-│
-│  ${lines.length} kontak
-└─❖`,
-          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-        );
-      } catch (e) {
+    if (session.step === 3) {
+      if (/^batal$/i.test(text)) {
         if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
         delete sessions[userId];
         return sendWithDelete(
           userId,
           chatId,
-          `◆◆  ERROR  ◆◆
-
-┌─❖
-│  ❌ Ada masalah
-└─❖`,
-          { parse_mode: "HTML" }
-        );
-      }
-    }
-
-    // Handle BATAL button
-    if (data === `txttovcf_batal_${userId}`) {
-      await bot.answerCallbackQuery(query.id);
-      if (!session || session.step !== 3) return;
-
-      if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
-      delete sessions[userId];
-      return sendWithDelete(
-        userId,
-        chatId,
-        `◆◆  DIBATALKAN  ◆◆
+          `◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
 │  ❌ Proses dibatalkan
 └─❖`,
-        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-      );
+          { parse_mode: "HTML" }
+        );
+      }
+
+      if (/^done$/i.test(text)) {
+        try {
+          const content = fs.readFileSync(session.file, "utf8");
+          const lines = content.split("\n").filter((l) => l.trim());
+          const vcfEntries = lines.map((line) => {
+            const parts = line.split("◆");
+            const name = parts[0]?.trim() || "Kontak";
+            const phone = parts[1]?.trim() || "0";
+            return createVcfEntry(phone, name);
+          });
+
+          const vcfContent = vcfEntries.join("\n\n");
+          const outputPath = path.join(
+            process.cwd(),
+            `${session.newFileName}.vcf`
+          );
+          fs.writeFileSync(outputPath, vcfContent);
+
+          await bot.sendDocument(chatId, outputPath, {}, {
+            filename: `${session.newFileName}.vcf`,
+          });
+
+          bot.incrementOperation(userId);
+          if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
+          if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
+
+          delete sessions[userId];
+          return sendWithDelete(
+            userId,
+            chatId,
+            `◆◆  SUKSES  ◆◆
+
+┌─❖
+│  ✅ File VCF dibuat
+│
+│  ${vcfEntries.length} kontak
+└─❖`,
+            { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+          );
+        } catch (e) {
+          if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
+          delete sessions[userId];
+          return sendWithDelete(
+            userId,
+            chatId,
+            `◆◆  ERROR  ◆◆
+
+┌─❖
+│  ❌ Ada masalah
+└─❖`,
+            { parse_mode: "HTML" }
+          );
+        }
+      }
     }
+
   });
+
 }
