@@ -2,11 +2,12 @@ import fs from "fs";
 import path from "path";
 
 function createVcfEntry(phone, name) {
+  const prefix = phone.toString().startsWith("0") ? "" : "+";
   return [
     "BEGIN:VCARD",
     "VERSION:3.0",
     `FN:${name}`,
-    `TEL;TYPE=CELL:+${phone.replace(/\D/g, "")}`,
+    `TEL;TYPE=CELL:${prefix}${phone}`,
     "END:VCARD",
   ].join("\n");
 }
