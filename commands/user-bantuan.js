@@ -29,7 +29,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ Fitur grup hanya untuk VIP users kak!
 └─❖`,
-        { parse_mode: "HTML" }
+        { parse_mode: "Markdown" }
       );
     }
 
@@ -45,7 +45,7 @@ export default function (bot, db, saveDB) {
 │
 │  Harus join grup terlebih dahulu
 └─❖`,
-        { parse_mode: "HTML" }
+        { parse_mode: "Markdown" }
       );
     }
 
@@ -87,7 +87,7 @@ export default function (bot, db, saveDB) {
 └─❖`;
 
     await trackMessage(userId, chatId, message, {
-      parse_mode: "HTML",
+      parse_mode: "Markdown",
       reply_markup: keyboard
     });
   });
@@ -142,7 +142,7 @@ export default function (bot, db, saveDB) {
 └─❖`;
 
       await trackMessage(userId, chatId, message, {
-        parse_mode: "HTML",
+        parse_mode: "Markdown",
         reply_markup: keyboard
       });
 
@@ -186,7 +186,7 @@ export default function (bot, db, saveDB) {
 └─❖`;
 
       await trackMessage(userId, chatId, message, {
-        parse_mode: "HTML",
+        parse_mode: "Markdown",
         reply_markup: keyboard
       });
 

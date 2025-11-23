@@ -36,7 +36,7 @@ export default function (bot, db, saveDB) {
 │  ❌ Akses Ditolak
 │
 │  Fitur khusus VIP
-└─❖`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`,  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
     }
 
     sessions[userId] = { step: 1 };
@@ -49,7 +49,7 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'done' untuk selesai
 │  Ketik 'batal' untuk batal
-└─❖`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`,  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
   });
 
   bot.on("message", async (msg) => {
@@ -66,7 +66,7 @@ export default function (bot, db, saveDB) {
 
 ┌─❖
 │  ❌ Proses dibatalkan
-└─❖`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`,  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       if (!msg.document || !msg.document.file_name.endsWith(".vcf")) {
@@ -74,7 +74,7 @@ export default function (bot, db, saveDB) {
 
 ┌─❖
 │  ⚠️ Kirim file VCF
-└─❖`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`,  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       try {
@@ -99,7 +99,7 @@ export default function (bot, db, saveDB) {
         if (total === 0) {
           fs.unlinkSync(localPath);
           delete sessions[userId];
-          return trackMessage(userId, chatId, "⚠️ Tidak ditemukan nama kontak di file ini Kak 😔",  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+          return trackMessage(userId, chatId, "⚠️ Tidak ditemukan nama kontak di file ini Kak 😔",  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
         }
 
         let hasil = `📋 Daftar Kontak:\n\n📊 <b>Total: ${total} kontak</b>\n\n`;
@@ -107,7 +107,7 @@ export default function (bot, db, saveDB) {
 
         if (total > 100) hasil += `\n\n⚠️ Ditampilkan 100 dari ${total} kontak.`;
 
-        await bot.sendMessage(chatId, hasil,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+        await bot.sendMessage(chatId, hasil,  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
         bot.incrementOperation(userId);
 
         if (total > 100) {
@@ -121,7 +121,7 @@ export default function (bot, db, saveDB) {
         delete sessions[userId];
       } catch (err) {
         console.error("Gagal memproses VCF:", err);
-        bot.sendMessage(chatId, "⚠️ Yah… gagal baca file VCF 😔\n\nPastikan formatnya benar ya!",  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+        bot.sendMessage(chatId, "⚠️ Yah… gagal baca file VCF 😔\n\nPastikan formatnya benar ya!",  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
         try {
           if (session.file) fs.unlinkSync(session.file);
         } catch {}

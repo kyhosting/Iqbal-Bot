@@ -35,7 +35,7 @@ export default function (bot, db, saveDB) {
 │
 │  Fitur khusus VIP
 └─❖`,
-        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
 
@@ -60,7 +60,7 @@ export default function (bot, db, saveDB) {
 │  Ketik 'done' selesai
 │  Ketik 'batal' batalkan
 └─❖`,
-      { parse_mode: "HTML" }
+      { parse_mode: "Markdown" }
     );
   });
 
@@ -83,7 +83,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ Proses dibatalkan
 └─❖`,
-          { parse_mode: "HTML" }
+          { parse_mode: "Markdown" }
         );
       }
 
@@ -95,7 +95,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ⚠️ Kirim file .vcf
 └─❖`,
-          { parse_mode: "HTML" }
+          { parse_mode: "Markdown" }
         );
       }
 
@@ -122,7 +122,7 @@ export default function (bot, db, saveDB) {
 │
 │  (Tanpa ekstensi)
 └─❖`,
-        { parse_mode: "HTML" }
+        { parse_mode: "Markdown" }
       );
     }
 
@@ -138,7 +138,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ Proses dibatalkan
 └─❖`,
-          { parse_mode: "HTML" }
+          { parse_mode: "Markdown" }
         );
       }
 
@@ -161,7 +161,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ⚠️ Tidak ada nomor ditemukan
 └─❖`,
-            { parse_mode: "HTML" }
+            { parse_mode: "Markdown" }
           );
         }
 
@@ -187,7 +187,7 @@ export default function (bot, db, saveDB) {
 │
 │  ${numbers.length} nomor
 └─❖`,
-          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       } catch (e) {
         if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
@@ -200,7 +200,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ Ada masalah
 └─❖`,
-          { parse_mode: "HTML" }
+          { parse_mode: "Markdown" }
         );
       }
     }

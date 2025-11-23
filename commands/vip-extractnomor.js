@@ -36,7 +36,7 @@ export default function (bot, db, saveDB) {
 │  ❌ Akses Ditolak
 │
 │  Fitur khusus VIP
-└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
     }
 
     sessions[userId] = { step: 1 };
@@ -53,7 +53,7 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'done' untuk selesai
 │  Ketik 'batal' untuk batal
-└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
   });
 
   bot.on("message", async (msg) => {
@@ -70,7 +70,7 @@ export default function (bot, db, saveDB) {
 
 ┌─❖
 │  ❌ Proses dibatalkan
-└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       if (!msg.document) {
@@ -80,7 +80,7 @@ export default function (bot, db, saveDB) {
 │  ⚠️ Kirim file dulu
 │
 │  VCF, TXT, XLSX, CSV
-└─❖`, { parse_mode: "HTML" });
+└─❖`, { parse_mode: "Markdown" });
       }
 
       const fileName = msg.document.file_name || "";
@@ -96,7 +96,7 @@ export default function (bot, db, saveDB) {
 │  ⚠️ Format tidak didukung
 │
 │  Gunakan: VCF, TXT, XLSX, CSV
-└─❖`, { parse_mode: "HTML" });
+└─❖`, { parse_mode: "Markdown" });
       }
 
       try {
@@ -121,7 +121,7 @@ export default function (bot, db, saveDB) {
 │  📝 Nama file output?
 │
 │  (Tanpa ekstensi)
-└─❖`, { parse_mode: "HTML" });
+└─❖`, { parse_mode: "Markdown" });
       } catch (err) {
         console.error("Download error:", err);
         delete sessions[userId];
@@ -129,7 +129,7 @@ export default function (bot, db, saveDB) {
 
 ┌─❖
 │  ⚠️ Download gagal
-└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
     }
 
@@ -141,7 +141,7 @@ export default function (bot, db, saveDB) {
 
 ┌─❖
 │  ❌ Proses dibatalkan
-└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       const outputName = text.trim().replace(/[^a-zA-Z0-9-_]/g, "_") || "nomor_hasil";
@@ -171,7 +171,7 @@ export default function (bot, db, saveDB) {
 │  File: ${session.fileName}
 │
 │  Total: ${uniqueNumbers.length} nomor
-└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
 
         await bot.sendDocument(chatId, outputFile);
         
@@ -188,7 +188,7 @@ export default function (bot, db, saveDB) {
 
 ┌─❖
 │  ⚠️ Ekstrak gagal
-└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
     }
   });

@@ -53,7 +53,7 @@ export default function (bot, db, saveDB) {
 │  Ketik 'start' untuk refresh
 │  Ketik 'bantuan' untuk help
 └─❖`,
-        { parse_mode: "HTML", reply_markup: verifyKeyboard }
+        { parse_mode: "Markdown", reply_markup: verifyKeyboard }
       );
     }
 
@@ -76,7 +76,7 @@ export default function (bot, db, saveDB) {
 │
 │  Klik tombol di bawah
 └─❖`,
-      { parse_mode: "HTML", reply_markup: verifyKeyboard }
+      { parse_mode: "Markdown", reply_markup: verifyKeyboard }
     );
   });
 
@@ -111,7 +111,7 @@ export default function (bot, db, saveDB) {
           await bot.sendMessage(
             chatId,
             `❌ Harus join kedua grup dulu Kak`,
-            { parse_mode: "HTML", reply_markup: joinKeyboard }
+            { parse_mode: "Markdown", reply_markup: joinKeyboard }
           );
         } catch (err) {
           console.error("Error di verify_join:", err);
