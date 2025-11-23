@@ -26,7 +26,8 @@ export default function (bot, db, saveDB) {
     const role = bot.getRole(userId);
 
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(
+      return trackMessage(
+        userId,
         chatId,
         `◆◆  VCF TO TXT  ◆◆
 
@@ -88,7 +89,8 @@ export default function (bot, db, saveDB) {
       }
 
       if (!msg.document || !msg.document.file_name.endsWith(".vcf")) {
-        return bot.sendMessage(
+        return trackMessage(
+          userId,
           chatId,
           `◆◆  VCF TO TXT  ◆◆
 
@@ -111,7 +113,8 @@ export default function (bot, db, saveDB) {
       session.originalName = msg.document.file_name.replace(".vcf", "");
       session.step = 2;
 
-      return bot.sendMessage(
+      return trackMessage(
+        userId,
         chatId,
         `◆◆  VCF TO TXT  ◆◆
 

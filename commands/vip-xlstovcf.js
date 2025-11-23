@@ -41,7 +41,8 @@ END:VCARD`;
 
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(
+      return trackMessage(
+        userId,
         chatId,
         `◆◆  XLS TO VCF  ◆◆
 
