@@ -67,37 +67,13 @@ bot.getMainKeyboard = () => {
     keyboard: [
       ['⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ', '⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ'],
       ['⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ', '⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ'],
-      ['⛓️ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ', '⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ'],
-      ['⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ', '⛓️ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛ'],
-      ['⛓️ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ', '⛓️CEK KONTAK'],
-      ['⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ', '⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ'],
-      ['⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ', '🎁 Redeem Code'],
-      ['⛓️MENU OWNER']
+      ['⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ', '⛓️ ʙᴀɢɪ ᴠᴄꜰ'],
+      ['⛓️ ɢᴀʙᴜɴɢ ᴛxᴛ', '⛓️ ɢᴀʙᴜɴɢ ᴠᴄꜰ'],
+      ['⛓️ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛ', '⛓️ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ'],
+      ['⛓️CEK KONTAK', '⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ'],
+      ['⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ', '⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ'],
+      ['🎁 Redeem Code', '⛓️MENU OWNER']
     ],
-    resize_keyboard: true,
-    one_time_keyboard: false
-  };
-};
-
-// ===== KEYBOARD HELPER FOR USER (Filter berdasarkan role) =====
-bot.getMainKeyboardUser = (userId) => {
-  const baseKeyboard = [
-    ['⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ', '⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ'],
-    ['⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ', '⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ'],
-    ['⛓️ ᴇxᴛʀᴀᴋ ɴᴏᴍᴏʀ', '⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ'],
-    ['⛓️ ɢᴀʙᴜɢ ꜰɪʟᴇ', '⛓️ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛ'],
-    ['⛓️ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ', '⛓️CEK KONTAK'],
-    ['⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ', '⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ'],
-    ['⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ', '🎁 Redeem Code']
-  ];
-  
-  // Tambah MENU OWNER hanya untuk owner
-  if (config.owner.includes(userId)) {
-    baseKeyboard.push(['⛓️MENU OWNER']);
-  }
-  
-  return {
-    keyboard: baseKeyboard,
     resize_keyboard: true,
     one_time_keyboard: false
   };
@@ -140,39 +116,19 @@ bot.getRole = (userId) => {
   const user = db.users[userId];
   if (!user) return "user";
 
-  // Check VIP/TRIAL expiry
+  // Check VIP expiry
   if (user.vip_expired && user.vip_expired !== 0 && Date.now() > user.vip_expired) {
     user.role = "user";
     user.vip_expired = 0;
     user.status = "inactive";
-    user.notified_expiry = false;
     saveDB();
-    bot.sendMessage(userId, `⏰ *Masa Trial/VIP kamu sudah habis Kak*\nSekarang kembali jadi user biasa ya 😊`, {
-      parse_mode: "HTML",
+    bot.sendMessage(userId, `⏰ *Masa VIP kamu sudah habis Kak*\nSekarang kembali jadi user biasa ya 😊`, {
+      parse_mode: "Markdown",
       reply_markup: bot.getMainKeyboard()
     }).catch(() => {});
   }
   
   return user.role || "user";
-};
-
-// ===== HELPER: DELETE THEN SEND (Auto Clear Chat System) =====
-bot.deleteAndSend = async (query, newText, newMarkup = null) => {
-  try {
-    // Delete old message with button
-    await bot.deleteMessage(query.message.chat.id, query.message.message_id).catch(() => {});
-    
-    // Small delay for smooth transition
-    await delay(300);
-    
-    // Send new message
-    const options = { parse_mode: "HTML" };
-    if (newMarkup) options.reply_markup = newMarkup;
-    
-    await bot.sendMessage(query.message.chat.id, newText, options);
-  } catch (err) {
-    console.error("deleteAndSend error:", err);
-  }
 };
 
 // ===== HELPER: VERIFY GROUP MEMBERSHIP FOR VIP COMMANDS =====
@@ -184,21 +140,17 @@ bot.verifyGroupAccess = async (userId, chatId) => {
   const groupCheck = await bot.checkGroupMembership(userId);
   
   if (!groupCheck.verified) {
-    const groupMainDeeplink = `https://t.me/agentviber12?join`;
-    const groupCvDeeplink = `https://t.me/channelviber?join`;
-
-    const joinKeyboard = {
-      inline_keyboard: [
-        [{ text: "📱 @agentviber12", url: groupMainDeeplink }],
-        [{ text: "📱 @channelviber", url: groupCvDeeplink }],
-        [{ text: "✅ Sudah Join", callback_data: "verify_again" }]
-      ]
-    };
+    const missingGroups = [];
+    if (!groupCheck.inGroup1) missingGroups.push(`@agentviber12`);
+    if (!groupCheck.inGroup2) missingGroups.push(`@channelviber`);
     
     await bot.sendMessage(
       chatId,
-      `⚠️ Wajib join 2 grup untuk akses`,
-      { reply_markup: joinKeyboard }
+      `⚠️ *Akses Ditolak Kak!*\n\n` +
+      `Kamu harus tetap join grup ini ya:\n` +
+      `${missingGroups.map(g => `• ${g}`).join('\n')}\n\n` +
+      `Setelah join, coba lagi 😊`,
+      { parse_mode: "Markdown" }
     );
     
     return false;
@@ -214,151 +166,136 @@ bot.incrementOperation = (userId) => {
   }
 };
 
-// Attach bot references
+// ===== AUTO CHECK VIP EXPIRE =====
+setInterval(() => {
+  for (const id in db.users) {
+    const user = db.users[id];
+    if (user.vip_expired && user.vip_expired !== 0 && Date.now() > user.vip_expired) {
+      user.role = "user";
+      user.vip_expired = 0;
+      user.status = "inactive";
+      bot.sendMessage(id, "⏰ *Masa VIP kamu telah berakhir Kak* 😊\nKembali jadi user biasa ya~", { 
+        parse_mode: "Markdown",
+        reply_markup: bot.getMainKeyboard()
+      }).catch(() => {});
+    }
+  }
+  saveDB();
+}, 60 * 60 * 1000); // cek tiap 1 jam
+
+// ===== EXPOSE REDEEM DB =====
 bot.redeemDB = redeemDB;
 bot.saveRedeemDB = saveRedeemDB;
 
-// ===== LOAD COMMANDS =====
-console.log("\n📦 Loading command modules...");
-const commandsDir = "./commands";
-const commandFiles = fs.readdirSync(commandsDir).filter(f => f.endsWith(".js"));
-
-for (const file of commandFiles) {
-  try {
-    const commandPath = `./commands/${file}`;
-    const { default: commandModule } = await import(commandPath);
-    commandModule(bot, db, saveDB);
-    console.log(`   ✅ ${file}`);
-  } catch (err) {
-    console.error(`   ❌ Error loading ${file}:`, err.message);
-  }
+// ===================== LOGGING SYSTEM =====================
+function logConsole({ id, username, command }) {
+  const log = `[${new Date().toISOString()}] ID: ${id} | USER: ${username || "-"} | CMD: ${command}\n`;
+  fs.appendFileSync("logs.txt", log);
+  console.log(log);
 }
 
-// ===== HELPER: Show Dashboard (with profile photo) =====
-bot.showDashboard = async (userId, chatId) => {
-  let user = db.users[userId];
-
-  // Jika user belum ada, tambahkan ke database + kasih trial 1 hari
-  if (!user) {
-    const trialExpired = Date.now() + 1 * 24 * 60 * 60 * 1000;
-    db.users[userId] = {
-      id: userId,
-      username: (await bot.getChat(userId)).username || "",
-      first_name: (await bot.getChat(userId)).first_name || "",
-      last_name: (await bot.getChat(userId)).last_name || "",
-      role: config.owner.includes(userId) ? "owner" : "trial",
-      vip_expired: config.owner.includes(userId) ? 0 : trialExpired,
-      status: "active",
-      total_operation: 0,
-      notified_expiry: false,
-      trial_start: Date.now(),
-      suspended: false
-    };
-    saveDB();
-
-    // Notif trial diberikan (hanya untuk non-owner)
-    if (!config.owner.includes(userId)) {
-      await bot.sendMessage(
-        userId,
-        `🎁 *TRIAL 1 HARI GRATIS!*\n\nSelamat! Kamu sudah verifikasi grup 🎉\n\n✅ Akses trial selama 1 hari sudah aktif!\n⏰ Berlaku sampai: ${new Date(trialExpired).toLocaleDateString("id-ID")}\n\nNikmati semua fitur premium dulu ya Kak! 💎\nSetelah trial habis, beli VIP untuk terus akses 😊`,
-        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-      ).catch(() => {});
-    }
-  } else {
-    // User sudah ada - restore jika suspended
-    if (user.suspended && user.vip_expired && user.vip_expired > Date.now()) {
-      user.suspended = false;
-      user.status = "active";
-      if (!user.role || user.role === "user") {
-        user.role = user.trial_start ? "trial" : "vip";
-      }
-      saveDB();
-
-      const daysLeft = Math.ceil((user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24));
-      await bot.sendMessage(
-        userId,
-        `✅ *Akses Dipulihkan Kak!*\n\nKamu sudah join kedua grup 🎉\n\n✨ Trial/VIP kamu aktif kembali!\n⏰ Sisa: *${daysLeft} hari*\n\nLanjut nikmati fitur premium ya 😊`,
-        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-      ).catch(() => {});
-    }
-  }
-
-  // Get user data (refresh)
-  user = db.users[userId];
-  const role = bot.getRole(userId);
-
-  // Hitung sisa hari VIP
-  let expired = "Tidak Aktif";
-  let remaining = "0 hari";
-  let status = user.status || "inactive";
-
-  if (user.vip_expired && user.vip_expired > Date.now()) {
-    const expDate = new Date(user.vip_expired);
-    expired = expDate.toLocaleDateString("id-ID");
-    const daysLeft = Math.ceil((user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24));
-    remaining = `${daysLeft} hari`;
-    status = "active";
-  }
-
-  // Caption dengan format EXACT (tidak boleh diubah sekalipun 1 huruf)
-  const caption = `🎌 iqbal ᴄᴠ ʙᴏᴛꜱ\n(by iqbaldev)\n\n╭─❖\n│ こんにちは、私は Iqbalʙᴏᴛ です。\n│ 私はファイル変換と管理を担当します。\n│ ✦ Created by: @Iqbaldev\n╰───────────────❖\n\n╭─❖ ꜱᴛᴀᴛᴜꜱ ᴀᴋᴄᴇꜱ\n│ ➤ Nama: *${user.first_name || "User"}*\n│ ➤ ID: \`${userId}\`\n│ ➤ Username: @${user.username || "-"}\n│ ➤ Role: *${role.toUpperCase()}*\n│ ➤ Status: *${status === "active" ? "✅ Aktif" : "❌ Tidak Aktif"}*\n│ ➤ Masa Aktif: *${expired}*\n│ ➤ Hari Tersisa: *${remaining}*\n│ ➤ Total Operasi: *${user.total_operation || 0}*\n╰───────────────❖\n\n╭─❖ ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ\n│ ➤ 📄 TXT 📇 VCF 📊 XLSX\n│ ➤ 他の形式も順次対応予定です。\n╰───────────────❖\n\n╭─❖ ᴍᴇɴᴜ ʙᴏᴛ\n│ ➤ ⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ\n│ ➤ ⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ\n│ ➤ ⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ\n│ ➤ ⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ\n│ ➤ ⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ\n│ ➤ ⛓️ ꜱᴘʟɪᴛ ꜰɪʟᴇ\n│ ➤ ⛓️ ɢᴀʙᴜɢ ꜰɪʟᴇ\n│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ\n│ ➤ ⛓️ ᴀᴍʙɪʟ ɴᴀᴍᴀ ꜰɪʟᴇ\n│ ➤ ⛓️ ʙᴜᴀᴛ ɴᴀᴍᴀ\n│ ➤ ⛓️ ᴀᴅᴍ & ɴᴀᴠʏ\n│ ➤ ⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ\n│ ➤ ⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ\n╰───────────────❖\n\n💎 ご利用ありがとうございます。\nこのボットは常に進化しています ⚙️`;
-
+bot.on("message", (msg) => {
   try {
-    const photos = await bot.getUserProfilePhotos(userId, { limit: 1 });
-    if (photos.total_count > 0) {
-      const fileId = photos.photos[0][0].file_id;
-      await bot.sendPhoto(chatId, fileId, {
-        caption: caption,
-        parse_mode: "HTML",
-        reply_markup: bot.getMainKeyboardUser(userId)
-      });
-    } else {
-      await bot.sendMessage(chatId, caption, {
-        parse_mode: "HTML",
-        reply_markup: bot.getMainKeyboardUser(userId)
+    if (!msg || !msg.text) return;
+    const text = String(msg.text).trim();
+    if (text.startsWith("/") || text.startsWith("⛓️") || text.startsWith("🎁")) {
+      const cmd = text.split(/\s+/)[0].split("@")[0];
+      logConsole({
+        id: msg.from?.id || (msg.chat && msg.chat.id) || "unknown",
+        username: msg.from?.username || `${msg.from?.first_name || ""} ${msg.from?.last_name || ""}`.trim(),
+        command: cmd
       });
     }
-  } catch (err) {
-    console.error("Error getting profile photo:", err);
-    await bot.sendMessage(chatId, caption, {
-      parse_mode: "HTML",
-      reply_markup: bot.getMainKeyboardUser(userId)
-    });
+  } catch (e) {
+    console.error("Error saat logging message:", e.message || e);
   }
-};
+});
 
-// ===== GLOBAL CALLBACK: Verify Again (dari inline button join) =====
-bot.on("callback_query", async (query) => {
-  if (query.data === "verify_again") {
-    const userId = query.from.id;
-    const chatId = query.message.chat.id;
-    const messageId = query.message.message_id;
-    
-    await bot.answerCallbackQuery(query.id);
-    
-    const groupCheck = await bot.checkGroupMembership(userId);
-    
-    if (!groupCheck.verified) {
-      // Still not joined
-      await bot.answerCallbackQuery(query.id, {
-        text: "⚠️ Masih belum join kedua grup!",
-        show_alert: true
-      });
-    } else {
-      // User sudah join - DELETE message & show dashboard with photo
-      try {
-        await bot.deleteMessage(chatId, messageId).catch(() => {});
-        await delay(300);
-        
-        // Show dashboard aesthetic dengan foto profil
-        await bot.showDashboard(userId, chatId);
-      } catch (err) {
-        console.error("Error di verify_again callback:", err);
-      }
+bot.on("callback_query", (q) => {
+  try {
+    const data = q.data || "";
+    logConsole({
+      id: q.from?.id,
+      username: q.from?.username || `${q.from?.first_name || ""} ${q.from?.last_name || ""}`.trim(),
+      command: `callback_query -> ${data}`
+    });
+  } catch (e) {
+    console.error("Error saat logging callback_query:", e.message || e);
+  }
+});
+
+// ===================== LOAD PLUGINS =====================
+async function loadPlugins() {
+  await delay(1000);
+  const PLUGIN_FOLDER = path.join("./commands");
+  const commandFiles = fs.readdirSync(PLUGIN_FOLDER).filter(f => f.endsWith(".js"));
+  let loadedPlugins = [];
+  let failedPlugins = [];
+
+  for (const file of commandFiles) {
+    try {
+      const { default: command } = await import(`./commands/${file}?t=${Date.now()}`);
+      command(bot, db, saveDB);
+      loadedPlugins.push(file);
+      await delay(100);
+    } catch (err) {
+      failedPlugins.push({ file, error: err.message });
+    }
+  }
+
+  console.log("=======================================");
+  if (failedPlugins.length > 0) {
+    console.log("⚠ Ada plugin gagal load:");
+    failedPlugins.forEach(p => console.log(`- ${p.file}: ${p.error}`));
+    console.log("---------------------------------------");
+  }
+
+  if (loadedPlugins.length > 20) {
+    console.log(`✅ Total plugins: ${loadedPlugins.length} berhasil berjalan...`);
+  } else {
+    console.log(`✅ Berhasil load plugins (${loadedPlugins.length}):`);
+    loadedPlugins.forEach(f => console.log(f));
+  }
+  console.log("=======================================\n\n\n");
+
+  return commandFiles.length;
+}
+
+// ===================== HOT RELOAD PLUGINS =====================
+fs.watch("./commands", async (eventType, filename) => {
+  if (filename && filename.endsWith(".js")) {
+    console.log(`♻ Reloading plugin: ${filename}`);
+    try {
+      const modulePath = `./commands/${filename}?update=${Date.now()}`;
+      const { default: command } = await import(modulePath);
+      command(bot, db, saveDB);
+      console.log(`✅ ${filename} reloaded successfully`);
+    } catch (err) {
+      console.error(`❌ Error reload ${filename}:`, err.message);
     }
   }
 });
 
-console.log(`\n🟢 Telegram Bot Initializing...`);
-console.log(`📦 Loading modules...`);
-console.log(`✅ Bot siap dijalankan...`);
+// ===================== BOT INFO =====================
+async function showBotInfo(commandCount) {
+  await delay(3000);
+  bot.getMe().then(info => {
+    console.log("======================================");
+    console.log("✅ Bot sedang berjalan...");
+    console.log(`🤖 Nama Bot : ${info.first_name}`);
+    console.log(`🔹 Username : @${info.username}`);
+    console.log(`🆔 ID Bot    : ${info.id}`);
+    console.log(`📂 Commands  : ${commandCount} file`);
+    console.log(`👥 Total User: ${Object.keys(db.users).length}`);
+    console.log(`🕒 Start Time: ${new Date().toLocaleString()}`);
+    console.log("======================================");
+  }).catch(err => {
+    console.log("Gagal mengambil informasi bot:", err);
+  });
+}
+
+// ===================== START =====================
+(async () => {
+  const count = await loadPlugins();
+  await showBotInfo(count);
+})();

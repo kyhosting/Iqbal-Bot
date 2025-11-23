@@ -13,7 +13,7 @@ export default function (bot, db, saveDB) {
       } catch (e) {}
     }
     const msg = await bot.sendMessage(chatId, text, options);
-    userMessages[userId] = msg.messageid;
+    userMessages[userId] = msg.message_id;
     return msg;
   }
 
@@ -30,17 +30,17 @@ export default function (bot, db, saveDB) {
     
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return trackMessage(userId, chatId, ◆◆  EKSTRAK NOMOR  ◆◆
+      return trackMessage(userId, chatId, `◆◆  EKSTRAK NOMOR  ◆◆
 
 ┌─❖
 │  ❌ Akses Ditolak
 │
 │  Fitur khusus VIP
-└─❖, { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
     }
 
     sessions[userId] = { step: 1 };
-    trackMessage(userId, chatId, ◆◆  EKSTRAK NOMOR  ◆◆
+    trackMessage(userId, chatId, `◆◆  EKSTRAK NOMOR  ◆◆
 
 ┌─❖
 │  Extract Phone Numbers
@@ -53,7 +53,7 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'done' untuk selesai
 │  Ketik 'batal' untuk batal
-└─❖, { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
   });
 
   bot.on("message", async (msg) => {
@@ -66,43 +66,43 @@ export default function (bot, db, saveDB) {
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return sendWithDelete(userId, chatId, ◆◆  DIBATALKAN  ◆◆
+        return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
 │  ❌ Proses dibatalkan
-└─❖, { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       if (!msg.document) {
-        return trackMessage(userId, chatId, ◆◆  EKSTRAK NOMOR  ◆◆
+        return trackMessage(userId, chatId, `◆◆  EKSTRAK NOMOR  ◆◆
 
 ┌─❖
 │  ⚠️ Kirim file dulu
 │
 │  VCF, TXT, XLSX, CSV
-└─❖, { parsemode: "Markdown" });
+└─❖`, { parse_mode: "Markdown" });
       }
 
-      const fileName = msg.document.filename || "";
+      const fileName = msg.document.file_name || "";
       const isVcf = fileName.endsWith(".vcf");
       const isTxt = fileName.endsWith(".txt");
       const isXls = fileName.endsWith(".xlsx") || fileName.endsWith(".xls");
       const isCsv = fileName.endsWith(".csv");
 
       if (!isVcf && !isTxt && !isXls && !isCsv) {
-        return trackMessage(userId, chatId, ◆◆  EKSTRAK NOMOR  ◆◆
+        return trackMessage(userId, chatId, `◆◆  EKSTRAK NOMOR  ◆◆
 
 ┌─❖
 │  ⚠️ Format tidak didukung
 │
 │  Gunakan: VCF, TXT, XLSX, CSV
-└─❖, { parsemode: "Markdown" });
+└─❖`, { parse_mode: "Markdown" });
       }
 
       try {
-        const fileId = msg.document.fileid;
+        const fileId = msg.document.file_id;
         const file = await bot.getFile(fileId);
-        const fileUrl = https://api.telegram.org/file/bot${bot.token}/${file.filepath};
+        const fileUrl = `https://api.telegram.org/file/bot${bot.token}/${file.file_path}`;
         const res = await fetch(fileUrl);
         const buffer = await res.arrayBuffer();
         const localPath = path.join(process.cwd(), fileName);
@@ -113,7 +113,7 @@ export default function (bot, db, saveDB) {
         session.fileName = fileName;
         session.fileType = isVcf ? "vcf" : isTxt ? "txt" : isCsv ? "csv" : "xls";
 
-        return trackMessage(userId, chatId, ◆◆  EKSTRAK NOMOR  ◆◆
+        return trackMessage(userId, chatId, `◆◆  EKSTRAK NOMOR  ◆◆
 
 ┌─❖
 │  ✅ File diterima
@@ -121,15 +121,15 @@ export default function (bot, db, saveDB) {
 │  📝 Nama file output?
 │
 │  (Tanpa ekstensi)
-└─❖, { parsemode: "Markdown" });
+└─❖`, { parse_mode: "Markdown" });
       } catch (err) {
         console.error("Download error:", err);
         delete sessions[userId];
-        return trackMessage(userId, chatId, ◆◆  EKSTRAK NOMOR  ◆◆
+        return trackMessage(userId, chatId, `◆◆  EKSTRAK NOMOR  ◆◆
 
 ┌─❖
 │  ⚠️ Download gagal
-└─❖, { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
     }
 
@@ -137,15 +137,15 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text)) {
         try { fs.unlinkSync(session.localPath); } catch {}
         delete sessions[userId];
-        return sendWithDelete(userId, chatId, ◆◆  DIBATALKAN  ◆◆
+        return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
 │  ❌ Proses dibatalkan
-└─❖, { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
-      const outputName = text.trim().replace(/[^a-zA-Z0-9-]/g, "") || "nomorhasil";
-      const outputFile = path.join(process.cwd(), ${outputName}.txt);
+      const outputName = text.trim().replace(/[^a-zA-Z0-9-_]/g, "_") || "nomor_hasil";
+      const outputFile = path.join(process.cwd(), `${outputName}.txt`);
 
       try {
         let numbers = [];
@@ -163,7 +163,7 @@ export default function (bot, db, saveDB) {
         const uniqueNumbers = [...new Set(numbers)].sort();
         fs.writeFileSync(outputFile, uniqueNumbers.join("\n"));
 
-        await trackMessage(userId, chatId, ◆◆  EKSTRAK SUKSES  ◆◆
+        await trackMessage(userId, chatId, `◆◆  EKSTRAK SUKSES  ◆◆
 
 ┌─❖
 │  ✅ Nomor berhasil ekstrak
@@ -171,7 +171,7 @@ export default function (bot, db, saveDB) {
 │  File: ${session.fileName}
 │
 │  Total: ${uniqueNumbers.length} nomor
-└─❖, { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
 
         await bot.sendDocument(chatId, outputFile);
         
@@ -184,11 +184,11 @@ export default function (bot, db, saveDB) {
         console.error("Extract error:", err);
         try { fs.unlinkSync(session.localPath); } catch {}
         delete sessions[userId];
-        return trackMessage(userId, chatId, ◆◆  EKSTRAK NOMOR  ◆◆
+        return trackMessage(userId, chatId, `◆◆  EKSTRAK NOMOR  ◆◆
 
 ┌─❖
 │  ⚠️ Ekstrak gagal
-└─❖, { parsemode: "Markdown", replymarkup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
     }
   });
@@ -220,7 +220,7 @@ function extractFromTxt(filePath) {
 function extractFromXls(filePath) {
   const workbook = XLSX.readFile(filePath);
   const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-  const data = XLSX.utils.sheettojson(worksheet);
+  const data = XLSX.utils.sheet_to_json(worksheet);
   const numbers = [];
   
   data.forEach(row => {

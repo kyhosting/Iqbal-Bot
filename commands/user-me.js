@@ -8,7 +8,7 @@ export default function (bot, db, saveDB) {
       } catch (e) {}
     }
     const msg = await bot.sendMessage(chatId, text, options);
-    userMessages[userId] = msg.messageid;
+    userMessages[userId] = msg.message_id;
     return msg;
   }
 
@@ -21,12 +21,12 @@ export default function (bot, db, saveDB) {
       return trackMessage(
         userId,
         chatId,
-        ◆◆  AKSES DITOLAK  ◆◆
+        `◆◆  AKSES DITOLAK  ◆◆
 
 ┌─❖
 │  ⚠️ Harus join grup terlebih dahulu
-└─❖,
-        { parsemode: "Markdown" }
+└─❖`,
+        { parse_mode: "Markdown" }
       );
     }
 
@@ -34,12 +34,12 @@ export default function (bot, db, saveDB) {
       db.users[userId] = {
         id: userId,
         username: msg.from.username || "",
-        firstname: msg.from.firstname || "",
-        lastname: msg.from.lastname || "",
+        first_name: msg.from.first_name || "",
+        last_name: msg.from.last_name || "",
         role: "user",
-        vipexpired: 0,
+        vip_expired: 0,
         status: "inactive",
-        totaloperation: 0
+        total_operation: 0
       };
       saveDB();
     }
@@ -52,21 +52,21 @@ export default function (bot, db, saveDB) {
     let status = user.status || "inactive";
     let vipBadge = "❌ Tidak Aktif";
     
-    if (user.vipexpired && user.vipexpired > Date.now()) {
-      const expDate = new Date(user.vipexpired);
+    if (user.vip_expired && user.vip_expired > Date.now()) {
+      const expDate = new Date(user.vip_expired);
       expired = expDate.toLocaleDateString('id-ID');
-      const daysLeft = Math.ceil((user.vipexpired - Date.now()) / (1000  60  60 * 24));
-      remaining = ${daysLeft} hari;
+      const daysLeft = Math.ceil((user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24));
+      remaining = `${daysLeft} hari`;
       status = "active";
-      vipBadge = ✅ Aktif - ${daysLeft} hari;
+      vipBadge = `✅ Aktif - ${daysLeft} hari`;
     }
 
-    const profileMessage = ◆◆  PROFIL USER  ◆◆
+    const profileMessage = `◆◆  PROFIL USER  ◆◆
 
 ┌─❖
 │  🎌 INFORMASI DASAR
 │
-│  Nama: ${msg.from.firstname}${msg.from.lastname ? ' ' + msg.from.lastname : ''}
+│  Nama: ${msg.from.first_name}${msg.from.last_name ? ' ' + msg.from.last_name : ''}
 │
 │  ID: ${userId}
 │
@@ -88,7 +88,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  📊 STATISTIK
 │
-│  Total Operasi: ${user.totaloperation || 0}
+│  Total Operasi: ${user.total_operation || 0}
 │
 │  Member Sejak: ${new Date().toLocaleDateString('id-ID')}
 └─❖
@@ -98,11 +98,11 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'me' untuk refresh
 │  Ketik 'start' untuk menu
-└─❖;
+└─❖`;
 
     await trackMessage(userId, chatId, profileMessage, {
-      parsemode: "Markdown",
-      replymarkup: bot.getMainKeyboardUser(userId)
+      parse_mode: "Markdown",
+      reply_markup: bot.getMainKeyboardUser(userId)
     });
   });
 }
