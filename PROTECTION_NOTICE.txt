@@ -1,108 +1,128 @@
 ╔════════════════════════════════════════════════════════════════════════════╗
-║                                                                            ║
+║                        ENGLISH VERSION                                     ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+╔════════════════════════════════════════════════════════════════════════════╗
 ║            🔐 IQBAL CV BOT - ANTI-PIRACY & PROTECTION NOTICE 🔐            ║
 ║                                                                            ║
 ║  This project is PROTECTED against unauthorized modification and           ║
 ║  redistribution. All files contain copyright notices and watermarks.       ║
-║                                                                            ║
-║  📋 PROTECTION METHODS IMPLEMENTED:                                        ║
-║  ════════════════════════════════════════════════════════════════════════  ║
-║                                                                            ║
-║  ✅ FILE HEADERS                                                           ║
-║     Every command file contains copyright header:                          ║
-║     🎌 IQBAL CV BOT - OFFICIAL MODULE                                     ║
-║     BY: KIFZL & IQBAL DEV                                                 ║
-║     DO NOT RENAME OR REDISTRIBUTE                                         ║
-║                                                                            ║
-║  ✅ CONFIG WATERMARK                                                       ║
-║     config.js contains built-in watermark:                                ║
-║     "🎌 IQBAL CV BOT - OFFICIAL VERSION"                                  ║
-║     "Powered by KIFZL & IQBAL DEV"                                        ║
-║                                                                            ║
-║  ✅ ENTRY POINT PROTECTION                                                ║
-║     index.js has prominent copyright banner:                              ║
-║     "DO NOT RENAME, MODIFY CREDITS, OR REDISTRIBUTE"                     ║
-║                                                                            ║
-║  ✅ CONSOLE OUTPUT                                                         ║
-║     Bot startup shows:                                                    ║
-║     "OFFICIAL PROJECT BY KIFZL & IQBAL DEV"                               ║
-║     Cannot be hidden without breaking bot                                 ║
-║                                                                            ║
-║  ✅ LICENSE FILE                                                           ║
-║     Licensed under MIT with explicit restrictions:                        ║
-║     • Cannot remove credits                                               ║
-║     • Cannot claim authorship                                             ║
-║     • Cannot redistribute without attribution                             ║
-║                                                                            ║
-║  ✅ CREDITS & DOCUMENTATION                                                ║
-║     Multiple files document proper usage:                                 ║
-║     • LICENSE - MIT with restrictions                                     ║
-║     • CREDITS.md - Full attribution details                               ║
-║     • COPYRIGHT.txt - Legal notice                                        ║
-║     • README.md - Mentions original creators                              ║
-║     • package.json - Author information                                   ║
-║                                                                            ║
-║  🚫 VIOLATION DETECTION:                                                   ║
-║  ════════════════════════════════════════════════════════════════════════  ║
-║                                                                            ║
-║  Removed headers = Signs of piracy                                        ║
-║  Missing credits = Copyright infringement                                 ║
-║  Renamed project = Intellectual property theft                            ║
-║  False authorship = DMCA violation                                        ║
-║                                                                            ║
-║  🛑 CONSEQUENCES:                                                          ║
-║  ════════════════════════════════════════════════════════════════════════  ║
-║                                                                            ║
-║  ❌ DMCA Takedown Notice                                                   ║
-║  ❌ GitHub Repository Strikes                                             ║
-║  ❌ Legal Action & Lawsuit                                                ║
-║  ❌ Cease & Desist Orders                                                 ║
-║  ❌ Financial Penalties                                                   ║
-║                                                                            ║
-║  ✅ APPROVED USAGE:                                                        ║
-║  ════════════════════════════════════════════════════════════════════════  ║
-║                                                                            ║
-║  ✓ Using bot for personal projects (WITH credits)                        ║
-║  ✓ Using bot for commercial projects (WITH attribution)                  ║
-║  ✓ Modifying code (WITH original credits kept)                           ║
-║  ✓ Deploying to hosting (WITH watermarks intact)                         ║
-║  ✓ Contributing improvements (WITH proper PR)                            ║
-║                                                                            ║
-║  ❌ FORBIDDEN USAGE:                                                       ║
-║  ════════════════════════════════════════════════════════════════════════  ║
-║                                                                            ║
-║  ✗ Removing copyright notices                                             ║
-║  ✗ Renaming to different project                                          ║
-║  ✗ Claiming as your own creation                                          ║
-║  ✗ Hiding original creators                                               ║
-║  ✗ Commercial use without attribution                                     ║
-║  ✗ Redistributing without permission                                      ║
-║                                                                            ║
-║  📞 REPORT VIOLATIONS:                                                     ║
-║  ════════════════════════════════════════════════════════════════════════  ║
-║                                                                            ║
-║  Telegram: @Iqbaldev                                                      ║
-║  GitHub: https://github.com/kyhosting/Iqbal-Bot/issues                    ║
-║  Email: Contact via Telegram for abuse reports                            ║
-║                                                                            ║
-║  🔗 OFFICIAL LINKS:                                                        ║
-║  ════════════════════════════════════════════════════════════════════════  ║
-║                                                                            ║
-║  GitHub: https://github.com/kyhosting/Iqbal-Bot                           ║
-║  Creator: @Iqbaldev (Telegram)                                            ║
-║  License: MIT (See LICENSE file)                                          ║
-║  Credits: See CREDITS.md                                                  ║
-║                                                                            ║
-║  🎌 WATERMARK:                                                             ║
-║  ════════════════════════════════════════════════════════════════════════  ║
-║                                                                            ║
-║  🎌 IQBAL CV BOT - OFFICIAL VERSION 🎌                                    ║
-║  PROUDLY CREATED BY: KIFZL & IQBAL DEV                                    ║
-║  PROTECTED BY: MIT LICENSE & COPYRIGHT LAW                                ║
-║                                                                            ║
-║  Remember: Respecting open-source is respecting developers' hard work!    ║
-║                                                                            ║
 ╚════════════════════════════════════════════════════════════════════════════╝
 
+📋 PROTECTION METHODS IMPLEMENTED:
+
+✅ FILE HEADERS - Every command file contains copyright header
+✅ CONFIG WATERMARK - config.js has built-in watermark
+✅ ENTRY POINT PROTECTION - index.js has prominent copyright banner
+✅ CONSOLE OUTPUT - Bot startup shows official credits
+✅ LICENSE FILE - MIT with explicit restrictions
+✅ CREDITS & DOCUMENTATION - Multiple files document proper usage
+
+🚫 VIOLATION DETECTION:
+   • Removed headers = Signs of piracy
+   • Missing credits = Copyright infringement
+   • Renamed project = Intellectual property theft
+   • False authorship = DMCA violation
+
+🛑 CONSEQUENCES:
+   ❌ DMCA Takedown Notice
+   ❌ GitHub Repository Strikes
+   ❌ Legal Action & Lawsuit
+   ❌ Cease & Desist Orders
+   ❌ Financial Penalties
+
+✅ APPROVED USAGE:
+   ✓ Using for personal projects (WITH credits)
+   ✓ Using for commercial projects (WITH attribution)
+   ✓ Modifying code (WITH original credits kept)
+   ✓ Deploying to hosting (WITH watermarks intact)
+   ✓ Contributing improvements (WITH proper PR)
+
+❌ FORBIDDEN USAGE:
+   ✗ Removing copyright notices
+   ✗ Renaming to different project
+   ✗ Claiming as your own creation
+   ✗ Hiding original creators
+   ✗ Commercial use without attribution
+   ✗ Redistributing without permission
+
+📞 REPORT VIOLATIONS:
+   Telegram: @Iqbaldev
+   GitHub: https://github.com/kyhosting/Iqbal-Bot/issues
+
+🔗 OFFICIAL LINKS:
+   GitHub: https://github.com/kyhosting/Iqbal-Bot
+   Creator: @Iqbaldev (Telegram)
+   License: MIT (See LICENSE file)
+   Credits: See CREDITS.md
+
+═══════════════════════════════════════════════════════════════════════════
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    VERSI INDONESIA / INDONESIAN VERSION                    ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║     🔐 IQBAL CV BOT - PEMBERITAHUAN ANTI-PEMBAJAKAN & PERLINDUNGAN 🔐      ║
+║                                                                            ║
+║  Proyek ini DILINDUNGI terhadap modifikasi dan redistribusi tanpa izin.   ║
+║  Semua file berisi pemberitahuan hak cipta dan watermark.                 ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+📋 METODE PERLINDUNGAN YANG DIIMPLEMENTASIKAN:
+
+✅ HEADER FILE - Setiap file perintah memiliki header hak cipta
+✅ WATERMARK CONFIG - config.js memiliki watermark bawaan
+✅ PERLINDUNGAN ENTRY POINT - index.js memiliki banner hak cipta menonjol
+✅ OUTPUT KONSOL - Startup bot menampilkan kredit resmi
+✅ FILE LISENSI - MIT dengan pembatasan eksplisit
+✅ DOKUMENTASI - Beberapa file mendokumentasikan penggunaan yang tepat
+
+🚫 DETEKSI PELANGGARAN:
+   • Header dihapus = Tanda pembajakan
+   • Kredit hilang = Pelanggaran hak cipta
+   • Proyek diganti nama = Pencurian IP
+   • Kepengarangan palsu = Pelanggaran DMCA
+
+🛑 KONSEKUENSI:
+   ❌ Pemberitahuan DMCA Takedown
+   ❌ Penghapusan Repository GitHub
+   ❌ Tindakan Hukum & Gugatan
+   ❌ Perintah Henti & Jangan Lakukan
+   ❌ Denda Finansial
+
+✅ PENGGUNAAN YANG DISETUJUI:
+   ✓ Menggunakan untuk proyek pribadi (DENGAN kredit)
+   ✓ Menggunakan untuk proyek komersial (DENGAN atribusi)
+   ✓ Memodifikasi kode (DENGAN kredit asli dipertahankan)
+   ✓ Deploy ke hosting (DENGAN watermark utuh)
+   ✓ Berkontribusi perbaikan (DENGAN PR yang tepat)
+
+❌ PENGGUNAAN YANG DILARANG:
+   ✗ Menghapus pemberitahuan hak cipta
+   ✗ Mengganti nama ke proyek berbeda
+   ✗ Mengklaim sebagai ciptaan Anda sendiri
+   ✗ Menyembunyikan pembuat asli
+   ✗ Penggunaan komersial tanpa atribusi
+   ✗ Mendistribusikan kembali tanpa izin
+
+📞 LAPORKAN PELANGGARAN:
+   Telegram: @Iqbaldev
+   GitHub: https://github.com/kyhosting/Iqbal-Bot/issues
+
+🔗 TAUTAN RESMI:
+   GitHub: https://github.com/kyhosting/Iqbal-Bot
+   Pembuat: @Iqbaldev (Telegram)
+   Lisensi: MIT (Lihat file LICENSE)
+   Kredit: Lihat CREDITS.md
+
+═══════════════════════════════════════════════════════════════════════════
+
+🎌 WATERMARK / TANDA TANGAN:
+🎌 IQBAL CV BOT - OFFICIAL VERSION BY KIFZL & IQBAL DEV 🎌
+
+Remember: Respecting open-source is respecting developers' hard work!
+Ingat: Menghormati open-source berarti menghormati kerja keras pengembang!
+
 Made with ❤️  by KIKI FZL & PARTNER/SUPPORT IQBAL DEV
-こんにちは 🎌
+Dibuat dengan ❤️ oleh KIKI FZL & PARTNER/SUPPORT IQBAL DEV
