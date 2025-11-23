@@ -184,7 +184,23 @@ export default function (bot, db, saveDB) {
         day: "numeric"
       });
 
-      const statusText = isVip ? "🔥 VIP ACTIVE" : "👤 Regular";
+      // Role display - dinamis berdasarkan user role
+      let roleText = "👤 user biasa";
+      if (userData.role === "owner") roleText = "👑 owner";
+      else if (userData.role === "admin") roleText = "🔐 admin";
+      else if (userData.role === "vip") roleText = "💎 vip";
+      else if (userData.role === "trial") roleText = "⭐ trial";
+      else if (userData.role === "redeem_code") roleText = "🎁 redeem code";
+      else roleText = "👤 user biasa";
+
+      // Status display - dinamis berdasarkan user status
+      let statusText = "👤 regular";
+      if (userData.suspended) statusText = "⚠️ suspended";
+      else if (userData.role === "vip" && userData.vip_expired > now) statusText = "🔥 vip active";
+      else if (userData.role === "trial" && userData.vip_expired > now) statusText = "⭐ trial active";
+      else if (userData.role === "redeem_code") statusText = "🎁 redeem code";
+      else if (userData.status === "active") statusText = "✅ active";
+
       const username = userData.username || "unknown";
       const fullName = userData.first_name || "User";
 
@@ -202,7 +218,7 @@ export default function (bot, db, saveDB) {
 │ ➤ Nama: *${fullName}*
 │ ➤ ID: \`${userId}\`
 │ ➤ Username: @${username}
-│ ➤ Role: *${userData.role === "owner" ? "👑 OWNER" : (userData.role === "admin" ? "🔐 ADMIN" : (userData.role === "vip" ? "💎 VIP" : "👤 USER"))}*
+│ ➤ Role: *${roleText}*
 │ ➤ Status: *${statusText}*
 │ ➤ Masa Aktif: *${expiredDate}*
 │ ➤ Hari Tersisa: *${remainingDays} hari*
