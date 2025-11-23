@@ -159,6 +159,9 @@ export default function (bot, db, saveDB) {
 
       const perFile = parseInt(text);
       try {
+        // Baca contacts SEBELUM proses
+        const contacts = readVcf(session.file);
+        
         const hasil = splitVcfCustom(session.file, session.newFileName, perFile, session.splitCounter, session.fileCounter);
 
         // Sort files by numeric suffix untuk urutan yang rapi
@@ -177,14 +180,31 @@ export default function (bot, db, saveDB) {
         sortedFiles.forEach(f => {
           try { fs.unlinkSync(f); } catch (e) {}
         });
-        fs.unlinkSync(session.file);
+        if (session.file && fs.existsSync(session.file)) fs.unlinkSync(session.file);
 
         session.splitCounter = hasil.nextIndex;
         session.fileCounter = hasil.nextFile;
         session.step = 6;
         
+        const kontakMsg = contacts.length > 0
+          ? `\n\n👥 Kontak:\n${contacts.slice(0, 8).map((c, i) => {
+              const match = c.match(/FN:(.*)/i);
+              const name = match ? match[1].trim() : "Kontak";
+              return `${i + 1}. ${name}`;
+            }).join("\n")}${contacts.length > 8 ? `\n... dan ${contacts.length - 8} lainnya` : ""}`
+          : "";
+        
         // Kirim status langsung
-        bot.sendMessage(chatId, `✅ Selesai dipotong Kak! 🎉\n\nKetik \`lanjut\` untuk file berikutnya\nKetik \`selesai\` untuk berhenti`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+        bot.sendMessage(chatId, `◆◆  SUKSES  ◆◆
+
+┌─❖
+│  ✅ File berhasil dipotong
+│
+│  📊 Total: ${contacts.length} kontak${kontakMsg}
+│
+│  Ketik 'lanjut' untuk file berikutnya
+│  Ketik 'selesai' untuk berhenti
+└─❖`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
         bot.incrementOperation(userId);
       } catch (err) {
         console.error(err);

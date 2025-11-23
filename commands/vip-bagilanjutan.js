@@ -296,6 +296,14 @@ export default function (bot, db, saveDB) {
         sessionLanjutan.file_counter = fileIndex;
 
         bot.incrementOperation(userId);
+        
+        const kontakMsg = contacts.length > 0
+          ? `\n\n👥 Kontak:\n${contacts.slice(0, 8).map((c, i) => {
+              const match = c.match(/FN:(.*)/i);
+              const name = match ? match[1].trim() : "Kontak";
+              return `${i + 1}. ${name}`;
+            }).join("\n")}${contacts.length > 8 ? `\n... dan ${contacts.length - 8} lainnya` : ""}`
+          : "";
 
         return await trackMessage(
           userId,
@@ -306,6 +314,7 @@ export default function (bot, db, saveDB) {
 │  ✅ File berhasil dibagi
 │
 │  📊 Total: ${sortedFiles.length} file
+│  📊 Total: ${contacts.length} kontak${kontakMsg}
 │
 │  Ketik 'lanjut' untuk file berikutnya
 │  Ketik 'selesai' untuk selesai

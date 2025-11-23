@@ -196,10 +196,12 @@ export default function (bot, db, saveDB) {
         try {
           const content = fs.readFileSync(session.file, "utf8");
           const lines = content.split("\n").filter((l) => l.trim());
+          const kontakList = [];
           const vcfEntries = lines.map((line) => {
             const parts = line.split("◆");
             const name = parts[0]?.trim() || "Kontak";
             const phone = parts[1]?.trim() || "0";
+            kontakList.push(name);
             return createVcfEntry(phone, name);
           });
 
@@ -219,6 +221,11 @@ export default function (bot, db, saveDB) {
           if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
 
           delete sessions[userId];
+          
+          const kontakMsg = kontakList.length > 0 
+            ? `\n\n👥 Kontak:\n${kontakList.slice(0, 10).map((k, i) => `${i + 1}. ${k}`).join("\n")}${kontakList.length > 10 ? `\n... dan ${kontakList.length - 10} lainnya` : ""}`
+            : "";
+          
           return sendWithDelete(
             userId,
             chatId,
@@ -227,7 +234,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ✅ File VCF dibuat
 │
-│  ${vcfEntries.length} kontak
+│  📊 Total: ${vcfEntries.length} kontak${kontakMsg}
 └─❖`,
             { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
           );
