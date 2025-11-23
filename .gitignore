@@ -11,6 +11,7 @@ node_modules
 *.local
 minecraft.txt
 config.js
+config.local.js
 database.json
 redeem.json
 backup_*.json

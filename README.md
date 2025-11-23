@@ -122,17 +122,32 @@ cd Iqbal-Bot
 npm install
 ```
 
-#### Step 3: Setup Bot Token
+#### Step 3: Setup Bot Token (PENTING!)
+**Termux akan auto-create config.js dari config.example.js saat first run.**
+
 ```bash
-# Edit config.js
+# First time run
+npm start
+
+# Bot akan create config.js otomatis dan tampil:
+# ✅ config.js created! Please edit it with your settings.
+# 📝 Edit these values in config.js:
+#    - TELEGRAM_BOT_TOKEN
+#    - owner: [YOUR_TELEGRAM_ID]
+#    - ownerUsername
+#    - groups.main and groups.cv
+```
+
+Setelah itu, edit `config.js`:
+```bash
 nano config.js
 ```
 
-Ganti nilai `token` dengan bot token dari @BotFather:
+Ganti nilai-nilai ini:
 ```javascript
 export default {
-  token: "YOUR_BOT_TOKEN_HERE",
-  owner: [YOUR_TELEGRAM_ID],
+  token: "YOUR_BOT_TOKEN_HERE",      // Get from @BotFather
+  owner: [YOUR_TELEGRAM_ID],          // Get from @userinfobot
   ownerUsername: "YourUsername",
   groups: {
     main: "your_group_name",
@@ -142,6 +157,12 @@ export default {
 ```
 
 Tekan: `CTRL + X` → `Y` → `Enter`
+
+**Alternatif: Gunakan Environment Variable (Recommended untuk Production)**
+```bash
+export TELEGRAM_BOT_TOKEN="YOUR_BOT_TOKEN_HERE"
+npm start
+```
 
 #### Step 4: Run Bot (Option A: Simple - Recommended untuk Termux)
 ```bash
