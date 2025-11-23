@@ -413,7 +413,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ⏰ Kapan code ini kadaluarsa?
 │
-│  Format: <angka><satuan>
+│  Format: &lt;angka&gt;&lt;satuan&gt;
 │  
 │  Satuan:
 │  • m = menit (contoh: 5m)
