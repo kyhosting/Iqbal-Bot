@@ -61,7 +61,7 @@ export default function (bot, db, saveDB) {
 └─❖`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
   });
 
-  bot.on("message", (msg) => {
+  bot.on("message", async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const text = msg.text?.trim();
@@ -90,64 +90,46 @@ export default function (bot, db, saveDB) {
 
       session.numbers = numbers;
       session.step = 2;
-      const keyboard = {
-        inline_keyboard: [
-          [
-            { text: "✅ Done", callback_data: `createadmin_done_${userId}` },
-            { text: "❌ Batal", callback_data: `createadmin_batal_${userId}` }
-          ]
-        ]
-      };
       return trackMessage(userId, chatId, `◆◆  CREATE ADMIN  ◆◆
 
 ┌─❖
 │  ⏳ Processing...
 │
-│  Perintah:
-│  • done  — proses & kirim hasil file
-│  • batal — batalkan proses
-└─❖`,  { parse_mode: "HTML", reply_markup: keyboard });
-    }
-  });
-
-  bot.on("callback_query", async (query) => {
-    const userId = query.from.id;
-    const chatId = query.message.chat.id;
-    const data = query.data;
-    const session = sessions[userId];
-
-    if (data === `createadmin_done_${userId}`) {
-      await bot.answerCallbackQuery(query.id);
-      if (!session || session.step !== 2) return;
-
-      const filename = "ADMIN.vcf";
-      const filepath = path.join(process.cwd(), filename);
-
-      try {
-        const content = session.numbers.map((num, i) => createVcfEntry(num, `ADMIN-${String(i + 1).padStart(4, "0")}`)).join("\n");
-        fs.writeFileSync(filepath, content);
-
-        await bot.sendDocument(chatId, filepath);
-        await trackMessage(userId, chatId, `✅ File ADMIN.vcf berhasil dibuat Kak! 🎉\n\n👤 Total admin: ${session.numbers.length}\n\nSemoga membantu ya! 😊`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
-        bot.incrementOperation(userId);
-        if (fs.existsSync(filepath)) fs.unlinkSync(filepath);
-        delete sessions[userId];
-      } catch (err) {
-        console.error("Gagal:", err);
-        delete sessions[userId];
-        return sendWithDelete(userId, chatId, `⚠️ Yah… gagal buat file 😔`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
-      }
+│  Ketik 'done' untuk proses
+│  Ketik 'batal' untuk batalkan
+└─❖`,  { parse_mode: "HTML" });
     }
 
-    if (data === `createadmin_batal_${userId}`) {
-      await bot.answerCallbackQuery(query.id);
-      if (!session || session.step !== 2) return;
-      delete sessions[userId];
-      return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆
+    if (session.step === 2) {
+      if (/^batal$/i.test(text)) {
+        delete sessions[userId];
+        return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
 │  ❌ Proses dibatalkan
 └─❖`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+      }
+
+      if (/^done$/i.test(text)) {
+        const filename = "ADMIN.vcf";
+        const filepath = path.join(process.cwd(), filename);
+
+        try {
+          const content = session.numbers.map((num, i) => createVcfEntry(num, `ADMIN-${String(i + 1).padStart(4, "0")}`)).join("\n");
+          fs.writeFileSync(filepath, content);
+
+          await bot.sendDocument(chatId, filepath);
+          await trackMessage(userId, chatId, `✅ File ADMIN.vcf berhasil dibuat Kak! 🎉\n\n👤 Total admin: ${session.numbers.length}\n\nSemoga membantu ya! 😊`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+          bot.incrementOperation(userId);
+          if (fs.existsSync(filepath)) fs.unlinkSync(filepath);
+          delete sessions[userId];
+        } catch (err) {
+          console.error("Gagal:", err);
+          delete sessions[userId];
+          return sendWithDelete(userId, chatId, `⚠️ Yah… gagal buat file 😔`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+        }
+      }
     }
   });
+
 }

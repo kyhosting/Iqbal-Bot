@@ -119,14 +119,6 @@ export default function (bot, db, saveDB) {
 
       session.filename = text.replace(/[^a-zA-Z0-9-_]/g, "_") + ".txt";
       session.step = 3;
-      const keyboard = {
-        inline_keyboard: [
-          [
-            { text: "✅ Done", callback_data: `msgtotxt_done_${userId}` },
-            { text: "❌ Batal", callback_data: `msgtotxt_batal_${userId}` }
-          ]
-        ]
-      };
       return bot.sendMessage(
         chatId,
         `◆◆  MSG TO TXT  ◆◆
@@ -134,75 +126,66 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ⏳ Processing...
 │
-│  Perintah:
-│  • done  — proses & kirim hasil file
-│  • batal — batalkan proses
+│  Ketik 'done' untuk proses
+│  Ketik 'batal' untuk batalkan
 └─❖`,
-        { parse_mode: "HTML", reply_markup: keyboard }
+        { parse_mode: "HTML" }
       );
     }
-  });
 
-  bot.on("callback_query", async (query) => {
-    const userId = query.from.id;
-    const chatId = query.message.chat.id;
-    const data = query.data;
-    const session = sessions[userId];
-
-    if (data === `msgtotxt_done_${userId}`) {
-      await bot.answerCallbackQuery(query.id);
-      if (!session || session.step !== 3) return;
-
-      const filepath = path.join(process.cwd(), session.filename);
-      try {
-        fs.writeFileSync(filepath, session.content);
-        await bot.sendDocument(chatId, filepath, {}, { filename: session.filename });
-
-        await trackMessage(
-          userId,
-          chatId,
-          `◆◆  FILE SUKSES  ◆◆
-
-┌─❖
-│  ✅ File TXT dibuat
-│
-│  📄 ${session.filename}
-└─❖`,
-          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-        );
-
-        bot.incrementOperation(userId);
-        if (fs.existsSync(filepath)) fs.unlinkSync(filepath);
-        delete sessions[userId];
-      } catch (e) {
+    if (session.step === 3) {
+      if (/^batal$/i.test(text)) {
         delete sessions[userId];
         return sendWithDelete(
           userId,
           chatId,
-          `◆◆  ERROR  ◆◆
-
-┌─❖
-│  ❌ Ada masalah
-└─❖`,
-          { parse_mode: "HTML" }
-        );
-      }
-    }
-
-    if (data === `msgtotxt_batal_${userId}`) {
-      await bot.answerCallbackQuery(query.id);
-      if (!session || session.step !== 3) return;
-      delete sessions[userId];
-      return sendWithDelete(
-        userId,
-        chatId,
-        `◆◆  DIBATALKAN  ◆◆
+          `◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
 │  ❌ Proses dibatalkan
 └─❖`,
-        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-      );
+          { parse_mode: "HTML" }
+        );
+      }
+
+      if (/^done$/i.test(text)) {
+        try {
+          const outputPath = path.join(process.cwd(), session.filename);
+          fs.writeFileSync(outputPath, session.content);
+
+          await bot.sendDocument(chatId, outputPath, {}, {
+            filename: session.filename,
+          });
+
+          bot.incrementOperation(userId);
+          if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
+
+          delete sessions[userId];
+          return sendWithDelete(
+            userId,
+            chatId,
+            `◆◆  SUKSES  ◆◆
+
+┌─❖
+│  ✅ File TXT dibuat
+└─❖`,
+            { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+          );
+        } catch (e) {
+          delete sessions[userId];
+          return sendWithDelete(
+            userId,
+            chatId,
+            `◆◆  ERROR  ◆◆
+
+┌─❖
+│  ❌ Ada masalah
+└─❖`,
+            { parse_mode: "HTML" }
+          );
+        }
+      }
     }
   });
+
 }

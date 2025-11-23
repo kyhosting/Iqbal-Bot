@@ -147,14 +147,6 @@ export default function (bot, db, saveDB) {
         : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
 
       session.step = 3;
-      const keyboard = {
-        inline_keyboard: [
-          [
-            { text: "✅ Done", callback_data: `vcftotxt_done_${userId}` },
-            { text: "❌ Batal", callback_data: `vcftotxt_batal_${userId}` }
-          ]
-        ]
-      };
       return bot.sendMessage(
         chatId,
         `◆◆  VCF TO TXT  ◆◆
@@ -162,102 +154,89 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ⏳ Processing...
 │
-│  Perintah:
-│  • done  — proses & kirim hasil file
-│  • batal — batalkan proses
+│  Ketik 'done' untuk proses
+│  Ketik 'batal' untuk batalkan
 └─❖`,
-        { parse_mode: "HTML", reply_markup: keyboard }
+        { parse_mode: "HTML" }
       );
     }
-  });
 
-  bot.on("callback_query", async (query) => {
-    const userId = query.from.id;
-    const chatId = query.message.chat.id;
-    const data = query.data;
-    const session = sessions[userId];
-
-    // Handle DONE button
-    if (data === `vcftotxt_done_${userId}`) {
-      await bot.answerCallbackQuery(query.id);
-      if (!session || session.step !== 3) return;
-
-      try {
-        const content = fs.readFileSync(session.file, "utf8");
-        const matches = content.match(/TEL;[^:]*:(\+?\d+)/g) || [];
-        const numbers = matches.map((m) => m.replace(/.*:/, ""));
-
-        if (numbers.length === 0) {
-          if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
-          delete sessions[userId];
-          return bot.sendMessage(
-            chatId,
-            `◆◆  VCF TO TXT  ◆◆
-
-┌─❖
-│  ⚠️ Tidak ada nomor ditemukan
-└─❖`,
-            { parse_mode: "HTML" }
-          );
-        }
-
-        const outputPath = path.join(process.cwd(), `${session.newFileName}.txt`);
-        fs.writeFileSync(outputPath, numbers.join("\n"));
-
-        await bot.sendDocument(chatId, outputPath, {}, {
-          filename: `${session.newFileName}.txt`,
-        });
-
-        bot.incrementOperation(userId);
+    if (session.step === 3) {
+      if (/^batal$/i.test(text)) {
         if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
-        if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
-
         delete sessions[userId];
         return sendWithDelete(
           userId,
           chatId,
-          `◆◆  SUKSES  ◆◆
+          `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Proses dibatalkan
+└─❖`,
+          { parse_mode: "HTML" }
+        );
+      }
+
+      if (/^done$/i.test(text)) {
+        try {
+          const content = fs.readFileSync(session.file, "utf8");
+          const matches = content.match(/TEL;[^:]*:(\+?\d+)/g) || [];
+          const numbers = matches.map((m) => m.replace(/.*:/, ""));
+
+          if (numbers.length === 0) {
+            if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
+            delete sessions[userId];
+            return bot.sendMessage(
+              chatId,
+              `◆◆  VCF TO TXT  ◆◆
+
+┌─❖
+│  ⚠️ Tidak ada nomor ditemukan
+└─❖`,
+              { parse_mode: "HTML" }
+            );
+          }
+
+          const outputPath = path.join(process.cwd(), `${session.newFileName}.txt`);
+          fs.writeFileSync(outputPath, numbers.join("\n"));
+
+          await bot.sendDocument(chatId, outputPath, {}, {
+            filename: `${session.newFileName}.txt`,
+          });
+
+          bot.incrementOperation(userId);
+          if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
+          if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
+
+          delete sessions[userId];
+          return sendWithDelete(
+            userId,
+            chatId,
+            `◆◆  SUKSES  ◆◆
 
 ┌─❖
 │  ✅ File TXT dibuat
 │
 │  ${numbers.length} nomor
 └─❖`,
-          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-        );
-      } catch (e) {
-        if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
-        delete sessions[userId];
-        return sendWithDelete(
-          userId,
-          chatId,
-          `◆◆  ERROR  ◆◆
+            { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+          );
+        } catch (e) {
+          if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
+          delete sessions[userId];
+          return sendWithDelete(
+            userId,
+            chatId,
+            `◆◆  ERROR  ◆◆
 
 ┌─❖
 │  ❌ Ada masalah
 └─❖`,
-          { parse_mode: "HTML" }
-        );
+            { parse_mode: "HTML" }
+          );
+        }
       }
-    }
-
-    // Handle BATAL button
-    if (data === `vcftotxt_batal_${userId}`) {
-      await bot.answerCallbackQuery(query.id);
-      if (!session || session.step !== 3) return;
-
-      if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
-      delete sessions[userId];
-      return sendWithDelete(
-        userId,
-        chatId,
-        `◆◆  DIBATALKAN  ◆◆
-
-┌─❖
-│  ❌ Proses dibatalkan
-└─❖`,
-        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-      );
     }
   });
 }
+
