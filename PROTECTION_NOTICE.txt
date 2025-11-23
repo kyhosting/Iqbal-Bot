@@ -1,0 +1,108 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║            🔐 IQBAL CV BOT - ANTI-PIRACY & PROTECTION NOTICE 🔐            ║
+║                                                                            ║
+║  This project is PROTECTED against unauthorized modification and           ║
+║  redistribution. All files contain copyright notices and watermarks.       ║
+║                                                                            ║
+║  📋 PROTECTION METHODS IMPLEMENTED:                                        ║
+║  ════════════════════════════════════════════════════════════════════════  ║
+║                                                                            ║
+║  ✅ FILE HEADERS                                                           ║
+║     Every command file contains copyright header:                          ║
+║     🎌 IQBAL CV BOT - OFFICIAL MODULE                                     ║
+║     BY: KIFZL & IQBAL DEV                                                 ║
+║     DO NOT RENAME OR REDISTRIBUTE                                         ║
+║                                                                            ║
+║  ✅ CONFIG WATERMARK                                                       ║
+║     config.js contains built-in watermark:                                ║
+║     "🎌 IQBAL CV BOT - OFFICIAL VERSION"                                  ║
+║     "Powered by KIFZL & IQBAL DEV"                                        ║
+║                                                                            ║
+║  ✅ ENTRY POINT PROTECTION                                                ║
+║     index.js has prominent copyright banner:                              ║
+║     "DO NOT RENAME, MODIFY CREDITS, OR REDISTRIBUTE"                     ║
+║                                                                            ║
+║  ✅ CONSOLE OUTPUT                                                         ║
+║     Bot startup shows:                                                    ║
+║     "OFFICIAL PROJECT BY KIFZL & IQBAL DEV"                               ║
+║     Cannot be hidden without breaking bot                                 ║
+║                                                                            ║
+║  ✅ LICENSE FILE                                                           ║
+║     Licensed under MIT with explicit restrictions:                        ║
+║     • Cannot remove credits                                               ║
+║     • Cannot claim authorship                                             ║
+║     • Cannot redistribute without attribution                             ║
+║                                                                            ║
+║  ✅ CREDITS & DOCUMENTATION                                                ║
+║     Multiple files document proper usage:                                 ║
+║     • LICENSE - MIT with restrictions                                     ║
+║     • CREDITS.md - Full attribution details                               ║
+║     • COPYRIGHT.txt - Legal notice                                        ║
+║     • README.md - Mentions original creators                              ║
+║     • package.json - Author information                                   ║
+║                                                                            ║
+║  🚫 VIOLATION DETECTION:                                                   ║
+║  ════════════════════════════════════════════════════════════════════════  ║
+║                                                                            ║
+║  Removed headers = Signs of piracy                                        ║
+║  Missing credits = Copyright infringement                                 ║
+║  Renamed project = Intellectual property theft                            ║
+║  False authorship = DMCA violation                                        ║
+║                                                                            ║
+║  🛑 CONSEQUENCES:                                                          ║
+║  ════════════════════════════════════════════════════════════════════════  ║
+║                                                                            ║
+║  ❌ DMCA Takedown Notice                                                   ║
+║  ❌ GitHub Repository Strikes                                             ║
+║  ❌ Legal Action & Lawsuit                                                ║
+║  ❌ Cease & Desist Orders                                                 ║
+║  ❌ Financial Penalties                                                   ║
+║                                                                            ║
+║  ✅ APPROVED USAGE:                                                        ║
+║  ════════════════════════════════════════════════════════════════════════  ║
+║                                                                            ║
+║  ✓ Using bot for personal projects (WITH credits)                        ║
+║  ✓ Using bot for commercial projects (WITH attribution)                  ║
+║  ✓ Modifying code (WITH original credits kept)                           ║
+║  ✓ Deploying to hosting (WITH watermarks intact)                         ║
+║  ✓ Contributing improvements (WITH proper PR)                            ║
+║                                                                            ║
+║  ❌ FORBIDDEN USAGE:                                                       ║
+║  ════════════════════════════════════════════════════════════════════════  ║
+║                                                                            ║
+║  ✗ Removing copyright notices                                             ║
+║  ✗ Renaming to different project                                          ║
+║  ✗ Claiming as your own creation                                          ║
+║  ✗ Hiding original creators                                               ║
+║  ✗ Commercial use without attribution                                     ║
+║  ✗ Redistributing without permission                                      ║
+║                                                                            ║
+║  📞 REPORT VIOLATIONS:                                                     ║
+║  ════════════════════════════════════════════════════════════════════════  ║
+║                                                                            ║
+║  Telegram: @Iqbaldev                                                      ║
+║  GitHub: https://github.com/kyhosting/Iqbal-Bot/issues                    ║
+║  Email: Contact via Telegram for abuse reports                            ║
+║                                                                            ║
+║  🔗 OFFICIAL LINKS:                                                        ║
+║  ════════════════════════════════════════════════════════════════════════  ║
+║                                                                            ║
+║  GitHub: https://github.com/kyhosting/Iqbal-Bot                           ║
+║  Creator: @Iqbaldev (Telegram)                                            ║
+║  License: MIT (See LICENSE file)                                          ║
+║  Credits: See CREDITS.md                                                  ║
+║                                                                            ║
+║  🎌 WATERMARK:                                                             ║
+║  ════════════════════════════════════════════════════════════════════════  ║
+║                                                                            ║
+║  🎌 IQBAL CV BOT - OFFICIAL VERSION 🎌                                    ║
+║  PROUDLY CREATED BY: KIFZL & IQBAL DEV                                    ║
+║  PROTECTED BY: MIT LICENSE & COPYRIGHT LAW                                ║
+║                                                                            ║
+║  Remember: Respecting open-source is respecting developers' hard work!    ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+Made with ❤️  by KIKI FZL & PARTNER/SUPPORT IQBAL DEV
+こんにちは 🎌
