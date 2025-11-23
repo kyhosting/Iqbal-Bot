@@ -33,7 +33,7 @@ export default function (bot, db, saveDB) {
       fileNames: [], 
       fileType: null, 
       chatId: chatId,
-      silentMode: false // Belum send panel
+      panelMessageId: null // Store ID pesan panel untuk delete/update
     };
 
     await bot.sendMessage(chatId, 
@@ -68,6 +68,16 @@ export default function (bot, db, saveDB) {
       // Batalkan
       if (/^batal$/i.test(text)) {
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
+        
+        // Delete panel message jika ada
+        if (session.panelMessageId) {
+          try {
+            await bot.deleteMessage(chatId, session.panelMessageId);
+          } catch (e) {
+            console.error("[GABUNG] Error deleting panel:", e.message);
+          }
+        }
+        
         delete sessions[userId];
         
         await bot.sendMessage(chatId, 
@@ -174,11 +184,9 @@ export default function (bot, db, saveDB) {
         session.files.push(localPath);
         session.fileNames.push(fileName);
 
-        // HANYA send panel untuk FILE PERTAMA
-        if (!session.silentMode) {
-          // Generate panel text
-          const fileList = session.fileNames.map((fn, i) => `  ${i + 1}. ${fn}`).join("\n");
-          const panelText = `✦✦  GABUNG FILE  ✦✦
+        // Generate panel text
+        const fileList = session.fileNames.map((fn, i) => `  ${i + 1}. ${fn}`).join("\n");
+        const panelText = `✦✦  GABUNG FILE  ✦✦
 
 ┌──────────────────❖
 │  ✅ ${session.files.length} file diterima
@@ -191,11 +199,22 @@ ${fileList}
 │  • batal — batalkan
 └──────────────────❖`;
 
-          await bot.sendMessage(chatId, panelText, { parse_mode: "HTML" });
-          session.silentMode = true; // Aktivasi silent mode untuk file berikutnya
+        // AUTO DELETE + SEND strategy
+        if (session.panelMessageId !== null) {
+          // Jika sudah ada panel sebelumnya: DELETE pesan lama
+          try {
+            await bot.deleteMessage(chatId, session.panelMessageId);
+            console.log(`[GABUNG] Deleted old panel: ${session.panelMessageId}`);
+          } catch (e) {
+            console.error(`[GABUNG] Error deleting old panel: ${e.message}`);
+          }
         }
-        
-        // File 2 dan seterusnya: TIDAK KIRIM APAPUN (DIAM)
+
+        // SEND panel baru
+        const newMsg = await bot.sendMessage(chatId, panelText, { parse_mode: "HTML" });
+        session.panelMessageId = newMsg.message_id;
+        console.log(`[GABUNG] Sent new panel: ${newMsg.message_id}`);
+
         return;
       } catch (e) {
         console.error(`[GABUNG] Error processing file: ${e.message}`);
@@ -214,6 +233,16 @@ ${fileList}
     if (session.step === 2) {
       if (/^batal$/i.test(text)) {
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
+        
+        // Delete panel message jika ada
+        if (session.panelMessageId) {
+          try {
+            await bot.deleteMessage(chatId, session.panelMessageId);
+          } catch (e) {
+            console.error("[GABUNG] Error deleting panel:", e.message);
+          }
+        }
+        
         delete sessions[userId];
         
         return bot.sendMessage(chatId, 
@@ -259,6 +288,16 @@ ${fileList}
         }
 
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
+        
+        // Delete panel message jika ada
+        if (session.panelMessageId) {
+          try {
+            await bot.deleteMessage(chatId, session.panelMessageId);
+          } catch (e) {
+            console.error("[GABUNG] Error deleting panel:", e.message);
+          }
+        }
+        
         delete sessions[userId];
 
         bot.incrementOperation(userId);
@@ -276,6 +315,16 @@ ${fileList}
       } catch (e) {
         console.error(`[GABUNG] Error processing: ${e.message}`);
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
+        
+        // Delete panel message jika ada
+        if (session.panelMessageId) {
+          try {
+            await bot.deleteMessage(chatId, session.panelMessageId);
+          } catch (e) {
+            console.error("[GABUNG] Error deleting panel:", e.message);
+          }
+        }
+        
         delete sessions[userId];
         
         return bot.sendMessage(chatId, 
