@@ -98,7 +98,7 @@ export default function (bot, db, saveDB) {
     }
   }
 
-  bot.onText(/^⛓️MENU OWNER$|^⛓️ MENU OWNER ⛓️$|^\/owner$/i, async (msg) => {
+  bot.onText(/^⛓️ ᴍᴇɴᴜ ᴏᴡɴᴇʀ ⛓️$|^⛓️ MENU OWNER ⛓️$|^\/owner$/i, async (msg) => {
     const userId = msg.from.id;
     const chatId = msg.chat.id;
 
