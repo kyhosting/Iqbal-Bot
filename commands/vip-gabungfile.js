@@ -172,18 +172,36 @@ export default function (bot, db, saveDB) {
         fs.writeFileSync(localPath, Buffer.from(buffer));
         session.files.push(localPath);
 
-        return bot.sendMessage(chatId, 
-          `◆◆  GABUNG FILE  ◆◆
+        const panelText = `◆◆  GABUNG FILE  ◆◆
 
 ┌─❖
-│  ✅ File ${session.files.length} diterima
+│  ✅ ${session.files.length} file diterima
 │
 │  Kirim file lagi atau ketik:
 │  • done  — proses & kirim hasil
 │  • batal — batalkan
-└─❖`, 
-          { parse_mode: "HTML" }
-        );
+└─❖`;
+
+        // Jika ini file pertama, kirim pesan baru
+        if (session.files.length === 1) {
+          const sentMsg = await bot.sendMessage(chatId, panelText, { parse_mode: "HTML" });
+          session.panelMessageId = sentMsg.message_id;
+          return;
+        }
+
+        // Jika sudah ada file sebelumnya, edit pesan yang ada
+        if (session.panelMessageId) {
+          try {
+            await bot.editMessageText(panelText, {
+              chat_id: chatId,
+              message_id: session.panelMessageId,
+              parse_mode: "HTML"
+            });
+          } catch (e) {
+            console.error("Error editing message:", e);
+          }
+        }
+        return;
       } catch (e) {
         console.error(e);
         return bot.sendMessage(chatId, 
