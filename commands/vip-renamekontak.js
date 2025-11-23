@@ -88,19 +88,53 @@ export default function (bot, db, saveDB) {
         session.vcards = vcards;
         session.fileName = fileName;
         
+        return trackMessage(userId, chatId, `◆◆  ⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ ⛓️  ◆◆
+
+┌─❖
+│  ⏳ Processing...
+│
+│  Perintah:
+│  • done  — proses & kirim hasil file
+│  • batal — batalkan proses
+└─❖`, { parse_mode: "HTML" });
+      } catch (err) {
+        delete sessions[userId];
+        return trackMessage(userId, chatId, `❌ Error: ${err.message}`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+      }
+    } else if (session.step === 2) {
+      if (/^batal$/i.test(text)) {
+        delete sessions[userId];
+        return trackMessage(userId, chatId, `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ✅ Operasi dibatalkan
+└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+      }
+
+      if (!/^done$/i.test(text)) {
+        return trackMessage(userId, chatId, `◆◆  ⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ ⛓️  ◆◆
+
+┌─❖
+│  ⏳ Processing...
+│
+│  Perintah:
+│  • done  — proses & kirim hasil file
+│  • batal — batalkan proses
+└─❖`, { parse_mode: "HTML" });
+      }
+
+      session.step = 3;
+      return trackMessage(userId, chatId, `${(() => {
+        const vcards = session.vcards;
         let listText = `Kontak di file (${vcards.length}):\n\n`;
         vcards.slice(0, 5).forEach((v, i) => {
           const name = v.fn || `Kontak ${i + 1}`;
           listText += `${i + 1}. ${name}\n`;
         });
         if (vcards.length > 5) listText += `... dan ${vcards.length - 5} lainnya\n`;
-
-        return trackMessage(userId, chatId, `${listText}\n\nFormat: \`nomor|nama_baru|nama_baru|...\`\n\nContoh: \`1|John Doe\``, { parse_mode: "HTML" });
-      } catch (err) {
-        delete sessions[userId];
-        return trackMessage(userId, chatId, `❌ Error: ${err.message}`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
-      }
-    } else if (session.step === 2) {
+        return listText;
+      })()}\n\nFormat: \`nomor|nama_baru|nama_baru|...\`\n\nContoh: \`1|John Doe\``, { parse_mode: "HTML" });
+    } else if (session.step === 3) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
         return trackMessage(userId, chatId, `◆◆  DIBATALKAN  ◆◆

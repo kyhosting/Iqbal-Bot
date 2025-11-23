@@ -113,6 +113,57 @@ export default function (bot, db, saveDB) {
       return await trackMessage(
         userId,
         chatId,
+        `◆◆  ⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ ⛓️  ◆◆
+
+┌─❖
+│  ⏳ Processing...
+│
+│  Perintah:
+│  • done  — proses & kirim hasil file
+│  • batal — batalkan proses
+└─❖`,
+        { parse_mode: "HTML" }
+      );
+    }
+
+    // Step 2: Processing step
+    if (session.step === 2) {
+      if (batals(text)) {
+        if (session.file && fs.existsSync(session.file)) fs.unlinkSync(session.file);
+        delete sessions[userId];
+        return await sendWithDelete(
+          userId,
+          chatId,
+          `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Proses dibatalkan
+└─❖`,
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+        );
+      }
+
+      if (!/^done$/i.test(text)) {
+        return await trackMessage(
+          userId,
+          chatId,
+          `◆◆  ⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ ⛓️  ◆◆
+
+┌─❖
+│  ⏳ Processing...
+│
+│  Perintah:
+│  • done  — proses & kirim hasil file
+│  • batal — batalkan proses
+└─❖`,
+          { parse_mode: "HTML" }
+        );
+      }
+
+      session.step = 3;
+      return await trackMessage(
+        userId,
+        chatId,
         `◆◆  BAGI LANJUTAN  ◆◆
 
 ┌─❖
@@ -125,8 +176,8 @@ export default function (bot, db, saveDB) {
       );
     }
 
-    // Step 2: Output filename
-    if (session.step === 2) {
+    // Step 3: Output filename
+    if (session.step === 3) {
       if (batals(text)) {
         if (session.file && fs.existsSync(session.file)) fs.unlinkSync(session.file);
         delete sessions[userId];
@@ -145,7 +196,7 @@ export default function (bot, db, saveDB) {
       const originalName = path.basename(session.file, ".vcf");
       session.newFileName =
         /^skip$/i.test(text) || !text ? originalName : text.replace(/[^a-zA-Z0-9-_]/g, "_");
-      session.step = 3;
+      session.step = 4;
 
       return await trackMessage(
         userId,
@@ -162,42 +213,7 @@ export default function (bot, db, saveDB) {
       );
     }
 
-    // Step 3: Starting contact number
-    if (session.step === 3) {
-      if (batals(text) || isNaN(parseInt(text))) {
-        if (session.file && fs.existsSync(session.file)) fs.unlinkSync(session.file);
-        delete sessions[userId];
-        return await sendWithDelete(
-          userId,
-          chatId,
-          `◆◆  DIBATALKAN  ◆◆
-
-┌─❖
-│  ❌ Proses dibatalkan
-└─❖`,
-          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-        );
-      }
-
-      sessionLanjutan.split_counter = parseInt(text);
-      session.step = 4;
-
-      return await trackMessage(
-        userId,
-        chatId,
-        `◆◆  BAGI LANJUTAN  ◆◆
-
-┌─❖
-│  🔢 Angka awal nama file
-│
-│  Contoh: 1 → "nama-1.vcf", "nama-2.vcf"
-│  Ketik 'batal' batalkan
-└─❖`,
-        { parse_mode: "HTML" }
-      );
-    }
-
-    // Step 4: Starting file number
+    // Step 4: Starting contact number
     if (session.step === 4) {
       if (batals(text) || isNaN(parseInt(text))) {
         if (session.file && fs.existsSync(session.file)) fs.unlinkSync(session.file);
@@ -214,8 +230,43 @@ export default function (bot, db, saveDB) {
         );
       }
 
-      sessionLanjutan.file_counter = parseInt(text);
+      sessionLanjutan.split_counter = parseInt(text);
       session.step = 5;
+
+      return await trackMessage(
+        userId,
+        chatId,
+        `◆◆  BAGI LANJUTAN  ◆◆
+
+┌─❖
+│  🔢 Angka awal nama file
+│
+│  Contoh: 1 → "nama-1.vcf", "nama-2.vcf"
+│  Ketik 'batal' batalkan
+└─❖`,
+        { parse_mode: "HTML" }
+      );
+    }
+
+    // Step 5: Starting file number
+    if (session.step === 5) {
+      if (batals(text) || isNaN(parseInt(text))) {
+        if (session.file && fs.existsSync(session.file)) fs.unlinkSync(session.file);
+        delete sessions[userId];
+        return await sendWithDelete(
+          userId,
+          chatId,
+          `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Proses dibatalkan
+└─❖`,
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+        );
+      }
+
+      sessionLanjutan.file_counter = parseInt(text);
+      session.step = 6;
 
       return await trackMessage(
         userId,
@@ -232,8 +283,8 @@ export default function (bot, db, saveDB) {
       );
     }
 
-    // Step 5: Number of parts
-    if (session.step === 5) {
+    // Step 6: Number of parts
+    if (session.step === 6) {
       if (batals(text) || isNaN(parseInt(text)) || parseInt(text) <= 0) {
         if (session.file && fs.existsSync(session.file)) fs.unlinkSync(session.file);
         delete sessions[userId];
@@ -250,7 +301,7 @@ export default function (bot, db, saveDB) {
       }
 
       const bagian = parseInt(text);
-      session.step = 6;
+      session.step = 7;
 
       try {
         const contacts = readVcf(session.file);
@@ -338,8 +389,8 @@ export default function (bot, db, saveDB) {
       }
     }
 
-    // Step 6: Continue or finish
-    if (session.step === 6) {
+    // Step 7: Continue or finish
+    if (session.step === 7) {
       if (/^lanjut$/i.test(text)) {
         session.step = 1;
         return await trackMessage(
