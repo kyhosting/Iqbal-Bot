@@ -248,9 +248,9 @@ bot.sendTempMessage = async (chatId, text, deleteAfter = 10000) => {
 // ===== INCREMENT OPERATION COUNTER =====
 bot.incrementOperation = (userId) => {
   try {
-    if (!db.users) db.users = {};
-    if (!db.users[userId]) {
-      db.users[userId] = {
+    if (!bot.db.users) bot.db.users = {};
+    if (!bot.db.users[userId]) {
+      bot.db.users[userId] = {
         id: userId,
         username: "",
         first_name: "",
@@ -261,17 +261,19 @@ bot.incrementOperation = (userId) => {
         total_operation: 0
       };
     }
-    db.users[userId].total_operation = (db.users[userId].total_operation || 0) + 1;
-    saveDB();
-    return db.users[userId].total_operation;
+    bot.db.users[userId].total_operation = (bot.db.users[userId].total_operation || 0) + 1;
+    bot.saveDB();
+    return bot.db.users[userId].total_operation;
   } catch (err) {
     console.error("Error incrementing operation:", err);
     return 0;
   }
 };
 
-// ===== EXPOSE REDEEM DB & SAVE FUNCTION =====
+// ===== EXPOSE DATABASE & SAVE FUNCTIONS =====
+bot.db = db;
 bot.redeemDB = redeemDB;
+bot.saveDB = saveDB;
 bot.saveRedeemDB = saveRedeemDB;
 
 // ===== CHECK IF OWNER OR VIP ACCESS =====
@@ -297,7 +299,7 @@ bot.showDashboard = async (userId, chatId) => {
     else if (role === "vip") roleText = "💎 VIP";
     else if (role === "trial") roleText = "⭐ Trial";
     
-    const user = db.users[userId] || {};
+    const user = bot.db.users[userId] || {};
     const vipDaysLeft = user.vip_expired > Date.now() 
       ? Math.ceil((user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24))
       : 0;
