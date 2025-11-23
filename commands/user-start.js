@@ -185,11 +185,11 @@ export default function (bot, db, saveDB) {
       });
 
       const statusText = isVip ? "🔥 VIP ACTIVE" : "👤 Regular";
-      const roleText = userData.role === "owner" ? "👑 OWNER" : (userData.role === "vip" ? "💎 VIP" : "👤 USER");
       const username = userData.username || "unknown";
+      const fullName = userData.first_name || "User";
 
-      // Buat caption dengan format MARKDOWN yang tepat
-      const caption = `🎌 *iqbal ᴄᴠ ʙᴏᴛꜱ*
+      // Buat caption dengan format MARKDOWN yang tepat - TIDAK BOLEH DIUBAH SEKALIPUN 1 HURUF
+      const caption = `🎌 iqbal ᴄᴠ ʙᴏᴛꜱ
 (by iqbaldev)
 
 ╭─❖
@@ -198,23 +198,23 @@ export default function (bot, db, saveDB) {
 │ ✦ Created by: @Iqbaldev
 ╰───────────────❖
 
-╭─❖ *ꜱᴛᴀᴛᴜꜱ ᴀᴋᴄᴇꜱ*
-│ ➤ Nama: *${userData.first_name || "User"}*
+╭─❖ ꜱᴛᴀᴛᴜꜱ ᴀᴋᴄᴇꜱ
+│ ➤ Nama: *${fullName}*
 │ ➤ ID: \`${userId}\`
 │ ➤ Username: @${username}
-│ ➤ Role: *${roleText}*
+│ ➤ Role: *${userData.role === "owner" ? "👑 OWNER" : (userData.role === "admin" ? "🔐 ADMIN" : (userData.role === "vip" ? "💎 VIP" : "👤 USER"))}*
 │ ➤ Status: *${statusText}*
 │ ➤ Masa Aktif: *${expiredDate}*
 │ ➤ Hari Tersisa: *${remainingDays} hari*
 │ ➤ Total Operasi: *${userData.total_operation}*
 ╰───────────────❖
 
-╭─❖ *ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ*
+╭─❖ ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ
 │ ➤ 📄 TXT 📇 VCF 📊 XLSX
 │ ➤ 他の形式も順次対応予定です。
 ╰───────────────❖
 
-╭─❖ *ᴍᴇɴᴜ ʙᴏᴛ*
+╭─❖ ᴍᴇɴᴜ ʙᴏᴛ
 │ ➤ ⛓️ ʀᴀᴘɪᴋᴀɴ ᴛxᴛ
 │ ➤ ⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ
 │ ➤ ⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ
@@ -241,7 +241,7 @@ export default function (bot, db, saveDB) {
           const photoId = userPhotos.photos[0][0].file_id;
           await bot.sendPhoto(chatId, photoId, {
             caption: caption,
-            parse_mode: "HTML",
+            parse_mode: "Markdown",
             reply_markup: bot.getMainKeyboardUser(userId)
           });
           photoSent = true;
@@ -253,7 +253,7 @@ export default function (bot, db, saveDB) {
       // Jika tidak ada foto, kirim text saja
       if (!photoSent) {
         await bot.sendMessage(chatId, caption, {
-          parse_mode: "HTML",
+          parse_mode: "Markdown",
           reply_markup: bot.getMainKeyboardUser(userId)
         });
       }
