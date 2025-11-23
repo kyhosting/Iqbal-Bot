@@ -365,6 +365,21 @@ bot.on("polling_error", err => {
   if (err.code === 'ETELEGRAM' && err.response?.body?.error_code === 404) {
     return; // Skip logging 404 errors
   }
+  
+  // Handle 409 Conflict - multiple instances running
+  if (err.response?.statusCode === 409) {
+    console.error(`\n⚠️  409 CONFLICT ERROR - Another bot instance already running!`);
+    console.error(`📌 Only ONE bot instance allowed per token at a time.`);
+    console.error(`\n💡 Solutions:`);
+    console.error(`   1. Stop the other bot instance (Replit/Termux/VPS)`);
+    console.error(`   2. Wait 30+ seconds for Telegram to reset`);
+    console.error(`   3. Try running again\n`);
+    console.error(`Shutting down gracefully...`);
+    saveDB();
+    saveRedeemDB();
+    process.exit(0);
+  }
+  
   console.error("❌ Polling Error:", err.message);
 });
 bot.on("error", err => {
@@ -372,6 +387,16 @@ bot.on("error", err => {
   if (err.message?.includes("404")) {
     return;
   }
+  
+  // Handle 409 Conflict in error handler too
+  if (err.message?.includes("409") || err.message?.includes("Conflict")) {
+    console.error(`\n⚠️  409 CONFLICT - Another instance running!`);
+    console.error(`Shutting down...\n`);
+    saveDB();
+    saveRedeemDB();
+    process.exit(0);
+  }
+  
   console.error("❌ Bot Error:", err.message);
 });
 
