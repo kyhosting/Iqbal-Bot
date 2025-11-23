@@ -9,7 +9,7 @@ export default function (bot, db, saveDB) {
       } catch (e) {}
     }
     const msg = await bot.sendMessage(chatId, text, options);
-    userMessages[userId] = msg.message_id;
+    userMessages[userId] = msg.messageid;
     return msg;
   }
 
@@ -24,16 +24,16 @@ export default function (bot, db, saveDB) {
         return trackMessage(
           userId,
           chatId,
-          `❌ Hanya admin grup yang bisa ban user`,
-          { parse_mode: "Markdown" }
+          ❌ Hanya admin grup yang bisa ban user,
+          { parsemode: "Markdown" }
         );
       }
     } catch (e) {
       return trackMessage(
         userId,
         chatId,
-        `❌ Error checking admin status`,
-        { parse_mode: "Markdown" }
+        ❌ Error checking admin status,
+        { parsemode: "Markdown" }
       );
     }
 
@@ -43,24 +43,24 @@ export default function (bot, db, saveDB) {
       return trackMessage(
         userId,
         chatId,
-        `❌ Fitur grup hanya untuk VIP users kak!`,
-        { parse_mode: "Markdown" }
+        ❌ Fitur grup hanya untuk VIP users kak!,
+        { parsemode: "Markdown" }
       );
     }
 
-    sessions[userId] = { step: "ban_userid", groupId: chatId };
+    sessions[userId] = { step: "banuserid", groupId: chatId };
     trackMessage(
       userId,
       chatId,
-      `◆◆  BAN USER  ◆◆
+      ◆◆  BAN USER  ◆◆
 
 ┌─❖
 │  👤 Reply message dari user
 │  atau ketik user ID
 │
 │  Ketik 'batal' untuk cancel
-└─❖`,
-      { parse_mode: "Markdown" }
+└─❖,
+      { parsemode: "Markdown" }
     );
   });
 
@@ -75,16 +75,16 @@ export default function (bot, db, saveDB) {
         return trackMessage(
           userId,
           chatId,
-          `❌ Hanya admin grup yang bisa unban user`,
-          { parse_mode: "Markdown" }
+          ❌ Hanya admin grup yang bisa unban user,
+          { parsemode: "Markdown" }
         );
       }
     } catch (e) {
       return trackMessage(
         userId,
         chatId,
-        `❌ Error checking admin status`,
-        { parse_mode: "Markdown" }
+        ❌ Error checking admin status,
+        { parsemode: "Markdown" }
       );
     }
 
@@ -94,23 +94,23 @@ export default function (bot, db, saveDB) {
       return trackMessage(
         userId,
         chatId,
-        `❌ Fitur grup hanya untuk VIP users kak!`,
-        { parse_mode: "Markdown" }
+        ❌ Fitur grup hanya untuk VIP users kak!,
+        { parsemode: "Markdown" }
       );
     }
 
-    sessions[userId] = { step: "unban_userid", groupId: chatId };
+    sessions[userId] = { step: "unbanuserid", groupId: chatId };
     trackMessage(
       userId,
       chatId,
-      `◆◆  UNBAN USER  ◆◆
+      ◆◆  UNBAN USER  ◆◆
 
 ┌─❖
 │  👤 Ketik user ID yang mau di-unban
 │
 │  Ketik 'batal' untuk cancel
-└─❖`,
-      { parse_mode: "Markdown" }
+└─❖,
+      { parsemode: "Markdown" }
     );
   });
 
@@ -125,16 +125,16 @@ export default function (bot, db, saveDB) {
         return trackMessage(
           userId,
           chatId,
-          `❌ Hanya admin grup yang bisa kick user`,
-          { parse_mode: "Markdown" }
+          ❌ Hanya admin grup yang bisa kick user,
+          { parsemode: "Markdown" }
         );
       }
     } catch (e) {
       return trackMessage(
         userId,
         chatId,
-        `❌ Error checking admin status`,
-        { parse_mode: "Markdown" }
+        ❌ Error checking admin status,
+        { parsemode: "Markdown" }
       );
     }
 
@@ -144,24 +144,24 @@ export default function (bot, db, saveDB) {
       return trackMessage(
         userId,
         chatId,
-        `❌ Fitur grup hanya untuk VIP users kak!`,
-        { parse_mode: "Markdown" }
+        ❌ Fitur grup hanya untuk VIP users kak!,
+        { parsemode: "Markdown" }
       );
     }
 
-    sessions[userId] = { step: "kick_userid", groupId: chatId };
+    sessions[userId] = { step: "kickuserid", groupId: chatId };
     trackMessage(
       userId,
       chatId,
-      `◆◆  KICK USER  ◆◆
+      ◆◆  KICK USER  ◆◆
 
 ┌─❖
 │  👤 Reply message dari user
 │  atau ketik user ID
 │
 │  Ketik 'batal' untuk cancel
-└─❖`,
-      { parse_mode: "Markdown" }
+└─❖,
+      { parsemode: "Markdown" }
     );
   });
 
@@ -175,14 +175,14 @@ export default function (bot, db, saveDB) {
     if (!session) return;
 
     // BAN USER
-    if (session.step === "ban_userid") {
+    if (session.step === "banuserid") {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
         return trackMessage(
           userId,
           chatId,
-          `❌ Dibatalkan`,
-          { parse_mode: "Markdown" }
+          ❌ Dibatalkan,
+          { parsemode: "Markdown" }
         );
       }
 
@@ -191,8 +191,8 @@ export default function (bot, db, saveDB) {
         return trackMessage(
           userId,
           chatId,
-          `❌ User ID tidak valid`,
-          { parse_mode: "Markdown" }
+          ❌ User ID tidak valid,
+          { parsemode: "Markdown" }
         );
       }
 
@@ -202,28 +202,28 @@ export default function (bot, db, saveDB) {
         trackMessage(
           userId,
           chatId,
-          `✅ User ${targetUserId} berhasil di-ban`,
-          { parse_mode: "Markdown" }
+          ✅ User ${targetUserId} berhasil di-ban,
+          { parsemode: "Markdown" }
         );
       } catch (e) {
         trackMessage(
           userId,
           chatId,
-          `❌ Error ban user: ${e.message}`,
-          { parse_mode: "Markdown" }
+          ❌ Error ban user: ${e.message},
+          { parsemode: "Markdown" }
         );
       }
     }
 
     // UNBAN USER
-    if (session.step === "unban_userid") {
+    if (session.step === "unbanuserid") {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
         return trackMessage(
           userId,
           chatId,
-          `❌ Dibatalkan`,
-          { parse_mode: "Markdown" }
+          ❌ Dibatalkan,
+          { parsemode: "Markdown" }
         );
       }
 
@@ -232,8 +232,8 @@ export default function (bot, db, saveDB) {
         return trackMessage(
           userId,
           chatId,
-          `❌ User ID tidak valid`,
-          { parse_mode: "Markdown" }
+          ❌ User ID tidak valid,
+          { parsemode: "Markdown" }
         );
       }
 
@@ -243,28 +243,28 @@ export default function (bot, db, saveDB) {
         trackMessage(
           userId,
           chatId,
-          `✅ User ${targetUserId} berhasil di-unban`,
-          { parse_mode: "Markdown" }
+          ✅ User ${targetUserId} berhasil di-unban,
+          { parsemode: "Markdown" }
         );
       } catch (e) {
         trackMessage(
           userId,
           chatId,
-          `❌ Error unban user: ${e.message}`,
-          { parse_mode: "Markdown" }
+          ❌ Error unban user: ${e.message},
+          { parsemode: "Markdown" }
         );
       }
     }
 
     // KICK USER
-    if (session.step === "kick_userid") {
+    if (session.step === "kickuserid") {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
         return trackMessage(
           userId,
           chatId,
-          `❌ Dibatalkan`,
-          { parse_mode: "Markdown" }
+          ❌ Dibatalkan,
+          { parsemode: "Markdown" }
         );
       }
 
@@ -273,8 +273,8 @@ export default function (bot, db, saveDB) {
         return trackMessage(
           userId,
           chatId,
-          `❌ User ID tidak valid`,
-          { parse_mode: "Markdown" }
+          ❌ User ID tidak valid,
+          { parsemode: "Markdown" }
         );
       }
 
@@ -284,14 +284,14 @@ export default function (bot, db, saveDB) {
         trackMessage(
           userId,
           chatId,
-          `✅ User ${targetUserId} berhasil di-kick`,
-          { parse_mode: "Markdown" }
+          ✅ User ${targetUserId} berhasil di-kick,
+          { parsemode: "Markdown" }
         );
       } catch (e) {
         trackMessage(
           userId,
           chatId,
-          `❌ Error kick user: ${e.message}`,
+          ❌ Error kick user: ${e.message},
           { parse_mode: "Markdown" }
         );
       }

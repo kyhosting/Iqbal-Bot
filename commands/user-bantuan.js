@@ -1,7 +1,7 @@
 import config from "../config.js";
 
 export default function (bot, db, saveDB) {
-  const OWNER_USERNAME = config.ownerUsername;
+  const OWNERUSERNAME = config.ownerUsername;
   const userMessages = {};
 
   async function trackMessage(userId, chatId, text, options = {}) {
@@ -11,7 +11,7 @@ export default function (bot, db, saveDB) {
       } catch (e) {}
     }
     const msg = await bot.sendMessage(chatId, text, options);
-    userMessages[userId] = msg.message_id;
+    userMessages[userId] = msg.messageid;
     return msg;
   }
 
@@ -24,12 +24,12 @@ export default function (bot, db, saveDB) {
       return trackMessage(
         userId,
         chatId,
-        `◆◆  AKSES DITOLAK  ◆◆
+        ◆◆  AKSES DITOLAK  ◆◆
 
 ┌─❖
 │  ❌ Fitur grup hanya untuk VIP users kak!
-└─❖`,
-        { parse_mode: "Markdown" }
+└─❖,
+        { parsemode: "Markdown" }
       );
     }
 
@@ -38,36 +38,36 @@ export default function (bot, db, saveDB) {
       return trackMessage(
         userId,
         chatId,
-        `◆◆  BANTUAN  ◆◆
+        ◆◆  BANTUAN  ◆◆
 
 ┌─❖
 │  ⚠️ Akses Ditolak
 │
 │  Harus join grup terlebih dahulu
-└─❖`,
-        { parse_mode: "Markdown" }
+└─❖,
+        { parsemode: "Markdown" }
       );
     }
 
-    const bugMessage = `Halo Owner, saya ingin melaporkan BUG.\n\n• User ID: ${userId}\n\nTulis bug nya disini:`;
-    const errorMessage = `Owner, BOT nya ERROR.\n\n• User ID: ${userId}\n\nError yang terjadi:`;
-    const featureMessage = `Halo Owner, saya ingin request fitur baru.\n\n• User ID: ${userId}\n\nFitur yang saya inginkan:`;
+    const bugMessage = Halo Owner, saya ingin melaporkan BUG.\n\n• User ID: ${userId}\n\nTulis bug nya disini:;
+    const errorMessage = Owner, BOT nya ERROR.\n\n• User ID: ${userId}\n\nError yang terjadi:;
+    const featureMessage = Halo Owner, saya ingin request fitur baru.\n\n• User ID: ${userId}\n\nFitur yang saya inginkan:;
 
-    const bugUrl = `https://t.me/${OWNER_USERNAME}?text=${encodeURIComponent(bugMessage)}`;
-    const errorUrl = `https://t.me/${OWNER_USERNAME}?text=${encodeURIComponent(errorMessage)}`;
-    const featureUrl = `https://t.me/${OWNER_USERNAME}?text=${encodeURIComponent(featureMessage)}`;
+    const bugUrl = https://t.me/${OWNERUSERNAME}?text=${encodeURIComponent(bugMessage)};
+    const errorUrl = https://t.me/${OWNERUSERNAME}?text=${encodeURIComponent(errorMessage)};
+    const featureUrl = https://t.me/${OWNERUSERNAME}?text=${encodeURIComponent(featureMessage)};
 
     const keyboard = {
-      inline_keyboard: [
+      inlinekeyboard: [
         [{ text: "🐞 Lapor Bug", url: bugUrl }],
         [{ text: "⚠️ Bot Error", url: errorUrl }],
         [{ text: "🛠️ Request Fitur", url: featureUrl }],
-        [{ text: "💎 Beli VIP", callback_data: "show_vip_list" }],
-        [{ text: "💬 Chat Owner", url: `https://t.me/${OWNER_USERNAME}` }]
+        [{ text: "💎 Beli VIP", callbackdata: "showviplist" }],
+        [{ text: "💬 Chat Owner", url: https://t.me/${OWNERUSERNAME} }]
       ]
     };
 
-    const message = `◆◆  MENU BANTUAN  ◆◆
+    const message = ◆◆  MENU BANTUAN  ◆◆
 
 ┌─❖
 │  🆘 Ada Yang Bisa Dibantu?
@@ -84,38 +84,38 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'bantuan' untuk menu
 │  Ketik 'batal' untuk batal
-└─❖`;
+└─❖;
 
     await trackMessage(userId, chatId, message, {
-      parse_mode: "Markdown",
-      reply_markup: keyboard
+      parsemode: "Markdown",
+      replymarkup: keyboard
     });
   });
 
-  bot.on("callback_query", async (query) => {
+  bot.on("callbackquery", async (query) => {
     const userId = query.from.id;
     const chatId = query.message.chat.id;
     const data = query.data;
 
-    if (data === "show_vip_list") {
-      const vip7Message = `Halo Owner, saya ingin membeli VIP.\n\n• Harga: VIP 7 Hari (15K)\n• User ID: ${userId}\n\nMohon diproses 🙏`;
-      const vip30Message = `Halo Owner, saya ingin membeli VIP.\n\n• Harga: VIP 30 Hari (35K)\n• User ID: ${userId}\n\nMohon diproses 🙏`;
-      const vip1yMessage = `Halo Owner, saya ingin membeli VIP.\n\n• Harga: VIP 1 Tahun (100K)\n• User ID: ${userId}\n\nMohon diproses 🙏`;
+    if (data === "showviplist") {
+      const vip7Message = Halo Owner, saya ingin membeli VIP.\n\n• Harga: VIP 7 Hari (15K)\n• User ID: ${userId}\n\nMohon diproses 🙏;
+      const vip30Message = Halo Owner, saya ingin membeli VIP.\n\n• Harga: VIP 30 Hari (35K)\n• User ID: ${userId}\n\nMohon diproses 🙏;
+      const vip1yMessage = Halo Owner, saya ingin membeli VIP.\n\n• Harga: VIP 1 Tahun (100K)\n• User ID: ${userId}\n\nMohon diproses 🙏;
 
-      const vip7Url = `https://t.me/${OWNER_USERNAME}?text=${encodeURIComponent(vip7Message)}`;
-      const vip30Url = `https://t.me/${OWNER_USERNAME}?text=${encodeURIComponent(vip30Message)}`;
-      const vip1yUrl = `https://t.me/${OWNER_USERNAME}?text=${encodeURIComponent(vip1yMessage)}`;
+      const vip7Url = https://t.me/${OWNERUSERNAME}?text=${encodeURIComponent(vip7Message)};
+      const vip30Url = https://t.me/${OWNERUSERNAME}?text=${encodeURIComponent(vip30Message)};
+      const vip1yUrl = https://t.me/${OWNERUSERNAME}?text=${encodeURIComponent(vip1yMessage)};
 
       const keyboard = {
-        inline_keyboard: [
+        inlinekeyboard: [
           [{ text: "💎 VIP 7 Hari — 15K", url: vip7Url }],
           [{ text: "💎 VIP 30 Hari — 35K", url: vip30Url }],
           [{ text: "💎 VIP 1 Tahun — 100K", url: vip1yUrl }],
-          [{ text: "🔙 Kembali", callback_data: "back_to_bantuan" }]
+          [{ text: "🔙 Kembali", callbackdata: "backtobantuan" }]
         ]
       };
 
-      const message = `◆◆  PAKET VIP  ◆◆
+      const message = ◆◆  PAKET VIP  ◆◆
 
 ┌─❖
 │  💎 TERSEDIA
@@ -139,34 +139,34 @@ export default function (bot, db, saveDB) {
 │  ✓ Rapikan & clean data
 │
 │  ✓ Rename & manage file
-└─❖`;
+└─❖;
 
       await trackMessage(userId, chatId, message, {
-        parse_mode: "Markdown",
-        reply_markup: keyboard
+        parsemode: "Markdown",
+        replymarkup: keyboard
       });
 
       await bot.answerCallbackQuery(query.id);
-    } else if (data === "back_to_bantuan") {
-      const bugMessage = `Halo Owner, saya ingin melaporkan BUG.\n\n• User ID: ${userId}\n\nTulis bug nya disini:`;
-      const errorMessage = `Owner, BOT nya ERROR.\n\n• User ID: ${userId}\n\nError yang terjadi:`;
-      const featureMessage = `Halo Owner, saya ingin request fitur baru.\n\n• User ID: ${userId}\n\nFitur yang saya inginkan:`;
+    } else if (data === "backtobantuan") {
+      const bugMessage = Halo Owner, saya ingin melaporkan BUG.\n\n• User ID: ${userId}\n\nTulis bug nya disini:;
+      const errorMessage = Owner, BOT nya ERROR.\n\n• User ID: ${userId}\n\nError yang terjadi:;
+      const featureMessage = Halo Owner, saya ingin request fitur baru.\n\n• User ID: ${userId}\n\nFitur yang saya inginkan:;
 
-      const bugUrl = `https://t.me/${OWNER_USERNAME}?text=${encodeURIComponent(bugMessage)}`;
-      const errorUrl = `https://t.me/${OWNER_USERNAME}?text=${encodeURIComponent(errorMessage)}`;
-      const featureUrl = `https://t.me/${OWNER_USERNAME}?text=${encodeURIComponent(featureMessage)}`;
+      const bugUrl = https://t.me/${OWNERUSERNAME}?text=${encodeURIComponent(bugMessage)};
+      const errorUrl = https://t.me/${OWNERUSERNAME}?text=${encodeURIComponent(errorMessage)};
+      const featureUrl = https://t.me/${OWNERUSERNAME}?text=${encodeURIComponent(featureMessage)};
 
       const keyboard = {
-        inline_keyboard: [
+        inlinekeyboard: [
           [{ text: "🐞 Lapor Bug", url: bugUrl }],
           [{ text: "⚠️ Bot Error", url: errorUrl }],
           [{ text: "🛠️ Request Fitur", url: featureUrl }],
-          [{ text: "💎 Beli VIP", callback_data: "show_vip_list" }],
-          [{ text: "💬 Chat Owner", url: `https://t.me/${OWNER_USERNAME}` }]
+          [{ text: "💎 Beli VIP", callbackdata: "showviplist" }],
+          [{ text: "💬 Chat Owner", url: https://t.me/${OWNERUSERNAME} }]
         ]
       };
 
-      const message = `◆◆  MENU BANTUAN  ◆◆
+      const message = ◆◆  MENU BANTUAN  ◆◆
 
 ┌─❖
 │  🆘 Ada Yang Bisa Dibantu?
@@ -183,11 +183,11 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'bantuan' untuk menu
 │  Ketik 'batal' untuk batal
-└─❖`;
+└─❖;
 
       await trackMessage(userId, chatId, message, {
-        parse_mode: "Markdown",
-        reply_markup: keyboard
+        parsemode: "Markdown",
+        replymarkup: keyboard
       });
 
       await bot.answerCallbackQuery(query.id);

@@ -8,7 +8,7 @@ export default function (bot, db, saveDB) {
       } catch (e) {}
     }
     const msg = await bot.sendMessage(chatId, text, options);
-    userMessages[userId] = msg.message_id;
+    userMessages[userId] = msg.messageid;
     return msg;
   }
 
@@ -21,16 +21,16 @@ export default function (bot, db, saveDB) {
       return trackMessage(
         userId,
         chatId,
-        `◆◆  AKSES DITOLAK  ◆◆
+        ◆◆  AKSES DITOLAK  ◆◆
 
 ┌─❖
 │  ❌ Fitur grup hanya untuk VIP users kak!
-└─❖`,
-        { parse_mode: "Markdown" }
+└─❖,
+        { parsemode: "Markdown" }
       );
     }
 
-    const message = `◆◆  CLEAR CHAT  ◆◆
+    const message = ◆◆  CLEAR CHAT  ◆◆
 
 ┌─❖
 │  ✅ Chat Bersih
@@ -41,7 +41,7 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'done' untuk selesai
 │  Ketik 'batal' untuk batal
-└─❖`;
+└─❖;
 
     await trackMessage(userId, chatId, message, { parse_mode: "Markdown" });
   });

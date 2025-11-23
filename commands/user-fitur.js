@@ -8,7 +8,7 @@ export default function (bot) {
       } catch (e) {}
     }
     const msg = await bot.sendMessage(chatId, text, options);
-    userMessages[userId] = msg.message_id;
+    userMessages[userId] = msg.messageid;
     return msg;
   }
 
@@ -21,16 +21,16 @@ export default function (bot) {
       return trackMessage(
         userId,
         chatId,
-        `◆◆  AKSES DITOLAK  ◆◆
+        ◆◆  AKSES DITOLAK  ◆◆
 
 ┌─❖
 │  ❌ Fitur grup hanya untuk VIP users kak!
-└─❖`,
-        { parse_mode: "Markdown" }
+└─❖,
+        { parsemode: "Markdown" }
       );
     }
 
-    const message = `◆◆  FITUR BOT IQBAL CV  ◆◆
+    const message = ◆◆  FITUR BOT IQBAL CV  ◆◆
 
 ┌─❖
 │  📄 KONVERSI FILE
@@ -112,7 +112,7 @@ export default function (bot) {
 │
 │  Ketik 'fitur' untuk list fitur
 │  Ketik 'start' untuk mulai
-└─❖`;
+└─❖;
 
     await trackMessage(userId, chatId, message, { parse_mode: "Markdown" });
   });
