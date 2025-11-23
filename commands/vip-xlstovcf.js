@@ -32,7 +32,7 @@ TEL:${sanitizedPhone}
 END:VCARD`;
   }
 
-  bot.onText(/^⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ ⛓️$|^⛓️ XLS TO VCF ⛓️$|^\/xlstovcf$/i, async (msg) => {
+  bot.onText(/^⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ ⛓️$|^⛓️ XLS TO VCF ⛓️$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
 
