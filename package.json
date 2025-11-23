@@ -1,17 +1,44 @@
 {
   "name": "iqbal-cv-bot",
   "version": "2.1.0",
-  "description": "Iqbal CV Bot - Advanced File Converter Bot",
+  "description": "🎌 Iqbal CV Bot - Official Telegram Bot for File Conversion & Contact Management | KIFZL & IQBAL DEV",
+  "author": "KIKI FZL & PARTNER/SUPPORT IQBAL DEV",
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "node --watch index.js"
   },
+  "keywords": [
+    "telegram",
+    "bot",
+    "vcf",
+    "txt",
+    "xlsx",
+    "converter",
+    "file-converter",
+    "contact-manager",
+    "node-telegram-bot-api"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kyhosting/Iqbal-Bot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kyhosting/Iqbal-Bot/issues"
+  },
+  "homepage": "https://github.com/kyhosting/Iqbal-Bot#readme",
+  "license": "MIT",
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
     "node-fetch": "^3.3.2",
     "node-telegram-bot-api": "^0.66.0",
     "vcard-parser": "^1.0.0",
     "xlsx": "^0.18.5"
-  }
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "preferGlobal": false,
+  "private": false
 }
