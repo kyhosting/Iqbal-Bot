@@ -6,7 +6,7 @@ Iqbal CV Bot is a Telegram bot designed for converting and managing contact file
 ## User Preferences
 - **Komunikasi**: Bahasa Indonesia, ramah, cool, dan profesional dengan emoji
 - **UI Style**: Japanese aesthetic dengan template clean
-- **Response Format**: Markdown dengan keyboard buttons setelah setiap operasi
+- **Response Format**: HTML parse_mode dengan keyboard buttons setelah setiap operasi
 
 ## System Architecture
 
@@ -14,7 +14,7 @@ Iqbal CV Bot is a Telegram bot designed for converting and managing contact file
 The bot is built on Node.js using ES Modules, leveraging `node-telegram-bot-api` for Telegram integration. File processing capabilities are powered by `xlsx`, `vcard-parser`, and `cheerio`. User and redeem code data are persistently stored in JSON files (`database.json`, `redeem.json`).
 
 ### User Interface and Interaction
-The bot features a Japanese aesthetic with a clean template. It utilizes Telegram's keyboard buttons for navigation, which are displayed after every operation. All responses are formatted in Markdown, include relevant emojis, and maintain a friendly, professional tone using phrases like "Kak".
+The bot features a Japanese aesthetic with a clean template. It utilizes Telegram's keyboard buttons for navigation, which are displayed after every operation. All responses are formatted using Telegram's HTML parse_mode (`parse_mode: "HTML"`), include relevant emojis, and maintain a friendly, professional tone using phrases like "Kak". Beautiful panel borders (◆◆, ╭─❖, etc.) provide visual structure to all messages.
 
 ### Keyboard Layout (v2.0.2)
 Professional 2x2 grid format with trailing emoji (⛓️):
@@ -80,7 +80,25 @@ The system enforces group membership for VIP commands, uses single-use redeem co
 
 ## Recent Updates
 
-**Session Nov 23, 2025 - KEYBOARD REDESIGN & NEW FEATURES (v2.0.2):**
+**Session Nov 23, 2025 - HTML MESSAGE FORMATTING (v2.0.3):**
+- 🎨 **ALL MESSAGES CONVERTED TO HTML FORMAT**
+  - Migrated all 26 files (25 commands + index.js) to use `parse_mode: "HTML"`
+  - Total of 239+ HTML parse_mode instances across the bot
+  - Messages now render with proper Telegram HTML formatting
+  - Beautiful panel borders (◆◆, ╭─❖, ├─❖, etc.) display correctly in Telegram clients
+  
+- ✅ **FORMATTING IMPROVEMENTS:**
+  - All user messages use consistent HTML formatting
+  - Emoji formatting preserved and enhanced
+  - Message structure maintained with visual panel borders
+  - Better rendering on all Telegram clients (mobile, desktop, web)
+
+- ✅ **Bot Status: 25/25 PLUGINS LOADED - PRODUCTION READY** 🚀
+  - All 25 commands loading successfully
+  - HTML formatting implemented across entire bot
+  - Bot process running stable
+
+**Previous Session (Nov 23, 2025 - v2.0.2):**
 - 🎨 **KEYBOARD LAYOUT UPDATE** - Professional 2x2 grid with trailing emoji format
   - All buttons now have consistent format: `⛓️ ᴛɪᴛʟᴇ ⛓️`
   - Organized into logical 2x2 groups for better UX
@@ -100,5 +118,3 @@ The system enforces group membership for VIP commands, uses single-use redeem co
   - Shows complete user list with: Role (Owner/VIP/User), Status, VIP Expiry, Operation Count
   - Display format: Name | ID | Role | Status | VIP Expiry | Total Operations
   - Original "👥 Lihat User" renamed to "👥 Lihat User VIP" (shows only active VIP users)
-  
-- ✅ **Bot Status: 25/25 PLUGINS LOADED - PRODUCTION READY** 🚀
