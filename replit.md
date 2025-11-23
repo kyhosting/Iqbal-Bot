@@ -80,12 +80,12 @@ The system enforces group membership for VIP commands, uses single-use redeem co
 
 ## Recent Updates
 
-**Session Nov 23, 2025 - FAST FILE SENDING OPTIMIZATION + PROCESSING MESSAGE PATTERN (v2.0.6):**
-- 🚀 **PARALLEL FILE SENDING - SPEED BOOST**
-  - `⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ ⛓️` & `⛓️ ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛ ⛓️` now use `Promise.all()` for parallel file transmission
-  - Files sent simultaneously instead of sequentially → **MUCH FASTER** 🔥
-  - Status message sent immediately after all files queued (no waiting)
-  - Better cleanup handling with try-catch safety
+**Session Nov 23, 2025 - FAST FILE SENDING OPTIMIZATION + ORGANIZED FILE ORDER (v2.0.6):**
+- 📂 **FILES SENT IN ORGANIZED ORDER**
+  - `⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ ⛓️` & `⛓️ ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛ ⛓️` now sort files by numeric suffix before sending
+  - Files sent sequentially in correct order → **file-1, file-2, file-3 (TERSUSUN RAPI!)** 📊
+  - Numeric sorting ensures files appear organized in user's chat
+  - Status message sent immediately after all files sent
 
 - ✅ **PROCESSING MESSAGE PATTERN - 5 CONVERSION COMMANDS**
   - Applied to: TXT TO VCF, VCF TO TXT, XLS TO VCF, MSG TO TXT, CREATE ADMIN

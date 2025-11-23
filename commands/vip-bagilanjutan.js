@@ -163,11 +163,20 @@ export default function (bot, db, saveDB) {
       try {
         const hasil = splitVcfByPart(session.file, session.newFileName, bagian, session.splitCounter, session.fileCounter);
 
-        // Kirim semua file PARALLEL - FAST! 🚀
-        await Promise.all(hasil.files.map(f => bot.sendDocument(chatId, f)));
+        // Sort files by numeric suffix untuk urutan yang rapi
+        const sortedFiles = hasil.files.sort((a, b) => {
+          const numA = parseInt(a.match(/-(\d+)\.vcf/)?.[1] || 0);
+          const numB = parseInt(b.match(/-(\d+)\.vcf/)?.[1] || 0);
+          return numA - numB;
+        });
+
+        // Kirim file BERURUTAN - TERSUSUN RAPI! 📂
+        for (const f of sortedFiles) {
+          await bot.sendDocument(chatId, f);
+        }
         
         // Cleanup files
-        hasil.files.forEach(f => {
+        sortedFiles.forEach(f => {
           try { fs.unlinkSync(f); } catch (e) {}
         });
         fs.unlinkSync(session.file);
@@ -176,7 +185,7 @@ export default function (bot, db, saveDB) {
         session.fileCounter = hasil.nextFile;
         session.step = 6;
         
-        // Kirim status langsung tanpa delay
+        // Kirim status langsung
         bot.sendMessage(chatId, `✅ Selesai dibagi Kak! 🎉\n\n📊 Total: ${hasil.files.length} file\n\nKetik \`lanjut\` untuk file berikutnya\nKetik \`selesai\` untuk berhenti`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
         bot.incrementOperation(userId);
       } catch (err) {
