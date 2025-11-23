@@ -80,41 +80,34 @@ if (encPath && !fs.existsSync(encPath)) {
 console.log("✅ Bot siap dijalankan...");
 
 // ===== VALIDATE BOT TOKEN =====
-if (!config.token || config.token === "YOUR_BOT_TOKEN_HERE") {
-  console.error(`
-╔════════════════════════════════════════════════════════════╗
-║                   ❌ ERROR: INVALID TOKEN                  ║
-╚════════════════════════════════════════════════════════════╝
+const hasValidToken = config.token && config.token !== "YOUR_BOT_TOKEN_HERE";
 
-🚫 Bot token is not configured!
+if (!hasValidToken) {
+  console.warn(`
+⚠️  ════════════════════════════════════════════════════════════
+⚠️   TOKEN NOT CONFIGURED - Running in SETUP MODE
+⚠️  ════════════════════════════════════════════════════════════
 
-📝 STEPS TO FIX:
+🚫 Bot token is not configured yet!
+
+📝 TO ACTIVATE BOT:
 
 1. Edit config.js:
    nano config.js
 
-2. Find this line:
-   token: "YOUR_BOT_TOKEN_HERE",
-
-3. Get your token from @BotFather on Telegram:
+2. Get your token from @BotFather on Telegram:
    - Open Telegram → Search: @BotFather
    - Type: /newbot
-   - Follow instructions
-   - Copy the token (format: 1234567890:ABCDefghijklmnop...)
+   - Follow instructions → Copy token
 
-4. Replace the token:
-   token: "YOUR_TOKEN_HERE",
-            ↑
-            Paste your real token here
+3. Replace in config.js:
+   token: "YOUR_REAL_TOKEN_HERE",
 
-5. Save file (Ctrl+X → Y → Enter)
-
-6. Run bot again:
+4. Save & run:
    npm start
 
-🎌 For detailed guide, see: TERMUX_SETUP.md
-  `);
-  process.exit(1);
+🎌 Full guide: TERMUX_SETUP.md
+⚠️  ════════════════════════════════════════════════════════════\n`);
 }
 
 // ===== PASTIKAN FILE / FOLDER UTAMA ADA =====
@@ -127,7 +120,14 @@ if (!fs.existsSync("./redeem.json")) {
 }
 
 // ===== INIT BOT =====
-const bot = new TelegramBot(config.token, { polling: true });
+let bot;
+if (hasValidToken) {
+  bot = new TelegramBot(config.token, { polling: true });
+} else {
+  // Use dummy token for setup mode (will fail Telegram API calls but won't crash)
+  bot = new TelegramBot("123456789:ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghij", { polling: false });
+  console.log("⚠️  Bot in SETUP MODE - polling disabled");
+}
 let db = JSON.parse(fs.readFileSync("database.json"));
 let redeemDB = JSON.parse(fs.readFileSync("redeem.json"));
 
