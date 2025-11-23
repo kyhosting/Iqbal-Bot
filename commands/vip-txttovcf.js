@@ -140,11 +140,14 @@ export default function (bot) {
         `◆◆  TXT TO VCF  ◆◆
 
 ┌─❖
-│  📇 Nama Kontak Dasar
+│  📇 Masukkan Nama Kontak Dasar
 │
-│  Contoh: customer → customer-0001, customer-0002
-│  Ketik 'skip' pakai nama file
-│  Ketik 'batal' batalkan
+│  Contoh Input:
+│  ➤ Customer
+│
+│  Catatan:
+│  • Ketik skip untuk memakai nama dari nama file
+│  • Ketik batal untuk membatalkan proses
 └─❖`,
         { parse_mode: "HTML" }
       );
@@ -197,7 +200,7 @@ export default function (bot) {
         const kontakList = [];
         const vcfData = numbers
           .map((num, i) => {
-            const name = `${session.contactName}-${String(i + 1).padStart(4, "0")}`;
+            const name = `${session.contactName}-${i + 1}`;
             kontakList.push(name);
             return createVcfEntry(num, name);
           })
