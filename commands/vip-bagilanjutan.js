@@ -86,9 +86,11 @@ export default function (bot, db, saveDB) {
 
       session.file = localPath;
       session.originalName = msg.document.file_name.replace(".vcf", "");
+      session.splitCounter = 1;
+      session.fileCounter = 1;
       session.step = 2;
 
-            `Kontak di file / Total: ${splitCounter}</pre></code>`
+      trackMessage(userId, chatId, `📎 Masukkan nama file output ya Kak\n\nKetik \`skip\` untuk pakai nama lama`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
       return;
     }
 
