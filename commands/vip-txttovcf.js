@@ -160,7 +160,8 @@ export default function (bot, db, saveDB) {
         : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
 
       session.step = 3;
-      return bot.sendMessage(
+      return trackMessage(
+        userId,
         chatId,
         `◆◆  TXT TO VCF  ◆◆
 
