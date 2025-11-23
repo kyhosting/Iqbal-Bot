@@ -31,7 +31,7 @@ export default function (bot, db, saveDB) {
     return /^batal$/i.test(text);
   }
 
-  bot.onText(/^⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ ⛓️$|^⛓️ BAGI LANJUT ⛓️$|^\/bagilanjutan$/i, async (msg) => {
+  bot.onText(/^⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ ⛓️$|^⛓️ BAGI LANJUT ⛓️$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);

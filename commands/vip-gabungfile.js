@@ -21,49 +21,7 @@ export default function (bot, db, saveDB) {
     return trackMessage(userId, chatId, text, options);
   }
 
-  bot.onText(/^⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ ⛓️$|^⛓️ GABUNG FILE ⛓️$|^\/gabungfile$/i, async (msg) => {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-    
-    const hasAccess = await bot.verifyGroupAccess(userId, chatId);
-    if (!hasAccess) return;
-    
-    const role = bot.getRole(userId);
-    if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(chatId, 
-        `◆◆  GABUNG FILE  ◆◆
-
-┌─❖
-│  ❌ Akses Ditolak
-│
-│  Fitur khusus VIP
-└─❖`, 
-        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-      );
-    }
-
-    sessions[userId] = { step: 1, files: [], fileType: null };
-    trackMessage(userId, chatId, 
-      `◆◆  GABUNG FILE  ◆◆
-
-┌─❖
-│  📂 Gabung Multiple File
-│
-│  Support: VCF, TXT, XLSX
-│
-│  Minimal 2 file
-│
-│  Tipe file harus sama
-│
-│  Ketik 'done' selesai
-│
-│  Ketik 'batal' batalkan
-└─❖`, 
-      { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-    );
-  });
-
-  bot.onText(/^\/gabungfile$/, async (msg) => {
+  bot.onText(/^⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ ⛓️$|^⛓️ GABUNG FILE ⛓️$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     
@@ -213,29 +171,26 @@ export default function (bot, db, saveDB) {
         const buffer = await res.arrayBuffer();
         const localPath = path.join(process.cwd(), fileName);
         fs.writeFileSync(localPath, Buffer.from(buffer));
-
         session.files.push(localPath);
+
         return bot.sendMessage(chatId, 
           `◆◆  GABUNG FILE  ◆◆
 
 ┌─❖
-│  ✅ File Diterima
+│  ✅ File ${session.files.length} diterima
 │
-│  File: ${fileName}
-│
-│  Total: ${session.files.length}
-│
-│  Kirim lagi atau ketik 'done'
+│  Ketik 'done' untuk proses
+│  Ketik 'batal' untuk batal
 └─❖`, 
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
-      } catch (err) {
-        console.error("Download error:", err);
+      } catch (e) {
+        console.error(e);
         return bot.sendMessage(chatId, 
-          `◆◆  GABUNG FILE  ◆◆
+          `◆◆  ERROR  ◆◆
 
 ┌─❖
-│  ⚠️ Download Gagal
+│  ❌ Gagal download file
 └─❖`, 
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
@@ -256,96 +211,64 @@ export default function (bot, db, saveDB) {
         );
       }
 
-      const outputName = text.trim().replace(/[^a-zA-Z0-9-_]/g, "_") || "gabungan";
-      const ext = session.fileType === "vcf" ? ".vcf" : session.fileType === "txt" ? ".txt" : ".xlsx";
-      const outputFile = path.join(process.cwd(), `${outputName}${ext}`);
+      const outputName = text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
+      const ext = session.fileType;
+      const outputFile = `${outputName}.${ext}`;
 
       try {
-        if (session.fileType === "vcf") {
-          mergeVcfFiles(session.files, outputFile);
-        } else if (session.fileType === "txt") {
-          mergeTxtFiles(session.files, outputFile);
-        } else if (session.fileType === "xls") {
-          mergeXlsFiles(session.files, outputFile);
+        if (ext === "vcf" || ext === "txt") {
+          const contents = session.files
+            .map((f) => fs.readFileSync(f, "utf8"))
+            .join("\n");
+          const outputPath = path.join(process.cwd(), outputFile);
+          fs.writeFileSync(outputPath, contents);
+          await bot.sendDocument(chatId, outputPath);
+          fs.unlinkSync(outputPath);
+        } else {
+          const workbook = XLSX.utils.book_new();
+          const allRows = [];
+          for (const file of session.files) {
+            const wb = XLSX.readFile(file);
+            const ws = wb.Sheets[wb.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(ws);
+            allRows.push(...rows);
+          }
+          const ws = XLSX.utils.json_to_sheet(allRows);
+          XLSX.utils.book_append_sheet(workbook, ws);
+          const outputPath = path.join(process.cwd(), outputFile);
+          XLSX.writeFile(workbook, outputPath);
+          await bot.sendDocument(chatId, outputPath);
+          fs.unlinkSync(outputPath);
         }
 
-        await bot.sendDocument(chatId, outputFile);
-        await bot.sendMessage(chatId, 
-          `◆◆  GABUNG FILE ✅ SUKSES  ◆◆
+        for (const f of session.files) try { fs.unlinkSync(f); } catch {}
+        delete sessions[userId];
 
-┌─❖
-│  📂 Hasil Gabung
-│
-│  File: ${outputName}${ext}
-│
-│  Total: ${session.files.length} file
-│
-│  Tipe: ${session.fileType.toUpperCase()}
-│
-│  💎 Terima kasih!
-└─❖`, 
-          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-        );
-        
         bot.incrementOperation(userId);
-      } catch (err) {
-        console.error("Merge error:", err);
-        bot.sendMessage(chatId, 
-          `◆◆  GABUNG FILE  ◆◆
+        return sendWithDelete(userId, chatId, 
+          `◆◆  SUKSES  ◆◆
 
 ┌─❖
-│  ⚠️ Gabung Gagal
+│  ✅ File berhasil digabung
+│
+│  📄 Total file: ${session.files.length}
+│  📄 Nama: ${outputFile}
+└─❖`, 
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+        );
+      } catch (e) {
+        console.error(e);
+        for (const f of session.files) try { fs.unlinkSync(f); } catch {}
+        delete sessions[userId];
+        return sendWithDelete(userId, chatId, 
+          `◆◆  ERROR  ◆◆
+
+┌─❖
+│  ❌ Gagal gabung file
 └─❖`, 
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
-
-      for (const f of [...session.files, outputFile]) {
-        try { fs.unlinkSync(f); } catch {}
-      }
-
-      delete sessions[userId];
     }
   });
-}
-
-function readVcf(filePath) {
-  const data = fs.readFileSync(filePath, "utf8");
-  return data.split(/END:VCARD\s*/i).filter(Boolean).map((x) => x.trim() + "\nEND:VCARD");
-}
-
-function mergeVcfFiles(inputFiles, outputFile) {
-  let allContacts = [];
-  for (const file of inputFiles) {
-    const contacts = readVcf(file);
-    allContacts = allContacts.concat(contacts);
-  }
-  fs.writeFileSync(outputFile, allContacts.join("\n"));
-}
-
-function mergeTxtFiles(inputFiles, outputFile) {
-  let result = "";
-  for (const file of inputFiles) {
-    const content = fs.readFileSync(file, "utf8");
-    result += content + "\n";
-  }
-  fs.writeFileSync(outputFile, result);
-}
-
-function mergeXlsFiles(inputFiles, outputFile) {
-  let allData = [];
-  
-  for (const file of inputFiles) {
-    const workbook = XLSX.readFile(file);
-    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-    const data = XLSX.utils.sheet_to_json(worksheet);
-    allData = allData.concat(data);
-  }
-  
-  if (allData.length > 0) {
-    const newWorkbook = XLSX.utils.book_new();
-    const newWorksheet = XLSX.utils.json_to_sheet(allData);
-    XLSX.utils.book_append_sheet(newWorkbook, newWorksheet, "Sheet1");
-    XLSX.writeFile(newWorkbook, outputFile);
-  }
 }

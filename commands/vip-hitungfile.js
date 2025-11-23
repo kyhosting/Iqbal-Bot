@@ -13,7 +13,7 @@ export default function (bot, db, saveDB) {
     return msg;
   }
 
-  bot.onText(/^⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ ⛓️$|^⛓️ HITUNG FILE ⛓️$|^\/hitungfile$/i, async (msg) => {
+  bot.onText(/^⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ ⛓️$|^⛓️ HITUNG FILE ⛓️$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     
