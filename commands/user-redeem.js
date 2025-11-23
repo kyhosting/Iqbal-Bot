@@ -181,11 +181,7 @@ export default function (bot, db, saveDB) {
 │
 │  💎 Selamat bersenang-senang!
 └─❖`,
-        { parse_mode: "HTML", reply_markup: {
-          inline_keyboard: [
-            [{ text: "📋 Salin Kode", callback_data: `copy_code_${code}` }]
-          ]
-        }}
+        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
   });

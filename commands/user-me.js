@@ -102,11 +102,7 @@ export default function (bot, db, saveDB) {
 
     await trackMessage(userId, chatId, profileMessage, {
       parse_mode: "HTML",
-      reply_markup: {
-        inline_keyboard: [
-          [{ text: "📋 Salin ID", callback_data: `copy_id_${userId}` }]
-        ]
-      }
+      reply_markup: bot.getMainKeyboardUser(userId)
     });
   });
 }
