@@ -68,7 +68,7 @@ export default function (bot, db, saveDB) {
 │
 │  Nama: ${msg.from.first_name}${msg.from.last_name ? ' ' + msg.from.last_name : ''}
 │
-│  ID: ${userId}
+│  ID: <code>${userId}</code>
 │
 │  Username: @${msg.from.username || '-'}
 └─❖
@@ -100,9 +100,20 @@ export default function (bot, db, saveDB) {
 │  Ketik 'start' untuk menu
 └─❖`;
 
+    const copyKeyboard = {
+      inline_keyboard: [
+        [{ text: "📋 Salin ID", callback_data: `copy_id_${userId}` }]
+      ]
+    };
+
     await trackMessage(userId, chatId, profileMessage, {
       parse_mode: "HTML",
-      reply_markup: bot.getMainKeyboardUser(userId)
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: "📋 Salin ID", callback_data: `copy_id_${userId}` }],
+          ...bot.getMainKeyboardUser(userId).keyboard
+        ]
+      }
     });
   });
 }
