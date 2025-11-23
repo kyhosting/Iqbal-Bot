@@ -93,42 +93,15 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ⏳ Processing...
 │
-│  Perintah:
-│  • done  — proses & kirim hasil file
-│  • batal — batalkan proses
+│  📎 Masukkan nama file output
+│
+│  Ketik 'skip' pakai nama lama
+│  Ketik 'batal' batalkan
 └─❖`,  { parse_mode: "HTML" });
       return;
     }
 
     if (session.step === 2) {
-      if (/^batal$/i.test(text)) {
-        fs.unlinkSync(session.file);
-        delete sessions[userId];
-        return sendWithDelete(userId, chatId, `◆◆  DIBATALKAN  ◆◆
-
-┌─❖
-│  ❌ Proses dibatalkan
-└─❖`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
-      }
-
-      if (!/^done$/i.test(text)) {
-        return trackMessage(userId, chatId, `◆◆  ⛓️ ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛ ⛓️  ◆◆
-
-┌─❖
-│  ⏳ Processing...
-│
-│  Perintah:
-│  • done  — proses & kirim hasil file
-│  • batal — batalkan proses
-└─❖`,  { parse_mode: "HTML" });
-      }
-
-      session.step = 3;
-      trackMessage(userId, chatId, `📎 Masukkan nama file output ya Kak\n\nKetik \`skip\` untuk pakai nama lama`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
-      return;
-    }
-
-    if (session.step === 3) {
       if (/^batal$/i.test(text)) {
         fs.unlinkSync(session.file);
         delete sessions[userId];

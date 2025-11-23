@@ -120,24 +120,6 @@ export default function (bot, db, saveDB) {
       }
 
       session.filename = text.replace(/[^a-zA-Z0-9-_]/g, "_") + ".txt";
-      session.step = 3;
-      return trackMessage(
-        userId,
-        chatId,
-        `◆◆  ⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ ⛓️  ◆◆
-
-┌─❖
-│  ⏳ Processing...
-│
-│  Perintah:
-│  • done  — proses & kirim hasil file
-│  • batal — batalkan proses
-└─❖`,
-        { parse_mode: "HTML" }
-      );
-    }
-
-    if (session.step === 3) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
         return sendWithDelete(
@@ -152,7 +134,7 @@ export default function (bot, db, saveDB) {
         );
       }
 
-      if (/^done$/i.test(text)) {
+      {
         try {
           const outputPath = path.join(process.cwd(), session.filename);
           fs.writeFileSync(outputPath, session.content);
