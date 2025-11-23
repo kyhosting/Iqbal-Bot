@@ -63,7 +63,7 @@ function delay(ms) {
 
 // ===== FORMAT MESSAGE HELPER =====
 function formatMessage(text) {
-  return `<pre><code>${text}</code></pre>`;
+  return `${text}`;
 }
 
 // Expose to bot
