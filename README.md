@@ -31,6 +31,60 @@
 - Ban/warn system
 - Auto-delete spam
 
+✅ **🔐 Project Security**
+- Integrity verification system
+- Anti-piracy protection
+- Credit tampering detection
+- Bilingual documentation (English/Indonesian)
+
+---
+
+## 🔐 Security & Integrity Verification
+
+Bot ini dilengkapi sistem keamanan canggih untuk mencegah pembajakan dan modifikasi tanpa izin.
+
+### ⚠️ Integrity Verification System
+
+Bot akan **otomatis memeriksa integritas proyek** pada saat startup untuk memastikan kredit dan watermark tidak diubah.
+
+#### Fitur Keamanan:
+- ✅ Deteksi tampering dengan kredit KIFZL & IQBAL DEV
+- ✅ Verify watermark di config.js, index.js, package.json
+- ✅ Auto-audit log untuk pelanggaran
+- ✅ 2 mode operasi: STRICT (error) atau WARNING (log only)
+
+#### Cara Kerja:
+
+**Mode STRICT** (Recommended untuk Production):
+```bash
+export INTEGRITY_MODE=STRICT
+npm start
+
+# Jika ada yang hapus/ubah KIFZL:
+❌ Bot ERROR & EXIT
+🔒 Prevent unauthorized use
+```
+
+**Mode WARNING** (Untuk Development):
+```bash
+export INTEGRITY_MODE=WARNING
+npm start
+
+# Jika ada yang hapus/ubah KIFZL:
+⚠️ Bot TETAP JALAN dengan warning
+📝 Log pelanggaran ke .integrity-log
+```
+
+### Dokumen Keamanan Tersedia:
+- 📄 **INTEGRITY_VERIFICATION_GUIDE.md** - Panduan lengkap sistem verifikasi
+- 📄 **PROJECT_INTEGRITY_REPORT.txt** - Laporan status proteksi semua file
+- 📄 **ALL_FILES_CREDITS.md** - Daftar lengkap 38 file terproteksi
+- 📄 **FEATURES_LIST.md** - Semua 25+ fitur dengan kredit creator
+- 📄 **LICENSE** - MIT License (Bilingual)
+- 📄 **COPYRIGHT.txt** - Pemberitahuan hak cipta
+- 📄 **CREDITS.md** - Atribusi lengkap
+- 📄 **PROTECTION_NOTICE.txt** - Pemberitahuan anti-pembajakan
+
 ---
 
 ## 📋 Requirements
@@ -249,10 +303,10 @@ git push origin main
 #### Step 4: Set Environment Variable
 Di halaman deployment:
 - Klik **"Environment"**
-- Tambah variable:
+- Tambah 2 variable:
   ```
-  Key: TELEGRAM_BOT_TOKEN
-  Value: YOUR_BOT_TOKEN
+  TELEGRAM_BOT_TOKEN = YOUR_BOT_TOKEN
+  INTEGRITY_MODE = STRICT
   ```
 - Klik **"Save"**
 
@@ -298,9 +352,10 @@ Start Command: npm start
 
 #### Step 5: Set Environment Variable
 - Scroll ke **"Environment Variables"**
-- Tambah:
+- Tambah 2 variable:
   ```
   TELEGRAM_BOT_TOKEN = YOUR_BOT_TOKEN
+  INTEGRITY_MODE = STRICT
   ```
 
 #### Step 6: Deploy
@@ -361,6 +416,10 @@ git clone https://github.com/kyhosting/Iqbal-Bot.git
 cd Iqbal-Bot
 npm install
 
+# Set environment variable
+export TELEGRAM_BOT_TOKEN="YOUR_BOT_TOKEN"
+export INTEGRITY_MODE="STRICT"
+
 # Install PM2
 sudo npm install -g pm2
 pm2 start index.js --name "iqbal-bot"
@@ -376,19 +435,30 @@ pm2 save
 
 ```
 .
-├── index.js                    # Bot main entry point
-├── config.js                   # Configuration (token, owner, groups)
-├── commands/                   # Command handlers
-│   ├── vip-gabungfile.js      # Gabung file
-│   ├── vip-txttovcf.js        # TXT to VCF
-│   ├── vip-vcftotxt.js        # VCF to TXT
-│   └── ... (23+ command files)
-├── database.json              # User database (auto-created)
-├── redeem.json                # Redeem code database
-├── package.json               # Dependencies
-├── DEPLOYMENT_CYCLIC.md       # Cyclic deployment guide
-├── DEPLOYMENT_RENDER.md       # Render deployment guide
-└── README.md                  # This file
+├── index.js                      # Bot main entry point
+├── config.js                     # Configuration (token, owner, groups)
+├── verify-integrity.js           # 🔐 Integrity verification system
+├── commands/                     # Command handlers (25 files)
+│   ├── vip-gabungfile.js        # Gabung file
+│   ├── vip-txttovcf.js          # TXT to VCF
+│   ├── vip-vcftotxt.js          # VCF to TXT
+│   └── ... (22+ command files)
+├── database.json                 # User database (auto-created)
+├── redeem.json                   # Redeem code database
+├── package.json                  # Dependencies
+├── README.md                     # This file
+│
+├── 📄 Security & Protection
+│   ├── LICENSE                   # MIT License (Bilingual)
+│   ├── COPYRIGHT.txt             # Copyright notice (Bilingual)
+│   ├── CREDITS.md                # Full credits (Bilingual)
+│   ├── PROTECTION_NOTICE.txt     # Anti-piracy notice (Bilingual)
+│   ├── INTEGRITY_VERIFICATION_GUIDE.md  # Integrity system documentation
+│   ├── PROJECT_INTEGRITY_REPORT.txt     # Protection status report
+│   ├── ALL_FILES_CREDITS.md      # Complete file listing with credits
+│   └── FEATURES_LIST.md          # All 25+ features with credits
+│
+└── .gitignore                    # Git ignore rules
 ```
 
 ---
@@ -423,7 +493,20 @@ pm2 save
 
 ## 🔐 Environment Configuration
 
-Edit `config.js` atau set environment variable:
+### Setup dengan Environment Variable (Recommended untuk Production)
+
+```bash
+# Set environment variables
+export TELEGRAM_BOT_TOKEN="YOUR_BOT_TOKEN_HERE"
+export INTEGRITY_MODE="STRICT"  # or WARNING
+
+# Jalankan bot
+npm start
+```
+
+### Setup dengan config.js (Development)
+
+Edit `config.js`:
 
 ```javascript
 // config.js
@@ -431,7 +514,7 @@ export default {
   token: process.env.TELEGRAM_BOT_TOKEN || "YOUR_BOT_TOKEN",
   owner: [8317563450],                    // Your Telegram ID
   ownerUsername: "Iqbaldev",              // Your username
-  botCreator: "Your Name",                // Creator info
+  botCreator: "KIFZL & PARTNER/SUPPORT IQBAL DEV",  // Creator info
   groups: {
     main: "agentviber12",                 // Main group
     cv: "channelviber"                    // Channel/CV
@@ -513,6 +596,25 @@ npm install
 - Check file size (tidak terlalu besar)
 - Check storage space di hosting
 
+### Integrity Verification Error
+Jika bot menunjukkan error integritas:
+
+```bash
+# Opsi 1: Restore file asli
+git checkout config.js index.js package.json
+
+# Opsi 2: Clone repository baru
+git clone https://github.com/kyhosting/Iqbal-Bot.git
+cd Iqbal-Bot
+npm install
+npm start
+
+# Opsi 3: Pastikan tidak ada modifikasi di:
+# - config.js (KIFZL & IQBAL DEV harus ada)
+# - index.js (header harus intact)
+# - package.json (author harus "KIFZL & PARTNER/SUPPORT IQBAL DEV")
+```
+
 ---
 
 ## 📞 Support & Contact
@@ -526,9 +628,39 @@ npm install
 
 ## 📄 License
 
-MIT License - Dibuat oleh **KIKI FZL & IQBAL DEV**
+MIT License - Dibuat oleh **KIFZL & PARTNER/SUPPORT IQBAL DEV**
 
 Kamu bebas menggunakan, memodifikasi, dan mendistribusikan bot ini dengan tetap mencantumkan credit original.
+
+Lihat file `LICENSE` untuk detail lengkap.
+
+---
+
+## 🔒 Security & Anti-Piracy
+
+Bot ini dilengkapi sistem anti-pembajakan yang komprehensif:
+
+✅ **Copyright Protection**
+- Semua 25+ command files dilindungi
+- Header watermark di setiap file
+- Legal documentation bilingual
+
+✅ **Integrity Verification**
+- Deteksi tampering otomatis pada startup
+- Audit trail untuk pelanggaran
+- STRICT dan WARNING modes tersedia
+
+✅ **Legal Notices**
+- LICENSE file (MIT bilingual)
+- COPYRIGHT.txt (Bilingual)
+- CREDITS.md (Full attribution)
+- PROTECTION_NOTICE.txt (Anti-piracy terms)
+
+Lihat dokumen keamanan untuk info lengkap:
+- `INTEGRITY_VERIFICATION_GUIDE.md`
+- `PROJECT_INTEGRITY_REPORT.txt`
+- `ALL_FILES_CREDITS.md`
+- `FEATURES_LIST.md`
 
 ---
 
@@ -545,7 +677,7 @@ Terima kasih kepada:
 
 ## 🎌 Dibuat dengan ❤️
 
-**By KIKI FZL & PARTNER/SUPPORT IQBAL DEV**
+**By KIFZL & PARTNER/SUPPORT IQBAL DEV**
 
 こんにちは 🎌 | Semangat coding! ✨
 
@@ -560,10 +692,11 @@ Terima kasih kepada:
 - [Deploy ke Oracle Cloud](https://www.oracle.com/cloud/free/)
 
 🎯 **Get Help:**
-- [Bot Commands Guide](./DEPLOYMENT_CYCLIC.md)
-- [Render Setup Guide](./DEPLOYMENT_RENDER.md)
+- [Integrity Verification Guide](./INTEGRITY_VERIFICATION_GUIDE.md)
+- [Protection Status](./PROJECT_INTEGRITY_REPORT.txt)
+- [Features List](./FEATURES_LIST.md)
 - [GitHub Issues](https://github.com/kyhosting/Iqbal-Bot/issues)
 
 ---
 
-**Made with ❤️ • Open Source • Production Ready ✅**
+**Made with ❤️ • Open Source • Production Ready ✅ • Fully Protected 🔒**
