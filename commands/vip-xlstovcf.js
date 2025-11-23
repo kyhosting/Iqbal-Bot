@@ -56,7 +56,7 @@ END:VCARD`;
     }
 
     sessions[userId] = { step: 1 };
-    trackMessage(
+    await trackMessage(
       userId,
       chatId,
       `◆◆  XLS TO VCF  ◆◆
@@ -119,7 +119,7 @@ END:VCARD`;
         .replace(/[^a-zA-Z0-9-_]/g, "_");
 
       session.step = 2;
-      trackMessage(
+      await trackMessage(
         userId,
         chatId,
         `◆◆  XLS TO VCF  ◆◆
