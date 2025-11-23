@@ -190,28 +190,10 @@ END:VCARD`;
         );
       }
 
-      session.newFileName = /^done$/i.test(text)
+      session.newFileName = /^skip$/i.test(text) || !text
         ? "contacts"
         : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
 
-      session.step = 3;
-      return trackMessage(
-        userId,
-        chatId,
-        `◆◆  ⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ ⛓️  ◆◆
-
-┌─❖
-│  ⏳ Processing...
-│
-│  Perintah:
-│  • done  — proses & kirim hasil file
-│  • batal — batalkan proses
-└─❖`,
-        { parse_mode: "HTML" }
-      );
-    }
-
-    if (session.step === 3) {
       if (/^batal$/i.test(text)) {
         if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
         delete sessions[userId];
@@ -227,7 +209,7 @@ END:VCARD`;
         );
       }
 
-      if (/^done$/i.test(text)) {
+      {
         try {
           const vcfEntries = session.data
             .map((row) => {

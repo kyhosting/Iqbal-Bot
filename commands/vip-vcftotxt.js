@@ -145,44 +145,11 @@ export default function (bot, db, saveDB) {
         );
       }
 
-      session.newFileName = /^done$/i.test(text)
+      session.newFileName = /^skip$/i.test(text) || !text
         ? session.originalName
         : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
 
-      session.step = 3;
-      return trackMessage(
-        userId,
-        chatId,
-        `◆◆  ⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ ⛓️  ◆◆
-
-┌─❖
-│  ⏳ Processing...
-│
-│  Perintah:
-│  • done  — proses & kirim hasil file
-│  • batal — batalkan proses
-└─❖`,
-        { parse_mode: "HTML" }
-      );
-    }
-
-    if (session.step === 3) {
-      if (/^batal$/i.test(text)) {
-        if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
-        delete sessions[userId];
-        return sendWithDelete(
-          userId,
-          chatId,
-          `◆◆  DIBATALKAN  ◆◆
-
-┌─❖
-│  ❌ Proses dibatalkan
-└─❖`,
-          { parse_mode: "HTML" }
-        );
-      }
-
-      if (/^done$/i.test(text)) {
+      {
         try {
           const content = fs.readFileSync(session.file, "utf8");
           const matches = content.match(/TEL;[^:]*:(\+?\d+)/g) || [];

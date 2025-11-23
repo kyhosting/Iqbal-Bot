@@ -111,7 +111,7 @@ export default function (bot, db, saveDB) {
 └─❖`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
-      if (/^done$/i.test(text)) {
+      if (/^done$/i.test(text) || /^[a-zA-Z0-9\s\+\-\(\)]+$/i.test(text)) {
         const filename = "ADMIN.vcf";
         const filepath = path.join(process.cwd(), filename);
 

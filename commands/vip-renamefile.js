@@ -85,39 +85,18 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ⏳ Processing...
 │
-│  Perintah:
-│  • done  — proses & kirim hasil file
-│  • batal — batalkan proses
+│  Nama saat ini: \`${fileName}\`
+│
+│  Kirim nama baru (tanpa ext):
+│  Contoh: \`contacts_baru\`
+│
+│  Ketik 'batal' batalkan
 └─❖`, { parse_mode: "HTML" });
       } catch (err) {
         delete sessions[userId];
         return trackMessage(userId, chatId, `❌ Error download file: ${err.message}`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
       }
     } else if (session.step === 2) {
-      if (/^batal$/i.test(text)) {
-        delete sessions[userId];
-        return trackMessage(userId, chatId, `◆◆  DIBATALKAN  ◆◆
-
-┌─❖
-│  ✅ Operasi dibatalkan
-└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
-      }
-
-      if (!/^done$/i.test(text)) {
-        return trackMessage(userId, chatId, `◆◆  ⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ ⛓️  ◆◆
-
-┌─❖
-│  ⏳ Processing...
-│
-│  Perintah:
-│  • done  — proses & kirim hasil file
-│  • batal — batalkan proses
-└─❖`, { parse_mode: "HTML" });
-      }
-
-      session.step = 3;
-      return trackMessage(userId, chatId, `Nama file saat ini: \`${session.originalFileName}\`\n\nKirim nama baru (tanpa extension):\n\nContoh: \`contacts_baru\``, { parse_mode: "HTML" });
-    } else if (session.step === 3) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
         return trackMessage(userId, chatId, `◆◆  DIBATALKAN  ◆◆

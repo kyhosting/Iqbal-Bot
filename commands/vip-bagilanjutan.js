@@ -118,55 +118,6 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ⏳ Processing...
 │
-│  Perintah:
-│  • done  — proses & kirim hasil file
-│  • batal — batalkan proses
-└─❖`,
-        { parse_mode: "HTML" }
-      );
-    }
-
-    // Step 2: Processing step
-    if (session.step === 2) {
-      if (batals(text)) {
-        if (session.file && fs.existsSync(session.file)) fs.unlinkSync(session.file);
-        delete sessions[userId];
-        return await sendWithDelete(
-          userId,
-          chatId,
-          `◆◆  DIBATALKAN  ◆◆
-
-┌─❖
-│  ❌ Proses dibatalkan
-└─❖`,
-          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
-        );
-      }
-
-      if (!/^done$/i.test(text)) {
-        return await trackMessage(
-          userId,
-          chatId,
-          `◆◆  ⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ ⛓️  ◆◆
-
-┌─❖
-│  ⏳ Processing...
-│
-│  Perintah:
-│  • done  — proses & kirim hasil file
-│  • batal — batalkan proses
-└─❖`,
-          { parse_mode: "HTML" }
-        );
-      }
-
-      session.step = 3;
-      return await trackMessage(
-        userId,
-        chatId,
-        `◆◆  BAGI LANJUTAN  ◆◆
-
-┌─❖
 │  📎 Masukkan nama file output
 │
 │  Ketik 'skip' pakai nama lama
@@ -176,8 +127,8 @@ export default function (bot, db, saveDB) {
       );
     }
 
-    // Step 3: Output filename
-    if (session.step === 3) {
+    // Step 2: Output filename
+    if (session.step === 2) {
       if (batals(text)) {
         if (session.file && fs.existsSync(session.file)) fs.unlinkSync(session.file);
         delete sessions[userId];
@@ -196,7 +147,7 @@ export default function (bot, db, saveDB) {
       const originalName = path.basename(session.file, ".vcf");
       session.newFileName =
         /^skip$/i.test(text) || !text ? originalName : text.replace(/[^a-zA-Z0-9-_]/g, "_");
-      session.step = 4;
+      session.step = 3;
 
       return await trackMessage(
         userId,
@@ -213,8 +164,8 @@ export default function (bot, db, saveDB) {
       );
     }
 
-    // Step 4: Starting contact number
-    if (session.step === 4) {
+    // Step 3: Starting contact number
+    if (session.step === 3) {
       if (batals(text) || isNaN(parseInt(text))) {
         if (session.file && fs.existsSync(session.file)) fs.unlinkSync(session.file);
         delete sessions[userId];
@@ -231,7 +182,7 @@ export default function (bot, db, saveDB) {
       }
 
       sessionLanjutan.split_counter = parseInt(text);
-      session.step = 5;
+      session.step = 4;
 
       return await trackMessage(
         userId,
@@ -248,8 +199,8 @@ export default function (bot, db, saveDB) {
       );
     }
 
-    // Step 5: Starting file number
-    if (session.step === 5) {
+    // Step 4: Starting file number
+    if (session.step === 4) {
       if (batals(text) || isNaN(parseInt(text))) {
         if (session.file && fs.existsSync(session.file)) fs.unlinkSync(session.file);
         delete sessions[userId];
@@ -266,7 +217,7 @@ export default function (bot, db, saveDB) {
       }
 
       sessionLanjutan.file_counter = parseInt(text);
-      session.step = 6;
+      session.step = 5;
 
       return await trackMessage(
         userId,
@@ -283,8 +234,8 @@ export default function (bot, db, saveDB) {
       );
     }
 
-    // Step 6: Number of parts
-    if (session.step === 6) {
+    // Step 5: Number of parts
+    if (session.step === 5) {
       if (batals(text) || isNaN(parseInt(text)) || parseInt(text) <= 0) {
         if (session.file && fs.existsSync(session.file)) fs.unlinkSync(session.file);
         delete sessions[userId];
@@ -301,7 +252,7 @@ export default function (bot, db, saveDB) {
       }
 
       const bagian = parseInt(text);
-      session.step = 7;
+      session.step = 6;
 
       try {
         const contacts = readVcf(session.file);
@@ -389,8 +340,8 @@ export default function (bot, db, saveDB) {
       }
     }
 
-    // Step 7: Continue or finish
-    if (session.step === 7) {
+    // Step 6: Continue or finish
+    if (session.step === 6) {
       if (/^lanjut$/i.test(text)) {
         session.step = 1;
         return await trackMessage(
