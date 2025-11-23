@@ -35,7 +35,7 @@ export default function (bot, db, saveDB) {
       }
 
       if (!msg.document || !msg.document.file_name.endsWith(".vcf")) {
-        return bot.sendMessage(chatId, "⚠️ <b>Harus file VCF ya Kak</b> 😊", { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, "⚠️ *Harus file VCF ya Kak* 😊", { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
       }
 
       try {
@@ -60,10 +60,10 @@ export default function (bot, db, saveDB) {
         if (total === 0) {
           fs.unlinkSync(localPath);
           delete sessions[userId];
-          return bot.sendMessage(chatId, "⚠️ <b>Tidak ditemukan nama kontak di file ini Kak</b> 😔", { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
+          return bot.sendMessage(chatId, "⚠️ *Tidak ditemukan nama kontak di file ini Kak* 😔", { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
         }
 
-        let hasil = `📋 <b>Daftar Kontak:</b>\n\n📊 <b>Total: ${total} kontak</b>\n\n`;
+        let hasil = `📋 *Daftar Kontak:</b>\n\n📊 <b>Total: ${total} kontak*\n\n`;
         hasil += namaKontak.slice(0, 100).map((nama, i) => `${i + 1}. ${nama}`).join("\n");
 
         if (total > 100) hasil += `\n\n⚠️ Ditampilkan 100 dari ${total} kontak.`;
@@ -82,7 +82,7 @@ export default function (bot, db, saveDB) {
         delete sessions[userId];
       } catch (err) {
         console.error("Gagal memproses VCF:", err);
-        bot.sendMessage(chatId, "⚠️ <b>Yah… gagal baca file VCF</b> 😔\n\nPastikan formatnya benar ya!", { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
+        bot.sendMessage(chatId, "⚠️ *Yah… gagal baca file VCF* 😔\n\nPastikan formatnya benar ya!", { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
         try {
           if (session.file) fs.unlinkSync(session.file);
         } catch {}

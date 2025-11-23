@@ -13,7 +13,7 @@ export default function (bot, db, saveDB) {
     if (!groupCheck.verified) {
       return bot.sendMessage(
         chatId,
-        `⚠️ <b>Akses Ditolak</b>\n\nKamu harus join grup terlebih dahulu ya Kak.`,
+        `⚠️ *Akses Ditolak*\n\nKamu harus join grup terlebih dahulu ya Kak.`,
         { parse_mode: "HTML" }
       );
     }
@@ -47,9 +47,9 @@ export default function (bot, db, saveDB) {
       ]
     };
 
-    const message = `🆘 <b>MENU BANTUAN</b>\n\n` +
+    const message = `🆘 *MENU BANTUAN*\n\n` +
       `Ada yang bisa dibantu Kak?\n\n` +
-      `📋 <b>Pilihan Tersedia:</b>\n` +
+      `📋 *Pilihan Tersedia:*\n` +
       `• 🐞 Lapor Bug - Laporkan bug yang Anda temukan\n` +
       `• ⚠️ Bot Error - Laporkan error yang Anda alami\n` +
       `• 🛠️ Request Fitur - Usulkan fitur baru\n` +
@@ -96,24 +96,24 @@ export default function (bot, db, saveDB) {
         ]
       };
 
-      let message = `💎 <b>DAFTAR PAKET VIP</b>\n\n`;
+      let message = `💎 *DAFTAR PAKET VIP*\n\n`;
       message += `${'═'.repeat(35)}\n\n`;
-      message += `✨ <b>PAKET VIP TERSEDIA:</b>\n\n`;
+      message += `✨ *PAKET VIP TERSEDIA:*\n\n`;
       
-      message += `📌 <b>PAKET 7 HARI</b>\n`;
+      message += `📌 *PAKET 7 HARI*\n`;
       message += `├─ Harga: Rp 15.000\n`;
       message += `└─ Akses: Semua fitur selama 7 hari\n\n`;
 
-      message += `📌 <b>PAKET 30 HARI</b> ⭐ PALING POPULER\n`;
+      message += `📌 *PAKET 30 HARI* ⭐ PALING POPULER\n`;
       message += `├─ Harga: Rp 35.000\n`;
       message += `└─ Akses: Semua fitur selama 30 hari\n\n`;
 
-      message += `📌 <b>PAKET 1 TAHUN</b>\n`;
+      message += `📌 *PAKET 1 TAHUN*\n`;
       message += `├─ Harga: Rp 100.000\n`;
       message += `└─ Akses: Semua fitur selama 1 tahun\n\n`;
 
       message += `${'═'.repeat(35)}\n\n`;
-      message += `🎯 <b>FITUR VIP YANG DIDAPATKAN:</b>\n`;
+      message += `🎯 *FITUR VIP YANG DIDAPATKAN:*\n`;
       message += `✓ Konversi file tanpa batas\n`;
       message += `✓ Ekstrak nomor (unlimited)\n`;
       message += `✓ Gabung & split file\n`;
@@ -162,9 +162,9 @@ export default function (bot, db, saveDB) {
         ]
       };
 
-      const message = `🆘 <b>MENU BANTUAN</b>\n\n` +
+      const message = `🆘 *MENU BANTUAN*\n\n` +
         `Ada yang bisa dibantu Kak?\n\n` +
-        `📋 <b>Pilihan Tersedia:</b>\n` +
+        `📋 *Pilihan Tersedia:*\n` +
         `• 🐞 Lapor Bug - Laporkan bug yang Anda temukan\n` +
         `• ⚠️ Bot Error - Laporkan error yang Anda alami\n` +
         `• 🛠️ Request Fitur - Usulkan fitur baru\n` +

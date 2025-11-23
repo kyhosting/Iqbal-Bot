@@ -51,7 +51,7 @@ export default function (bot, db, saveDB) {
       if (!msg.document) {
         return bot.sendMessage(
           chatId, 
-          "⚠️ <b>Kirim file dulu ya Kak</b> 😊",
+          "⚠️ *Kirim file dulu ya Kak* 😊",
           { 
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()
@@ -66,7 +66,7 @@ export default function (bot, db, saveDB) {
       if (!isTXT && !isVCF) {
         return bot.sendMessage(
           chatId,
-          "⚠️ <b>Hanya support TXT atau VCF ya Kak</b> 😊",
+          "⚠️ *Hanya support TXT atau VCF ya Kak* 😊",
           { 
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()
@@ -103,13 +103,13 @@ export default function (bot, db, saveDB) {
 
         await bot.sendMessage(
           chatId,
-          `✅ <b>Berhasil hitung kontak Kak!</b> 📊\n\n` +
-          `📂 <b>File:</b> \`${fileName}\`\n` +
-          `📏 <b>Ukuran:</b> ${fileSize} KB\n\n` +
-          `📊 <b>Detail:</b>\n` +
-          `• Total kontak: <b>${count}</b>\n` +
-          `• Kontak unik: <b>${unique}</b>\n` +
-          `• Duplikat: <b>${duplicates}</b>\n\n` +
+          `✅ *Berhasil hitung kontak Kak!* 📊\n\n` +
+          `📂 *File:* \`${fileName}\`\n` +
+          `📏 *Ukuran:* ${fileSize} KB\n\n` +
+          `📊 *Detail:*\n` +
+          `• Total kontak: *${count}*\n` +
+          `• Kontak unik: *${unique}*\n` +
+          `• Duplikat: *${duplicates}*\n\n` +
           `Semoga membantu ya! 😊`,
           { 
             parse_mode: "HTML",
@@ -126,7 +126,7 @@ export default function (bot, db, saveDB) {
         }
         bot.sendMessage(
           chatId,
-          "⚠️ <b>Yah… ada masalah saat hitung file</b> 😔\n\nCoba lagi ya Kak!",
+          "⚠️ *Yah… ada masalah saat hitung file* 😔\n\nCoba lagi ya Kak!",
           { 
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()

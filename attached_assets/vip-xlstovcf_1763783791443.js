@@ -52,7 +52,7 @@ export default function (bot, db, saveDB) {
       if (!msg.document) {
         return bot.sendMessage(
           chatId,
-          "⚠️ <b>Kirim file Excel dulu ya Kak</b> 😊",
+          "⚠️ *Kirim file Excel dulu ya Kak* 😊",
           { 
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()
@@ -66,7 +66,7 @@ export default function (bot, db, saveDB) {
       if (!isExcel) {
         return bot.sendMessage(
           chatId,
-          "⚠️ <b>Harus file Excel ya Kak</b> (.xls atau .xlsx) 😊",
+          "⚠️ *Harus file Excel ya Kak* (.xls atau .xlsx) 😊",
           { 
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()
@@ -94,7 +94,7 @@ export default function (bot, db, saveDB) {
           delete sessions[userId];
           return bot.sendMessage(
             chatId,
-            "⚠️ <b>File Excel kosong Kak</b> 😔\n\nCoba isi dulu ya!",
+            "⚠️ *File Excel kosong Kak* 😔\n\nCoba isi dulu ya!",
             { 
               parse_mode: "HTML",
               reply_markup: bot.getMainKeyboard()
@@ -134,7 +134,7 @@ export default function (bot, db, saveDB) {
           delete sessions[userId];
           return bot.sendMessage(
             chatId,
-            "⚠️ <b>Tidak ada data valid Kak</b> 😔\n\nPastikan format Excel:\n• Kolom 1: Nama\n• Kolom 2: Nomor",
+            "⚠️ *Tidak ada data valid Kak* 😔\n\nPastikan format Excel:\n• Kolom 1: Nama\n• Kolom 2: Nomor",
             { 
               parse_mode: "HTML",
               reply_markup: bot.getMainKeyboard()
@@ -149,12 +149,12 @@ export default function (bot, db, saveDB) {
         await bot.sendDocument(chatId, outputPath);
         await bot.sendMessage(
           chatId,
-          `✅ <b>Konversi berhasil Kak!</b> 🎉\n\n` +
-          `📊 <b>Statistik:</b>\n` +
+          `✅ *Konversi berhasil Kak!* 🎉\n\n` +
+          `📊 *Statistik:*\n` +
           `• Total baris: ${data.length}\n` +
           `• Berhasil convert: ${successCount} kontak\n` +
           `• Dilewati: ${skipCount} baris\n\n` +
-          `📂 <b>File VCF:</b> \`${outputFile}\`\n\n` +
+          `📂 *File VCF:* \`${outputFile}\`\n\n` +
           `Semoga membantu ya! 😊`,
           { 
             parse_mode: "HTML",
@@ -170,7 +170,7 @@ export default function (bot, db, saveDB) {
         if (fs.existsSync(localPath)) fs.unlinkSync(localPath);
         bot.sendMessage(
           chatId,
-          "⚠️ <b>Yah… ada masalah saat convert Excel</b> 😔\n\nPastikan file Excel format yang benar ya!",
+          "⚠️ *Yah… ada masalah saat convert Excel* 😔\n\nPastikan file Excel format yang benar ya!",
           { 
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()

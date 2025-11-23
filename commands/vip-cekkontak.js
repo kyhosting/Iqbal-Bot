@@ -102,7 +102,7 @@ export default function (bot, db, saveDB) {
           return trackMessage(userId, chatId, "⚠️ Tidak ditemukan nama kontak di file ini Kak 😔",  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
         }
 
-        let hasil = `📋 Daftar Kontak:\n\n📊 <b>Total: ${total} kontak</b>\n\n`;
+        let hasil = `📋 Daftar Kontak:\n\n📊 *Total: ${total} kontak*\n\n`;
         hasil += namaKontak.slice(0, 100).map((nama, i) => `${i + 1}. ${nama}`).join("\n");
 
         if (total > 100) hasil += `\n\n⚠️ Ditampilkan 100 dari ${total} kontak.`;

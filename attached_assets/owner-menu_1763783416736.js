@@ -26,7 +26,7 @@ export default function (bot, db, saveDB) {
     if (bot.getRole(userId) !== "owner") {
       return bot.sendMessage(
         chatId, 
-        "❌ <b>Menu ini hanya untuk owner ya Kak</b> 😊",
+        "❌ *Menu ini hanya untuk owner ya Kak* 😊",
         { 
           parse_mode: "HTML",
           reply_markup: bot.getMainKeyboard()
@@ -56,7 +56,7 @@ export default function (bot, db, saveDB) {
 
     bot.sendMessage(
       chatId,
-      `🛡️ <b>Panel Admin Aktif</b>\n\n` +
+      `🛡️ *Panel Admin Aktif*\n\n` +
       `Silakan pilih menu yang ingin digunakan ya Kak:`,
       { 
         parse_mode: "HTML",
@@ -73,7 +73,7 @@ export default function (bot, db, saveDB) {
     if (bot.getRole(userId) !== "owner") {
       return bot.sendMessage(
         chatId, 
-        "❌ <b>Khusus owner</b> 😊",
+        "❌ *Khusus owner* 😊",
         { 
           parse_mode: "HTML",
           reply_markup: bot.getMainKeyboard()
@@ -103,7 +103,7 @@ export default function (bot, db, saveDB) {
 
     bot.sendMessage(
       chatId,
-      `🛡️ <b>Panel Admin Aktif</b>\n\n` +
+      `🛡️ *Panel Admin Aktif*\n\n` +
       `Silakan pilih menu yang ingin digunakan ya Kak:`,
       { 
         parse_mode: "HTML",
@@ -129,12 +129,12 @@ export default function (bot, db, saveDB) {
         bot.answerCallbackQuery(query.id, { text: "Belum ada kode" });
         return bot.sendMessage(
           chatId,
-          "📋 <b>Daftar Kode Redeem</b>\n\nBelum ada kode redeem yang dibuat.",
+          "📋 *Daftar Kode Redeem*\n\nBelum ada kode redeem yang dibuat.",
           { parse_mode: "HTML" }
         );
       }
 
-      let message = `📋 <b>Daftar Kode Redeem</b> (${codes.length} kode)\n\n`;
+      let message = `📋 *Daftar Kode Redeem* (${codes.length} kode)\n\n`;
       codes.forEach((code, i) => {
         const r = bot.redeemDB[code];
         const status = r.used_by ? "✅ Terpakai" : "⏳ Aktif";
@@ -154,13 +154,13 @@ export default function (bot, db, saveDB) {
       const users = Object.values(db.users);
       const vipUsers = users.filter(u => u.role === "vip" && u.vip_expired > Date.now());
       
-      let message = `👥 <b>Statistik User</b>\n\n`;
+      let message = `👥 *Statistik User*\n\n`;
       message += `📊 Total User: ${users.length}\n`;
       message += `💎 VIP Aktif: ${vipUsers.length}\n`;
       message += `👤 User Biasa: ${users.length - vipUsers.length}\n\n`;
       
       if (vipUsers.length > 0) {
-        message += `<b>VIP Users:</b>\n`;
+        message += `*VIP Users:*\n`;
         vipUsers.slice(0, 10).forEach((u, i) => {
           const exp = new Date(u.vip_expired).toLocaleDateString('id-ID');
           message += `${i + 1}. ${u.first_name} (@${u.username || 'no username'})\n`;
@@ -186,14 +186,14 @@ export default function (bot, db, saveDB) {
         return bot.sendMessage(chatId, `❌ Belum ada user di database`, { parse_mode: "HTML" });
       }
 
-      let message = `📋 <b>Daftar Semua User</b>\n\n`;
+      let message = `📋 *Daftar Semua User*\n\n`;
       message += `📊 Total: ${users.length} user\n`;
       message += `💎 VIP Aktif: ${vipUsers.length}\n`;
       message += `👤 Normal: ${normalUsers.length}\n\n`;
 
       // VIP users
       if (vipUsers.length > 0) {
-        message += `<b>VIP Users (${vipUsers.length}):</b>\n`;
+        message += `*VIP Users (${vipUsers.length}):*\n`;
         vipUsers.forEach((u, i) => {
           const exp = new Date(u.vip_expired).toLocaleDateString('id-ID');
           message += `${i + 1}. ${u.first_name || 'Unknown'} (@${u.username || 'no-username'})\n`;
@@ -204,7 +204,7 @@ export default function (bot, db, saveDB) {
 
       // Normal users
       if (normalUsers.length > 0) {
-        message += `<b>Normal Users (${normalUsers.length}):</b>\n`;
+        message += `*Normal Users (${normalUsers.length}):*\n`;
         normalUsers.slice(0, 20).forEach((u, i) => {
           message += `${vipUsers.length + i + 1}. ${u.first_name || 'Unknown'} (@${u.username || 'no-username'})\n`;
           message += `   🆔 ${u.id}\n`;
@@ -223,7 +223,7 @@ export default function (bot, db, saveDB) {
       sessions[userId] = { step: "broadcast_message" };
       bot.sendMessage(
         chatId,
-        `📢 <b>Kirim Broadcast Message</b>\n\n` +
+        `📢 *Kirim Broadcast Message*\n\n` +
         `Ketik pesan yang ingin dikirim ke semua user\n\n` +
         `Ketik \`batal\` untuk membatalkan.`,
         { parse_mode: "HTML" }
@@ -236,7 +236,7 @@ export default function (bot, db, saveDB) {
       sessions[userId] = { step: "create_code_duration" };
       bot.sendMessage(
         chatId,
-        `➕ <b>Buat Kode Redeem Random</b>\n\n` +
+        `➕ *Buat Kode Redeem Random*\n\n` +
         `▸ Masukkan durasi VIP dalam hari\n` +
         `(contoh: 30)\n\n` +
         `▸ Ketik 'batal' untuk membatalkan`,
@@ -249,7 +249,7 @@ export default function (bot, db, saveDB) {
       bot.answerCallbackQuery(query.id);
       bot.sendMessage(
         chatId,
-        `🗑️ <b>Cara Hapus Kode</b>\n\n` +
+        `🗑️ *Cara Hapus Kode*\n\n` +
         `Gunakan format:\n` +
         `/deletecode <KODE>\n\n` +
         `Contoh:\n` +
@@ -263,7 +263,7 @@ export default function (bot, db, saveDB) {
       bot.answerCallbackQuery(query.id);
       bot.sendMessage(
         chatId,
-        `🎁 <b>Cara Set VIP Manual</b>\n\n` +
+        `🎁 *Cara Set VIP Manual*\n\n` +
         `Gunakan format:\n` +
         `/setvip <USER_ID> <DURASI_HARI>\n\n` +
         `Contoh:\n` +
@@ -284,7 +284,7 @@ export default function (bot, db, saveDB) {
     if (session && session.step === "create_code_duration") {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, `❌ <b>Buat kode dibatalkan</b>`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `❌ *Buat kode dibatalkan*`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
       }
 
       const duration = parseInt(text);
@@ -294,13 +294,13 @@ export default function (bot, db, saveDB) {
 
       sessions[userId].step = "create_code_expiry";
       sessions[userId].duration = duration;
-      return bot.sendMessage(chatId, `➕ <b>Buat Kode Redeem</b>\n\n▸ Masukkan tanggal expired\n(format: YYYY-MM-DD)\n\nContoh: 2025-12-31\n\n▸ Ketik 'batal' untuk membatalkan`, { parse_mode: "HTML" });
+      return bot.sendMessage(chatId, `➕ *Buat Kode Redeem*\n\n▸ Masukkan tanggal expired\n(format: YYYY-MM-DD)\n\nContoh: 2025-12-31\n\n▸ Ketik 'batal' untuk membatalkan`, { parse_mode: "HTML" });
     }
 
     if (session && session.step === "create_code_expiry") {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(chatId, `❌ <b>Buat kode dibatalkan</b>`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, `❌ *Buat kode dibatalkan*`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
       }
 
       const expiry = text.trim();
@@ -328,7 +328,7 @@ export default function (bot, db, saveDB) {
 
       bot.saveRedeemDB();
 
-      bot.sendMessage(chatId, `✅ <b>Kode Redeem Berhasil Dibuat</b>\n\n◆ ᴋᴏᴅᴇ ʀᴀɴᴅᴏᴍ\n\n▸ Kode: \`${randomCode}\`\n▸ Durasi: ${duration} hari\n▸ Expired: ${expiryDate.toLocaleDateString('id-ID')}\n\n◆`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
+      bot.sendMessage(chatId, `✅ *Kode Redeem Berhasil Dibuat*\n\n◆ ᴋᴏᴅᴇ ʀᴀɴᴅᴏᴍ\n\n▸ Kode: \`${randomCode}\`\n▸ Durasi: ${duration} hari\n▸ Expired: ${expiryDate.toLocaleDateString('id-ID')}\n\n◆`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
       delete sessions[userId];
     }
 
@@ -346,14 +346,14 @@ export default function (bot, db, saveDB) {
 
       for (const user of users) {
         try {
-          await bot.sendMessage(user.id, `📢 <b>Broadcast dari Owner</b>\n\n${text}`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
+          await bot.sendMessage(user.id, `📢 *Broadcast dari Owner*\n\n${text}`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
           success++;
         } catch (err) {
           failed++;
         }
       }
 
-      bot.sendMessage(chatId, `✅ <b>Broadcast Selesai</b>\n\n▸ Berhasil: ${success}\n▸ Gagal: ${failed}\n\n◆`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
+      bot.sendMessage(chatId, `✅ *Broadcast Selesai*\n\n▸ Berhasil: ${success}\n▸ Gagal: ${failed}\n\n◆`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
       delete sessions[userId];
     } catch (err) {
       bot.sendMessage(chatId, `❌ Error: Broadcast gagal`, { parse_mode: "HTML" });
@@ -392,7 +392,7 @@ export default function (bot, db, saveDB) {
 
     bot.sendMessage(
       chatId,
-      `✅ <b>Kode Berhasil Dibuat!</b>\n\n` +
+      `✅ *Kode Berhasil Dibuat!*\n\n` +
       `📝 Kode: \`${code}\`\n` +
       `⏳ Durasi: ${duration} hari\n` +
       `📅 Expired: ${expiresAt}`,
@@ -436,7 +436,7 @@ export default function (bot, db, saveDB) {
       return bot.sendMessage(chatId, `⚠️ User ${targetId} belum terdaftar di database.`);
     }
 
-    const vipExpired = Date.now() + (days <b> 24 </b> 60 <b> 60 </b> 1000);
+    const vipExpired = Date.now() + (days * 24 </b> 60 <b> 60 * 1000);
     db.users[targetId].role = "vip";
     db.users[targetId].vip_expired = vipExpired;
     db.users[targetId].status = "active";
@@ -446,7 +446,7 @@ export default function (bot, db, saveDB) {
 
     bot.sendMessage(
       chatId,
-      `✅ <b>VIP Berhasil Diberikan!</b>\n\n` +
+      `✅ *VIP Berhasil Diberikan!*\n\n` +
       `👤 User: ${db.users[targetId].first_name}\n` +
       `🆔 ID: ${targetId}\n` +
       `⏳ Durasi: ${days} hari\n` +
@@ -457,7 +457,7 @@ export default function (bot, db, saveDB) {
     // Notify user
     bot.sendMessage(
       targetId,
-      `🎉 <b>Selamat Kak!</b>\n\n` +
+      `🎉 *Selamat Kak!*\n\n` +
       `Kamu mendapatkan VIP selama ${days} hari 💎\n` +
       `Berlaku sampai: ${expDate}\n\n` +
       `Nikmati semua fitur premium ya! 😊`,
