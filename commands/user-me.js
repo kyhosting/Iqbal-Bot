@@ -100,18 +100,11 @@ export default function (bot, db, saveDB) {
 │  Ketik 'start' untuk menu
 └─❖`;
 
-    const copyKeyboard = {
-      inline_keyboard: [
-        [{ text: "📋 Salin ID", callback_data: `copy_id_${userId}` }]
-      ]
-    };
-
     await trackMessage(userId, chatId, profileMessage, {
       parse_mode: "HTML",
       reply_markup: {
         inline_keyboard: [
-          [{ text: "📋 Salin ID", callback_data: `copy_id_${userId}` }],
-          ...bot.getMainKeyboardUser(userId).keyboard
+          [{ text: "📋 Salin ID", callback_data: `copy_id_${userId}` }]
         ]
       }
     });

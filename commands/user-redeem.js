@@ -183,8 +183,7 @@ export default function (bot, db, saveDB) {
 └─❖`,
         { parse_mode: "HTML", reply_markup: {
           inline_keyboard: [
-            [{ text: "📋 Salin Kode", callback_data: `copy_code_${code}` }],
-            ...bot.getMainKeyboardUser(userId).keyboard
+            [{ text: "📋 Salin Kode", callback_data: `copy_code_${code}` }]
           ]
         }}
       );
