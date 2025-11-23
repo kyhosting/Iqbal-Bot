@@ -128,6 +128,51 @@ export default function (bot) {
 ┌─❖
 │  ⏳ Processing...
 │
+│  Perintah:
+│  • done  — proses & kirim hasil file
+│  • batal — batalkan proses
+└─❖`,
+        { parse_mode: "HTML" }
+      );
+    }
+
+    // Step 2 → Konfirmasi "done" atau "batal"
+    if (session.step === 2) {
+      if (/^batal$/i.test(text)) {
+        fs.unlinkSync(session.file);
+        delete sessions[userId];
+        return sendWithDelete(
+          userId,
+          chatId,
+          `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Proses dibatalkan
+└─❖`,
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+        );
+      }
+
+      if (!/^done$/i.test(text)) {
+        return trackMessage(
+          userId,
+          chatId,
+          `◆◆  ⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ ⛓️  ◆◆
+
+┌─❖
+│  ⚠️ Ketik 'done' atau 'batal'
+└─❖`,
+          { parse_mode: "HTML" }
+        );
+      }
+
+      session.step = 3;
+      return trackMessage(
+        userId,
+        chatId,
+        `◆◆  TXT TO VCF  ◆◆
+
+┌─❖
 │  📝 Nama File Output
 │
 │  Ketik 'skip' pakai nama lama
@@ -137,8 +182,8 @@ export default function (bot) {
       );
     }
 
-    // Step 2 → Input nama file output
-    if (session.step === 2) {
+    // Step 3 → Input nama file output
+    if (session.step === 3) {
       if (/^batal$/i.test(text)) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
