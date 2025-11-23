@@ -16,7 +16,7 @@ export default function (bot, db, saveDB) {
     return msg;
   }
 
-  bot.onText(/^⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ ⛓️$|^⛓️ RENAME FILE ⛓️$/i, async (msg) => {
+  bot.onText(/^⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ ⛓️$|^⛓️ RENAME FILE ⛓️$|^\/renamefile$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     
