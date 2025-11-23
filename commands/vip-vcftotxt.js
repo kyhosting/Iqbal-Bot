@@ -153,13 +153,14 @@ export default function (bot, db, saveDB) {
       return trackMessage(
         userId,
         chatId,
-        `◆◆  VCF TO TXT  ◆◆
+        `◆◆  ⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ ⛓️  ◆◆
 
 ┌─❖
 │  ⏳ Processing...
 │
-│  Ketik 'done' untuk proses
-│  Ketik 'batal' untuk batalkan
+│  Perintah:
+│  • done  — proses & kirim hasil file
+│  • batal — batalkan proses
 └─❖`,
         { parse_mode: "HTML" }
       );

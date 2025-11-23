@@ -198,13 +198,14 @@ END:VCARD`;
       return trackMessage(
         userId,
         chatId,
-        `◆◆  XLS TO VCF  ◆◆
+        `◆◆  ⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ ⛓️  ◆◆
 
 ┌─❖
 │  ⏳ Processing...
 │
-│  Ketik 'done' untuk proses
-│  Ketik 'batal' untuk batalkan
+│  Perintah:
+│  • done  — proses & kirim hasil file
+│  • batal — batalkan proses
 └─❖`,
         { parse_mode: "HTML" }
       );
