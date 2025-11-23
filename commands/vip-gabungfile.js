@@ -176,16 +176,18 @@ export default function (bot, db, saveDB) {
         fs.writeFileSync(localPath, Buffer.from(buffer));
         session.files.push(localPath);
 
-        return bot.sendMessage(chatId, 
-          `◆◆  GABUNG FILE  ◆◆
+        session.step = 2;
+        return trackMessage(userId, chatId,
+          `◆◆  ⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ ⛓️  ◆◆
 
 ┌─❖
-│  ✅ File ${session.files.length} diterima
+│  ⏳ Processing...
 │
-│  Ketik 'done' untuk proses
-│  Ketik 'batal' untuk batal
+│  Perintah:
+│  • done  — proses & kirim hasil file
+│  • batal — batalkan proses
 └─❖`, 
-          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "HTML" }
         );
       } catch (e) {
         console.error(e);
@@ -208,13 +210,54 @@ export default function (bot, db, saveDB) {
           `◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
-│  ❌ Proses Dibatalkan
+│  ❌ Proses dibatalkan
 └─❖`, 
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
-      const outputName = text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
+      if (!/^done$/i.test(text)) {
+        return trackMessage(userId, chatId,
+          `◆◆  ⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ ⛓️  ◆◆
+
+┌─❖
+│  ⚠️ Ketik 'done' atau 'batal'
+└─❖`,
+          { parse_mode: "HTML" }
+        );
+      }
+
+      session.step = 3;
+      return trackMessage(userId, chatId,
+        `◆◆  GABUNG FILE  ◆◆
+
+┌─❖
+│  📝 Nama File Output
+│
+│  Ketik 'skip' pakai nama otomatis
+│  Ketik 'batal' batalkan
+└─❖`,
+        { parse_mode: "HTML" }
+      );
+    }
+
+    if (session.step === 3) {
+      if (/^batal$/i.test(text)) {
+        for (const f of session.files) try { fs.unlinkSync(f); } catch {}
+        delete sessions[userId];
+        return sendWithDelete(userId, chatId, 
+          `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Proses dibatalkan
+└─❖`, 
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+        );
+      }
+
+      const outputName = /^skip$/i.test(text)
+        ? `gabung_${Date.now()}`
+        : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
       const ext = session.fileType;
       const outputFile = `${outputName}.${ext}`;
 
