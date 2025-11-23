@@ -1,0 +1,27 @@
+🎌 IQBAL CV BOT - QUICK START FOR TERMUX
+
+ERROR FIX: config.js not found → SOLVED! ✅
+Bot sekarang auto-create config.js dari config.example.js
+
+QUICK STEPS:
+1. npm start                    → Auto-create config.js
+2. Ctrl+C                       → Stop bot
+3. nano config.js              → Edit dengan token & ID
+4. npm start                    → Run bot!
+
+UNTUK DETAIL LENGKAP:
+Buka file: TERMUX_SETUP.md
+
+ATAU LIHAT README.md section: "Pilihan 1: TERMUX"
+
+KEY VALUES TO CHANGE:
+- token: "YOUR_BOT_TOKEN_HERE"     → Get from @BotFather
+- owner: [YOUR_TELEGRAM_ID]         → Get from @userinfobot  
+- ownerUsername: "YOUR_USERNAME"    → Your Telegram username
+- groups.main: "group_username"     → Group you created
+- groups.cv: "channel_username"     → Channel you created
+
+DONE! 🎉 Bot online 24/7!
+
+---
+DARI: KIFZL & PARTNER/SUPPORT IQBAL DEV

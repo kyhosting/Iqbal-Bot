@@ -23,8 +23,32 @@ import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
 import TelegramBot from "node-telegram-bot-api";
-import config from "./config.js";
-import { verifyProjectIntegrity, handleIntegrityViolations } from "./verify-integrity.js";
+
+// ===== AUTO-CREATE config.js IF NOT EXISTS =====
+const configPath = "./config.js";
+const configExamplePath = "./config.example.js";
+
+if (!fs.existsSync(configPath)) {
+  console.log("⚠️  config.js not found!");
+  if (fs.existsSync(configExamplePath)) {
+    console.log("📋 Creating config.js from config.example.js...");
+    fs.copyFileSync(configExamplePath, configPath);
+    console.log("✅ config.js created! Please edit it with your settings.");
+    console.log("📝 Edit these values in config.js:");
+    console.log("   - TELEGRAM_BOT_TOKEN (or set TELEGRAM_BOT_TOKEN environment variable)");
+    console.log("   - owner: [YOUR_TELEGRAM_ID]");
+    console.log("   - ownerUsername");
+    console.log("   - groups.main and groups.cv");
+    console.log("");
+  } else {
+    console.error("❌ config.example.js not found either!");
+    process.exit(1);
+  }
+}
+
+// ===== DYNAMIC IMPORT (for config that might be auto-created) =====
+const config = (await import("./config.js")).default;
+const { verifyProjectIntegrity, handleIntegrityViolations } = await import("./verify-integrity.js");
 
 // ===================== STARTUP =====================
 console.clear();
