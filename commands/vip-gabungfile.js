@@ -14,7 +14,7 @@ import fs from "fs";
 import path from "path";
 import XLSX from "xlsx";
 
-export default function (bot, db, saveDB) {
+export default function (bot, db, redeemDB, saveDB, saveRedeemDB) {
   const sessions = {};
 
   bot.onText(/^⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ ⛓️$|^⛓️ GABUNG FILE ⛓️$/i, async (msg) => {

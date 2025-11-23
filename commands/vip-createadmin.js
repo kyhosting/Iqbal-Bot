@@ -23,7 +23,7 @@ function createVcfEntry(phone, name) {
   ].join("\n");
 }
 
-export default function (bot, db, saveDB) {
+export default function (bot, db, redeemDB, saveDB, saveRedeemDB) {
   const sessions = {};
   const userMessages = {};
 

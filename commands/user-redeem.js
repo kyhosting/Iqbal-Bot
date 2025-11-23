@@ -10,7 +10,7 @@
  * ⚠️  Unauthorized modification may result in legal action
  */
 
-export default function (bot, db, saveDB) {
+export default function (bot, db, redeemDB, saveDB, saveRedeemDB) {
   const sessions = {};
   const userMessages = {};
 
