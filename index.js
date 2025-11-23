@@ -285,8 +285,8 @@ bot.on("callback_query", async (query) => {
     if (data.startsWith("copy_id_")) {
       const userId = data.replace("copy_id_", "");
       await bot.answerCallbackQuery(query.id, {
-        text: `📋 ID: ${userId} (copied!)`,
-        show_alert: false
+        text: `📋 ID: ${userId}\n\n(Long press/tap to copy)`,
+        show_alert: true
       });
       return;
     }
@@ -295,8 +295,8 @@ bot.on("callback_query", async (query) => {
     if (data.startsWith("copy_code_")) {
       const code = data.replace("copy_code_", "");
       await bot.answerCallbackQuery(query.id, {
-        text: `📋 Code: ${code} (copied!)`,
-        show_alert: false
+        text: `📋 Kode: ${code}\n\n(Long press/tap to copy)`,
+        show_alert: true
       });
       return;
     }
