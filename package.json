@@ -2,7 +2,7 @@
   "name": "iqbal-cv-bot",
   "version": "2.1.0",
   "description": "🎌 Iqbal CV Bot - Official Telegram Bot for File Conversion & Contact Management | KIFZL & IQBAL DEV",
-  "author": "KIKI FZL & PARTNER/SUPPORT IQBAL DEV",
+  "author": "KIFZL & PARTNER/SUPPORT IQBAL DEV",
   "type": "module",
   "main": "index.js",
   "scripts": {
