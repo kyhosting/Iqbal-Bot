@@ -62,35 +62,18 @@ console.log("🔍 Verifying project integrity...");
 const integrityResult = verifyProjectIntegrity();
 handleIntegrityViolations(integrityResult);
 
-// ===== CEK VALIDASI (Optional - hapus jika tidak perlu) =====
-const NODE_MODULES = path.join(process.cwd(), "node_modules");
-let encPath = null;
-try {
-  const encModule = path.join(NODE_MODULES, "encryption");
-  if (fs.existsSync(encModule)) {
-    encPath = encModule;
-  }
-} catch (e) {}
-
-// Skip validasi jika tidak ada - langsung jalankan bot
-if (encPath && !fs.existsSync(encPath)) {
-  console.log("⚠ Validasi belum ada, tapi bot tetap jalan...");
-}
-
 console.log("✅ Bot siap dijalankan...");
 
 // ===== VALIDATE BOT TOKEN =====
 const hasValidToken = config.token && config.token !== "YOUR_BOT_TOKEN_HERE";
 
 if (!hasValidToken) {
-  console.warn(`
-⚠️  ════════════════════════════════════════════════════════════
-⚠️   TOKEN NOT CONFIGURED - Running in SETUP MODE
-⚠️  ════════════════════════════════════════════════════════════
+  console.log(`
+📝 ════════════════════════════════════════════════════════════
+📝 SETUP MODE - Bot token not configured yet
+📝 ════════════════════════════════════════════════════════════
 
-🚫 Bot token is not configured yet!
-
-📝 TO ACTIVATE BOT:
+🔧 TO ACTIVATE BOT:
 
 1. Edit config.js:
    nano config.js
@@ -106,8 +89,8 @@ if (!hasValidToken) {
 4. Save & run:
    npm start
 
-🎌 Full guide: TERMUX_SETUP.md
-⚠️  ════════════════════════════════════════════════════════════\n`);
+📖 Full guide: TERMUX_SETUP.md
+📝 ════════════════════════════════════════════════════════════\n`);
 }
 
 // ===== PASTIKAN FILE / FOLDER UTAMA ADA =====
@@ -324,7 +307,10 @@ console.log("🚀 Bot Siap! Loading commands...");
 loadCommands().then(() => {
   console.log("✅ Bot Running! 🎌");
   console.log(`🌐 Creator: ${config.botCreator}`);
-  console.log(`📱 Support: @${config.ownerUsername}`);
+  const supportUsername = config.ownerUsername && config.ownerUsername !== "YOUR_USERNAME" 
+    ? config.ownerUsername 
+    : "Iqbaldev";
+  console.log(`📱 Support: @${supportUsername}`);
 }).catch(err => {
   console.error("❌ Fatal Error:", err);
   process.exit(1);
