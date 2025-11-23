@@ -49,7 +49,7 @@ export default function (bot, db, saveDB) {
     }
 
     sessions[userId] = { step: 1 };
-    trackMessage(userId, chatId, `◆◆  CREATE ADMIN  ◆◆
+    await trackMessage(userId, chatId, `◆◆  CREATE ADMIN  ◆◆
 
 ┌─❖
 │  Buat File Admin

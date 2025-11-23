@@ -44,7 +44,7 @@ export default function (bot, db, saveDB) {
     }
 
     sessions[userId] = { step: 1 };
-    trackMessage(
+    await trackMessage(
       userId,
       chatId,
       `◆◆  MSG TO TXT  ◆◆
