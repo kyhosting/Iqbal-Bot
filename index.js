@@ -154,6 +154,88 @@ bot.checkGroupMembership = async (userId) => {
   }
 };
 
+// ===== GET USER ROLE =====
+bot.getRole = (userId) => {
+  if (config.owner && config.owner.includes(userId)) {
+    return "owner";
+  }
+  if (db.users && db.users[userId] && db.users[userId].role) {
+    return db.users[userId].role;
+  }
+  return "user";
+};
+
+// ===== CHECK IF USER IS VIP =====
+bot.isVip = (userId) => {
+  const role = bot.getRole(userId);
+  return ["owner", "admin", "vip"].includes(role);
+};
+
+// ===== GET USER DATA =====
+bot.getUser = (userId) => {
+  if (!db.users) db.users = {};
+  if (!db.users[userId]) {
+    db.users[userId] = {
+      role: "user",
+      joinedAt: new Date().toISOString(),
+      totalOperations: 0
+    };
+  }
+  return db.users[userId];
+};
+
+// ===== VERIFY GROUP ACCESS =====
+bot.verifyGroupAccess = async (userId, chatId) => {
+  try {
+    const role = bot.getRole(userId);
+    if (["owner", "admin", "vip"].includes(role)) return true;
+    return false;
+  } catch (err) {
+    return false;
+  }
+};
+
+// ===== SEND VIP PANEL =====
+bot.sendVipPanel = async (chatId, userId, title = "🎌 VIP PANEL") => {
+  try {
+    const role = bot.getRole(userId);
+    const message = `${title}\n\nYour role: ${role}\n✨ Enjoy VIP features!`;
+    return await bot.sendMessage(chatId, message, { 
+      parse_mode: "HTML",
+      reply_markup: bot.getMainKeyboardUser(userId)
+    });
+  } catch (err) {
+    console.error("Error sending VIP panel:", err);
+  }
+};
+
+// ===== DELETE MESSAGE SAFE =====
+bot.deleteMessageSafe = async (chatId, messageId) => {
+  try {
+    if (messageId) {
+      await bot.deleteMessage(chatId, messageId);
+      return true;
+    }
+  } catch (err) {
+    return false;
+  }
+};
+
+// ===== SEND TEMP MESSAGE =====
+bot.sendTempMessage = async (chatId, text, deleteAfter = 10000) => {
+  try {
+    const msg = await bot.sendMessage(chatId, text, { parse_mode: "HTML" });
+    if (deleteAfter > 0) {
+      setTimeout(() => {
+        bot.deleteMessageSafe(chatId, msg.message_id);
+      }, deleteAfter);
+    }
+    return msg;
+  } catch (err) {
+    console.error("Error sending temp message:", err);
+  }
+};
+
 // ===== LOAD COMMANDS =====
 async function loadCommands() {
   const commandsPath = path.join(process.cwd(), "commands");
