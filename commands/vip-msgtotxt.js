@@ -38,7 +38,7 @@ export default function (bot, db, saveDB) {
 │
 │  Fitur khusus VIP
 └─❖`,
-        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
 
@@ -57,7 +57,7 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'batal' batalkan
 └─❖`,
-      { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
     );
   });
 
@@ -81,7 +81,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ Proses dibatalkan
 └─❖`,
-          { parse_mode: "HTML" }
+          { parse_mode: "Markdown" }
         );
       }
 
@@ -98,7 +98,7 @@ export default function (bot, db, saveDB) {
 │
 │  (Tanpa ekstensi .txt)
 └─❖`,
-        { parse_mode: "HTML" }
+        { parse_mode: "Markdown" }
       );
     }
 
@@ -113,7 +113,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ Proses dibatalkan
 └─❖`,
-          { parse_mode: "HTML" }
+          { parse_mode: "Markdown" }
         );
       }
 
@@ -135,7 +135,7 @@ export default function (bot, db, saveDB) {
 │
 │  📄 ${filename}
 └─❖`,
-          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
         );
 
         bot.incrementOperation(userId);
@@ -151,7 +151,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ Ada masalah
 └─❖`,
-          { parse_mode: "HTML" }
+          { parse_mode: "Markdown" }
         );
       }
     }

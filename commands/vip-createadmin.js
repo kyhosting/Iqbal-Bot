@@ -45,7 +45,7 @@ export default function (bot, db, saveDB) {
 │  ❌ Akses Ditolak
 │
 │  Fitur khusus VIP
-└─❖`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`,  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
     }
 
     sessions[userId] = { step: 1 };
@@ -58,7 +58,7 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'done' untuk selesai
 │  Ketik 'batal' untuk batal
-└─❖`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`,  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
   });
 
   bot.on("message", (msg) => {
@@ -76,7 +76,7 @@ export default function (bot, db, saveDB) {
 
 ┌─❖
 │  ❌ Proses dibatalkan
-└─❖`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`,  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       const numbers = text.split(/\s+/).filter(Boolean);
@@ -85,7 +85,7 @@ export default function (bot, db, saveDB) {
 
 ┌─❖
 │  ⚠️ Nomor tidak kosong
-└─❖`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`,  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       const filename = "ADMIN.vcf";
@@ -96,17 +96,17 @@ export default function (bot, db, saveDB) {
         fs.writeFileSync(filepath, content);
 
         bot.sendDocument(chatId, filepath).then(() => {
-          trackMessage(userId, chatId, `✅ File ADMIN.vcf berhasil dibuat Kak! 🎉\n\n👤 <b>Total admin:</b> ${numbers.length}\n\nSemoga membantu ya! 😊`,  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+          trackMessage(userId, chatId, `✅ File ADMIN.vcf berhasil dibuat Kak! 🎉\n\n👤 <b>Total admin:</b> ${numbers.length}\n\nSemoga membantu ya! 😊`,  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
           bot.incrementOperation(userId);
           fs.unlinkSync(filepath);
         }).catch((err) => {
           console.error("Gagal mengirim file:", err);
-          bot.sendMessage(chatId, "⚠️ Yah… gagal kirim file 😔",  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+          bot.sendMessage(chatId, "⚠️ Yah… gagal kirim file 😔",  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
           try { fs.unlinkSync(filepath); } catch {}
         });
       } catch (err) {
         console.error("Gagal membuat file:", err);
-        bot.sendMessage(chatId, "⚠️ Yah… gagal buat file VCF 😔",  { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+        bot.sendMessage(chatId, "⚠️ Yah… gagal buat file VCF 😔",  { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       delete sessions[userId];

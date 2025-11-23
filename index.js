@@ -150,7 +150,7 @@ bot.getRole = (userId) => {
     user.notified_expiry = false;
     saveDB();
     bot.sendMessage(userId, `⏰ *Masa Trial/VIP kamu sudah habis Kak*\nSekarang kembali jadi user biasa ya 😊`, {
-      parse_mode: "HTML",
+      parse_mode: "Markdown",
       reply_markup: bot.getMainKeyboard()
     }).catch(() => {});
   }
@@ -168,7 +168,7 @@ bot.deleteAndSend = async (query, newText, newMarkup = null) => {
     await delay(300);
     
     // Send new message
-    const options = { parse_mode: "HTML" };
+    const options = { parse_mode: "Markdown" };
     if (newMarkup) options.reply_markup = newMarkup;
     
     await bot.sendMessage(query.message.chat.id, newText, options);
@@ -206,7 +206,7 @@ bot.verifyGroupAccess = async (userId, chatId) => {
     await bot.sendMessage(
       chatId,
       `❌ <b>Akses Dicabut Sementara Kak!</b>\n\nKamu keluar dari salah satu grup 😢${remainingText}`,
-      { parse_mode: "HTML", reply_markup: rejoinKeyboard }
+      { parse_mode: "Markdown", reply_markup: rejoinKeyboard }
     );
     
     return false;
@@ -236,7 +236,7 @@ bot.verifyGroupAccess = async (userId, chatId) => {
     await bot.sendMessage(
       chatId,
       `⚠️ Wajib join 2 grup untuk akses`,
-       { parse_mode: "HTML", reply_markup: joinKeyboard }
+       { parse_mode: "Markdown", reply_markup: joinKeyboard }
     );
     
     return false;
@@ -350,7 +350,7 @@ bot.showDashboard = async (userId, chatId) => {
       await bot.sendMessage(
         userId,
         `🎁 <b>TRIAL 1 HARI GRATIS!</b>\n\nSelamat! Kamu sudah verifikasi grup 🎉\n\n✅ Akses trial selama 1 hari sudah aktif!\n⏰ Berlaku sampai: ${new Date(trialExpired).toLocaleDateString("id-ID")}\n\nNikmati semua fitur premium dulu ya Kak! 💎\nSetelah trial habis, beli VIP untuk terus akses 😊`,
-        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
       ).catch(() => {});
     }
   } else {
@@ -368,7 +368,7 @@ bot.showDashboard = async (userId, chatId) => {
       await bot.sendMessage(
         userId,
         `✅ <b>Akses Dipulihkan Kak!</b>\n\nKamu sudah join kedua grup 🎉\n\n✨ Trial/VIP kamu aktif kembali!\n⏰ Sisa: <b>${daysLeft} hari</b>\n\nLanjut nikmati fitur premium ya 😊`,
-        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
       ).catch(() => {});
     }
   }
@@ -399,19 +399,19 @@ bot.showDashboard = async (userId, chatId) => {
       const fileId = photos.photos[0][0].file_id;
       await bot.sendPhoto(chatId, fileId, {
         caption: caption,
-        parse_mode: "HTML",
+        parse_mode: "Markdown",
         reply_markup: bot.getMainKeyboardUser(userId)
       });
     } else {
       await bot.sendMessage(chatId, caption, {
-        parse_mode: "HTML",
+        parse_mode: "Markdown",
         reply_markup: bot.getMainKeyboardUser(userId)
       });
     }
   } catch (err) {
     console.error("Error getting profile photo:", err);
     await bot.sendMessage(chatId, caption, {
-      parse_mode: "HTML",
+      parse_mode: "Markdown",
       reply_markup: bot.getMainKeyboardUser(userId)
     });
   }
@@ -466,7 +466,7 @@ bot.on("my_chat_member", async (update) => {
           await bot.sendMessage(
             userId,
             `❌ <b>Akses Dicabut Sementara Kak!</b>\n\nKamu keluar dari salah satu grup 😢${remainingText}`,
-            { parse_mode: "HTML", reply_markup: rejoinKeyboard }
+            { parse_mode: "Markdown", reply_markup: rejoinKeyboard }
           ).catch(() => {});
           
           console.log(`⚠️ [SUSPENDED] User ${userId} left group - access suspended`);
@@ -501,7 +501,7 @@ bot.on("message", async (msg) => {
         await bot.sendMessage(
           chatId,
           `⛔ <b>Link dilarang di grup ini!</b>\n\n@${msg.from.username || "user"}, link tidak boleh di-share di sini.`,
-          { parse_mode: "HTML" }
+          { parse_mode: "Markdown" }
         ).then(m => {
           setTimeout(() => bot.deleteMessage(chatId, m.message_id).catch(() => {}), 3000);
         });
@@ -525,7 +525,7 @@ bot.on("message", async (msg) => {
         await bot.sendMessage(
           chatId,
           `⛔ <b>Spam terdeteksi!</b>\n\n@${msg.from.username || "user"}, jangan spam pesan!`,
-          { parse_mode: "HTML" }
+          { parse_mode: "Markdown" }
         ).then(m => {
           setTimeout(() => bot.deleteMessage(chatId, m.message_id).catch(() => {}), 3000);
         });
@@ -543,7 +543,7 @@ bot.on("message", async (msg) => {
         await bot.sendMessage(
           chatId,
           `⛔ <b>Bahasa tidak sopan!</b>\n\n@${msg.from.username || "user"}, jaga bahasa kamu di grup ini!`,
-          { parse_mode: "HTML" }
+          { parse_mode: "Markdown" }
         ).then(m => {
           setTimeout(() => bot.deleteMessage(chatId, m.message_id).catch(() => {}), 3000);
         });
@@ -573,7 +573,7 @@ bot.on("new_chat_members", async (msg) => {
       welcomeMsg = welcomeMsg.replace(/{name}/g, member.first_name);
       welcomeMsg = welcomeMsg.replace(/{group}/g, msg.chat.title);
       
-      await bot.sendMessage(chatId, welcomeMsg, { parse_mode: "HTML" });
+      await bot.sendMessage(chatId, welcomeMsg, { parse_mode: "Markdown" });
     }
   } catch (err) {
     console.error("Error in new member greeting:", err);
