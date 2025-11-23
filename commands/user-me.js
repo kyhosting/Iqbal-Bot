@@ -26,7 +26,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ⚠️ Harus join grup terlebih dahulu
 └─❖`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
     }
 
@@ -101,7 +101,7 @@ export default function (bot, db, saveDB) {
 └─❖`;
 
     await trackMessage(userId, chatId, profileMessage, {
-      parse_mode: "Markdown",
+      parse_mode: "HTML",
       reply_markup: bot.getMainKeyboardUser(userId)
     });
   });

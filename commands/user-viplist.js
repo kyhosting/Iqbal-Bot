@@ -28,7 +28,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ Fitur grup hanya untuk owner/VIP users kak!
 └─❖`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
     }
 
@@ -43,7 +43,7 @@ export default function (bot, db, saveDB) {
 │
 │  Command khusus owner
 └─❖`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
     }
 
@@ -62,7 +62,7 @@ export default function (bot, db, saveDB) {
 │
 │  Belum ada user VIP
 └─❖`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
     }
 
@@ -79,6 +79,6 @@ export default function (bot, db, saveDB) {
 
     message += `\n┌─❖\n│  Ketik 'done' untuk selesai\n│  Ketik 'batal' untuk batal\n└─❖`;
 
-    await trackMessage(userId, chatId, message, { parse_mode: "Markdown" });
+    await trackMessage(userId, chatId, message, { parse_mode: "HTML" });
   });
 }

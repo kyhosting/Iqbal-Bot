@@ -27,7 +27,7 @@ export default function (bot, db, saveDB) {
           userId,
           chatId,
           `❌ Hanya admin grup yang bisa set welcome message`,
-          { parse_mode: "Markdown" }
+          { parse_mode: "HTML" }
         );
       }
     } catch (e) {
@@ -35,7 +35,7 @@ export default function (bot, db, saveDB) {
         userId,
         chatId,
         `❌ Error checking admin status`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
     }
 
@@ -46,7 +46,7 @@ export default function (bot, db, saveDB) {
         userId,
         chatId,
         `❌ Fitur grup hanya untuk VIP users kak!`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
     }
 
@@ -66,7 +66,7 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'batal' untuk cancel
 └─❖`,
-      { parse_mode: "Markdown" }
+      { parse_mode: "HTML" }
     );
   });
 
@@ -83,7 +83,7 @@ export default function (bot, db, saveDB) {
           userId,
           chatId,
           `❌ Hanya admin grup yang bisa set rules`,
-          { parse_mode: "Markdown" }
+          { parse_mode: "HTML" }
         );
       }
     } catch (e) {
@@ -91,7 +91,7 @@ export default function (bot, db, saveDB) {
         userId,
         chatId,
         `❌ Error checking admin status`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
     }
 
@@ -102,7 +102,7 @@ export default function (bot, db, saveDB) {
         userId,
         chatId,
         `❌ Fitur grup hanya untuk VIP users kak!`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
     }
 
@@ -122,7 +122,7 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'batal' untuk cancel
 └─❖`,
-      { parse_mode: "Markdown" }
+      { parse_mode: "HTML" }
     );
   });
 
@@ -144,7 +144,7 @@ export default function (bot, db, saveDB) {
 │
 │  Admin bisa set dengan /setrules
 └─❖`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
     }
 
@@ -155,7 +155,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 ${groupSettings.rules}
 └─❖`,
-      { parse_mode: "Markdown" }
+      { parse_mode: "HTML" }
     );
   });
 
@@ -179,7 +179,7 @@ ${groupSettings.rules}
           userId,
           chatId,
           `❌ Dibatalkan`,
-          { parse_mode: "Markdown" }
+          { parse_mode: "HTML" }
         );
       }
 
@@ -196,7 +196,7 @@ ${groupSettings.rules}
         userId,
         chatId,
         `✅ Welcome message berhasil diset!`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
     }
 
@@ -208,7 +208,7 @@ ${groupSettings.rules}
           userId,
           chatId,
           `❌ Dibatalkan`,
-          { parse_mode: "Markdown" }
+          { parse_mode: "HTML" }
         );
       }
 
@@ -225,7 +225,7 @@ ${groupSettings.rules}
         userId,
         chatId,
         `✅ Rules berhasil diset!`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
     }
   });

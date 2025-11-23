@@ -38,7 +38,7 @@ export default function (bot, db, saveDB) {
 │
 │  Fitur khusus VIP
 └─❖`, 
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
 
@@ -59,7 +59,7 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'batal' batalkan
 └─❖`, 
-      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+      { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
     );
   });
 
@@ -80,7 +80,7 @@ export default function (bot, db, saveDB) {
 │
 │  Fitur khusus VIP
 └─❖`, 
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
 
@@ -101,7 +101,7 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'batal' batalkan
 └─❖`, 
-      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+      { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
     );
   });
 
@@ -122,7 +122,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ Proses Dibatalkan
 └─❖`, 
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
@@ -136,7 +136,7 @@ export default function (bot, db, saveDB) {
 │
 │  Minimal 2 file untuk digabung
 └─❖`, 
-            { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+            { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
           );
         }
         session.step = 2;
@@ -150,7 +150,7 @@ export default function (bot, db, saveDB) {
 │
 │  (Tanpa ekstensi)
 └─❖`, 
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
@@ -163,7 +163,7 @@ export default function (bot, db, saveDB) {
 │
 │  Kirim file VCF/TXT/XLS
 └─❖`, 
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
@@ -181,7 +181,7 @@ export default function (bot, db, saveDB) {
 │
 │  Hanya VCF, TXT, XLSX
 └─❖`, 
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
@@ -199,7 +199,7 @@ export default function (bot, db, saveDB) {
 │
 │  Sekarang: ${currentType.toUpperCase()}
 └─❖`, 
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
@@ -227,7 +227,7 @@ export default function (bot, db, saveDB) {
 │
 │  Kirim lagi atau ketik 'done'
 └─❖`, 
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       } catch (err) {
         console.error("Download error:", err);
@@ -237,7 +237,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ⚠️ Download Gagal
 └─❖`, 
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
     }
@@ -252,7 +252,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ Proses Dibatalkan
 └─❖`, 
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
@@ -284,7 +284,7 @@ export default function (bot, db, saveDB) {
 │
 │  💎 Terima kasih!
 └─❖`, 
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
         
         bot.incrementOperation(userId);
@@ -296,7 +296,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ⚠️ Gabung Gagal
 └─❖`, 
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 

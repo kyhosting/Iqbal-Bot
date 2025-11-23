@@ -32,7 +32,7 @@ export default function (bot, db, saveDB) {
 │  ❌ Akses Ditolak
 │
 │  Fitur khusus VIP
-└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
     }
 
     sessions[userId] = { step: 1 };
@@ -44,7 +44,7 @@ export default function (bot, db, saveDB) {
 │  Kirim file VCF
 │
 │  Ketik 'batal' untuk batal
-└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
   });
 
   bot.on("message", async (msg) => {
@@ -61,11 +61,11 @@ export default function (bot, db, saveDB) {
 
 ┌─❖
 │  ✅ Operasi dibatalkan
-└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       if (!msg.document) {
-        return trackMessage(userId, chatId, `⚠️ Silakan kirim file VCF Kak`, { parse_mode: "Markdown" });
+        return trackMessage(userId, chatId, `⚠️ Silakan kirim file VCF Kak`, { parse_mode: "HTML" });
       }
 
       try {
@@ -73,7 +73,7 @@ export default function (bot, db, saveDB) {
         const ext = fileName.split(".").pop().toLowerCase();
 
         if (ext !== "vcf") {
-          return trackMessage(userId, chatId, `❌ Hanya support format VCF`, { parse_mode: "Markdown" });
+          return trackMessage(userId, chatId, `❌ Hanya support format VCF`, { parse_mode: "HTML" });
         }
 
         const fileId = msg.document.file_id;
@@ -95,10 +95,10 @@ export default function (bot, db, saveDB) {
         });
         if (vcards.length > 5) listText += `... dan ${vcards.length - 5} lainnya\n`;
 
-        return trackMessage(userId, chatId, `${listText}\n\nFormat: \`nomor|nama_baru|nama_baru|...\`\n\nContoh: \`1|John Doe\``, { parse_mode: "Markdown" });
+        return trackMessage(userId, chatId, `${listText}\n\nFormat: \`nomor|nama_baru|nama_baru|...\`\n\nContoh: \`1|John Doe\``, { parse_mode: "HTML" });
       } catch (err) {
         delete sessions[userId];
-        return trackMessage(userId, chatId, `❌ Error: ${err.message}`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
+        return trackMessage(userId, chatId, `❌ Error: ${err.message}`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
       }
     } else if (session.step === 2) {
       if (/^batal$/i.test(text)) {
@@ -107,7 +107,7 @@ export default function (bot, db, saveDB) {
 
 ┌─❖
 │  ✅ Operasi dibatalkan
-└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       try {
@@ -116,11 +116,11 @@ export default function (bot, db, saveDB) {
         const newName = parts[1]?.trim();
 
         if (isNaN(index) || index < 0 || index >= session.vcards.length) {
-          return trackMessage(userId, chatId, `❌ Nomor kontak tidak valid`, { parse_mode: "Markdown" });
+          return trackMessage(userId, chatId, `❌ Nomor kontak tidak valid`, { parse_mode: "HTML" });
         }
 
         if (!newName) {
-          return trackMessage(userId, chatId, `❌ Nama tidak boleh kosong`, { parse_mode: "Markdown" });
+          return trackMessage(userId, chatId, `❌ Nama tidak boleh kosong`, { parse_mode: "HTML" });
         }
 
         session.vcards[index].fn = newName;
@@ -161,7 +161,7 @@ export default function (bot, db, saveDB) {
         }, 5000);
       } catch (err) {
         delete sessions[userId];
-        return trackMessage(userId, chatId, `❌ Error: ${err.message}`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
+        return trackMessage(userId, chatId, `❌ Error: ${err.message}`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
       }
     }
   });

@@ -26,7 +26,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ Fitur grup hanya untuk VIP users kak!
 └─❖`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
     }
 
@@ -43,6 +43,6 @@ export default function (bot, db, saveDB) {
 │  Ketik 'batal' untuk batal
 └─❖`;
 
-    await trackMessage(userId, chatId, message, { parse_mode: "Markdown" });
+    await trackMessage(userId, chatId, message, { parse_mode: "HTML" });
   });
 }

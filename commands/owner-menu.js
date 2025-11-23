@@ -75,9 +75,9 @@ export default function (bot, db, saveDB) {
 └─❖`;
 
     if (isFromBatal) {
-      return sendWithDelete(userId, chatId, text, { parse_mode: "Markdown", reply_markup: keyboard });
+      return sendWithDelete(userId, chatId, text, { parse_mode: "HTML", reply_markup: keyboard });
     } else {
-      const msg = await bot.sendMessage(chatId, text, { parse_mode: "Markdown", reply_markup: keyboard });
+      const msg = await bot.sendMessage(chatId, text, { parse_mode: "HTML", reply_markup: keyboard });
       userMessages[userId] = msg.message_id;
       return msg;
     }
@@ -91,9 +91,9 @@ export default function (bot, db, saveDB) {
 └─❖`;
 
     if (isFromBatal) {
-      return sendWithDelete(userId, chatId, text, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
+      return sendWithDelete(userId, chatId, text, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
     } else {
-      const msg = await bot.sendMessage(chatId, text, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
+      const msg = await bot.sendMessage(chatId, text, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
       userMessages[userId] = msg.message_id;
       return msg;
     }
@@ -112,7 +112,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ Fitur grup hanya untuk owner kak!
 └─❖`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
     }
 
@@ -124,7 +124,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ Menu ini hanya untuk owner
 └─❖`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
 
@@ -144,7 +144,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ Fitur grup hanya untuk owner kak!
 └─❖`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
     }
 
@@ -156,7 +156,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ Khusus owner
 └─❖`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
 
@@ -200,7 +200,7 @@ export default function (bot, db, saveDB) {
       };
 
       await bot.answerCallbackQuery(query.id);
-      await bot.sendMessage(chatId, message, { parse_mode: "Markdown", reply_markup: backKeyboard });
+      await bot.sendMessage(chatId, message, { parse_mode: "HTML", reply_markup: backKeyboard });
     }
 
     // CREATE CODE
@@ -218,7 +218,7 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'batal' untuk cancel
 └─❖`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
       userMessages[userId] = msg.message_id;
     }
@@ -236,7 +236,7 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'batal' untuk cancel
 └─❖`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
       userMessages[userId] = msg.message_id;
     }
@@ -266,7 +266,7 @@ export default function (bot, db, saveDB) {
       };
 
       await bot.answerCallbackQuery(query.id);
-      await bot.sendMessage(chatId, message, { parse_mode: "Markdown", reply_markup: backKeyboard });
+      await bot.sendMessage(chatId, message, { parse_mode: "HTML", reply_markup: backKeyboard });
     }
 
     // LIST ALL USERS
@@ -300,7 +300,7 @@ export default function (bot, db, saveDB) {
       };
 
       await bot.answerCallbackQuery(query.id);
-      await bot.sendMessage(chatId, message, { parse_mode: "Markdown", reply_markup: backKeyboard });
+      await bot.sendMessage(chatId, message, { parse_mode: "HTML", reply_markup: backKeyboard });
     }
 
     // BROADCAST
@@ -319,7 +319,7 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'batal' untuk cancel
 └─❖`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
       userMessages[userId] = msg.message_id;
     }
@@ -337,7 +337,7 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'batal' untuk cancel
 └─❖`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
       userMessages[userId] = msg.message_id;
     }
@@ -385,7 +385,7 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'batal' untuk cancel
 └─❖`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
       userMessages[userId] = msg.message_id;
       return;
@@ -400,7 +400,7 @@ export default function (bot, db, saveDB) {
       }
       const duration = parseInt(text);
       if (isNaN(duration) || duration <= 0) {
-        const msg = await bot.sendMessage(chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ Durasi harus angka positif!\n└─❖`, { parse_mode: "Markdown" });
+        const msg = await bot.sendMessage(chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ Durasi harus angka positif!\n└─❖`, { parse_mode: "HTML" });
         userMessages[userId] = msg.message_id;
         return;
       }
@@ -425,7 +425,7 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'batal' untuk cancel
 └─❖`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
       userMessages[userId] = msg.message_id;
       return;
@@ -451,7 +451,7 @@ export default function (bot, db, saveDB) {
 │  Contoh yang benar:
 │  5m, 1h, 7d, 2w
 └─❖`,
-          { parse_mode: "Markdown" }
+          { parse_mode: "HTML" }
         );
         userMessages[userId] = msg.message_id;
         return;
@@ -486,7 +486,7 @@ export default function (bot, db, saveDB) {
 │  Durasi VIP: ${session.duration} hari
 │  Code Expired: ${formatDuration(expiryMs)}
 └─❖`,
-        { parse_mode: "Markdown", reply_markup: backKeyboard }
+        { parse_mode: "HTML", reply_markup: backKeyboard }
       );
     }
 
@@ -500,7 +500,7 @@ export default function (bot, db, saveDB) {
 
       const code = text.toUpperCase();
       if (!bot.redeemDB[code]) {
-        const msg = await bot.sendMessage(chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ Kode tidak ditemukan!\n└─❖`, { parse_mode: "Markdown" });
+        const msg = await bot.sendMessage(chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ Kode tidak ditemukan!\n└─❖`, { parse_mode: "HTML" });
         userMessages[userId] = msg.message_id;
         return;
       }
@@ -525,7 +525,7 @@ export default function (bot, db, saveDB) {
 │
 │  Kode: \\\`${code}\\\`
 └─❖`,
-        { parse_mode: "Markdown", reply_markup: backKeyboard }
+        { parse_mode: "HTML", reply_markup: backKeyboard }
       );
     }
 
@@ -551,7 +551,7 @@ ${text}
 
       for (const user of allUsers) {
         try {
-          await bot.sendMessage(user.id, broadcastMsg, { parse_mode: "Markdown" });
+          await bot.sendMessage(user.id, broadcastMsg, { parse_mode: "HTML" });
           sent++;
           await new Promise(resolve => setTimeout(resolve, 100));
         } catch (e) {
@@ -577,7 +577,7 @@ ${text}
 │  Terkirim: ${sent} user
 │  Gagal: ${failed} user
 └─❖`,
-        { parse_mode: "Markdown", reply_markup: backKeyboard }
+        { parse_mode: "HTML", reply_markup: backKeyboard }
       );
     }
 
@@ -591,7 +591,7 @@ ${text}
 
       const targetUserId = parseInt(text);
       if (isNaN(targetUserId)) {
-        const msg = await bot.sendMessage(chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ User ID harus angka!\n└─❖`, { parse_mode: "Markdown" });
+        const msg = await bot.sendMessage(chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ User ID harus angka!\n└─❖`, { parse_mode: "HTML" });
         userMessages[userId] = msg.message_id;
         return;
       }
@@ -607,7 +607,7 @@ ${text}
 │
 │  Ketik 'batal' untuk cancel
 └─❖`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
       userMessages[userId] = msg.message_id;
       return;
@@ -623,7 +623,7 @@ ${text}
 
       const duration = parseInt(text);
       if (isNaN(duration) || duration <= 0) {
-        const msg = await bot.sendMessage(chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ Durasi harus angka positif!\n└─❖`, { parse_mode: "Markdown" });
+        const msg = await bot.sendMessage(chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ Durasi harus angka positif!\n└─❖`, { parse_mode: "HTML" });
         userMessages[userId] = msg.message_id;
         return;
       }
@@ -667,7 +667,7 @@ ${text}
 │  Durasi: ${duration} hari
 │  Expired: ${expDate}
 └─❖`,
-        { parse_mode: "Markdown", reply_markup: backKeyboard }
+        { parse_mode: "HTML", reply_markup: backKeyboard }
       );
     }
   });

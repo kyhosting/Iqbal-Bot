@@ -31,7 +31,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ Fitur grup hanya untuk VIP users kak!
 └─❖`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
     }
 
@@ -48,7 +48,7 @@ export default function (bot, db, saveDB) {
 │
 │  Ketik 'batal' untuk membatalkan
 └─❖`,
-      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+      { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
     );
   });
 
@@ -71,7 +71,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ Redeem dibatalkan
 └─❖`,
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
@@ -92,7 +92,7 @@ export default function (bot, db, saveDB) {
 │
 │  Coba cek lagi ya 🙏
 └─❖`,
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
@@ -108,7 +108,7 @@ export default function (bot, db, saveDB) {
 │
 │  Silakan minta kode baru
 └─❖`,
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
@@ -127,7 +127,7 @@ export default function (bot, db, saveDB) {
 │
 │  Kode sudah tidak berlaku
 └─❖`,
-            { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+            { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
           );
         }
       }
@@ -181,7 +181,7 @@ export default function (bot, db, saveDB) {
 │
 │  💎 Selamat bersenang-senang!
 └─❖`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
   });
