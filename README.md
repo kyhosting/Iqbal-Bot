@@ -143,19 +143,60 @@ export default {
 
 Tekan: `CTRL + X` → `Y` → `Enter`
 
-#### Step 4: Run Bot
+#### Step 4: Run Bot (Option A: Simple - Recommended untuk Termux)
 ```bash
-# Jalankan bot
+# Jalankan bot langsung
 npm start
-
-# Atau dengan pm2 (auto-restart)
-npm install -g pm2
-pm2 start index.js --name "Iqbal-Bot"
-pm2 save
-pm2 startup
 ```
 
-**Note:** Bot akan tetap online selama Termux dibuka. Untuk 24/7, gunakan PM2 atau opsi hosting lainnya.
+**Bot akan online selama Termux dibuka.**
+
+#### Step 4B: Run Bot (Option B: Dengan PM2 - Untuk Keep Running)
+```bash
+# Install PM2 globally
+npm install -g pm2
+
+# Start bot dengan PM2
+pm2 start index.js --name "Iqbal-Bot"
+
+# Save PM2 process list
+pm2 save
+
+# ⚠️ JANGAN gunakan pm2 startup di Termux! 
+# (Termux tidak support init system - akan error)
+```
+
+**Untuk Keep-Alive di Termux:**
+```bash
+# Install Termux:Boot plugin untuk auto-start saat Termux launch
+# Buka Play Store → Cari "Termux:Boot"
+# Setelah install, buat file: ~/.termux/boot/start-bot.sh
+
+# Copy script ini:
+#!/data/data/com.termux/files/usr/bin/bash
+cd ~/Iqbal-Bot
+pm2 start index.js --name "Iqbal-Bot"
+```
+
+**Atau gunakan script Termux wrapper:**
+```bash
+# Buat file ~/Iqbal-Bot/start-termux.sh
+cat > start-termux.sh << 'EOF'
+#!/bin/bash
+pm2 start index.js --name "Iqbal-Bot" || npm start
+EOF
+
+chmod +x start-termux.sh
+./start-termux.sh
+```
+
+**⚠️ Catatan Penting untuk Termux:**
+- ❌ **JANGAN** gunakan `pm2 startup` (error: Init system not found)
+- ✅ **GUNAKAN** `npm start` untuk testing/development
+- ✅ **GUNAKAN** `pm2 start` + `pm2 save` untuk persistent running
+- ✅ **INSTALL** Termux:Boot plugin untuk auto-start saat device boot
+
+**Untuk 24/7 Online Permanent:** Gunakan opsi hosting gratis lainnya (Cyclic, Render, Oracle Cloud)
 
 ---
 
