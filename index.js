@@ -67,11 +67,9 @@ bot.getMainKeyboard = () => {
     keyboard: [
       ['⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ', '⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ'],
       ['⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ', '⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ'],
-      ['⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ', '⛓️ ʙᴀɢɪ ᴠᴄꜰ'],
-      ['⛓️ ɢᴀʙᴜɴɢ ᴛxᴛ', '⛓️ ɢᴀʙᴜɴɢ ᴠᴄꜰ'],
+      ['⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ', '⛓️ ɢᴀʙᴜɴɢ ᴛxᴛ'],
       ['⛓️ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛ', '⛓️ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ'],
-      ['⛓️CEK KONTAK', '⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ'],
-      ['⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ', '⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ'],
+      ['⛓️CEK KONTAK', '⛓️ ᴇꜱᴛʀᴀᴋ ɴᴏᴍᴏʀ'],
       ['🎁 Redeem Code', '⛓️MENU OWNER']
     ],
     resize_keyboard: true,
@@ -86,11 +84,9 @@ bot.getMainKeyboardUser = (userId) => {
     const buttons = [
       ['⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ', '⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ'],
       ['⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ', '⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ'],
-      ['⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ', '⛓️ ʙᴀɢɪ ᴠᴄꜰ'],
-      ['⛓️ ɢᴀʙᴜɴɢ ᴛxᴛ', '⛓️ ɢᴀʙᴜɴɢ ᴠᴄꜰ'],
+      ['⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ', '⛓️ ɢᴀʙᴜɴɢ ᴛxᴛ'],
       ['⛓️ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛ', '⛓️ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ'],
-      ['⛓️CEK KONTAK', '⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ'],
-      ['⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ', '⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ'],
+      ['⛓️CEK KONTAK', '⛓️ ᴇꜱᴛʀᴀᴋ ɴᴏᴍᴏʀ'],
       ['🎁 Redeem Code']
     ];
     
@@ -188,6 +184,27 @@ bot.verifyGroupAccess = async (userId, chatId) => {
   }
   
   return true;
+};
+
+// ===== HELPER: CHECK GROUP ACCESS (OWNER/VIP ONLY IN GROUP) =====
+bot.checkGroupOwnerVipAccess = async (userId, chatId) => {
+  try {
+    const chat = await bot.getChat(chatId);
+    const role = bot.getRole(userId);
+    
+    // DM allowed always
+    if (chat.type === 'private') return true;
+    
+    // Group: only owner and VIP allowed
+    if (['group', 'supergroup', 'channel'].includes(chat.type)) {
+      if (role === 'owner' || role === 'vip') return true;
+      return false;
+    }
+    
+    return true;
+  } catch (err) {
+    return true; // Default allow if error
+  }
 };
 
 bot.incrementOperation = (userId) => {

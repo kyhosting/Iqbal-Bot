@@ -30,7 +30,7 @@ export default function (bot, db, saveDB) {
     return trackMessage(userId, chatId, text, options);
   }
 
-  bot.onText(/^⛓️ TXT TO VCF ⛓️$|^\/txttovcf$/i, async (msg) => {
+  bot.onText(/^⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ$|^⛓️ TXT TO VCF ⛓️$|^\/txttovcf$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);
