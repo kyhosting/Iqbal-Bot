@@ -9,7 +9,7 @@ export default function (bot, db, saveDB) {
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `🎁 <b>Redeem Code System</b>\n\n` +
+      `🎁 *Redeem Code System*\n\n` +
       `Silakan masukkan kode redeem kamu ya Kak ✨\n\n` +
       `Ketik \`batal\` untuk membatalkan.`,
       { 
@@ -27,7 +27,7 @@ export default function (bot, db, saveDB) {
     sessions[userId] = { step: 1 };
     bot.sendMessage(
       chatId,
-      `🎁 <b>Redeem Code System</b>\n\n` +
+      `🎁 *Redeem Code System*\n\n` +
       `Silakan masukkan kode redeem kamu ya Kak ✨\n\n` +
       `Ketik \`batal\` untuk membatalkan.`,
       { 
@@ -63,7 +63,7 @@ export default function (bot, db, saveDB) {
         delete sessions[userId];
         return bot.sendMessage(
           chatId,
-          `❌ <b>Yah… kode redeem tidak valid</b>\n\n` +
+          `❌ *Yah… kode redeem tidak valid*\n\n` +
           `Kode \`${code}\` tidak ditemukan Kak.\n` +
           `Coba cek lagi ya 🙏`,
           { 
@@ -78,7 +78,7 @@ export default function (bot, db, saveDB) {
         delete sessions[userId];
         return bot.sendMessage(
           chatId,
-          `❌ <b>Yah… kode sudah digunakan</b>\n\n` +
+          `❌ *Yah… kode sudah digunakan*\n\n` +
           `Kode ini sudah dipakai sama user lain Kak 😔\n` +
           `Coba minta kode baru ya!`,
           { 
@@ -95,7 +95,7 @@ export default function (bot, db, saveDB) {
           delete sessions[userId];
           return bot.sendMessage(
             chatId,
-            `❌ <b>Yah… kode sudah kadaluarsa</b>\n\n` +
+            `❌ *Yah… kode sudah kadaluarsa*\n\n` +
             `Kode ini sudah expired sejak ${expDate.toLocaleDateString('id-ID')} 😔`,
             { 
               parse_mode: "HTML",
@@ -107,7 +107,7 @@ export default function (bot, db, saveDB) {
 
       // Redeem sukses!
       let duration = redeemData.duration || 30; // default 30 hari
-      let vipExpired = Date.now() + (duration <b> 24 </b> 60 <b> 60 </b> 1000);
+      let vipExpired = Date.now() + (duration * 24 </b> 60 <b> 60 * 1000);
       let expiredDate = new Date(vipExpired);
 
       // Update user
@@ -139,11 +139,11 @@ export default function (bot, db, saveDB) {
 
       await bot.sendMessage(
         chatId,
-        `🎉 <b>Mantap Kak!</b>\n\n` +
+        `🎉 *Mantap Kak!*\n\n` +
         `Kode redeem kamu valid dan sudah berhasil digunakan 💎\n\n` +
-        `✨ <b>Status:</b> VIP Aktif\n` +
-        `⏳ <b>Berlaku sampai:</b> ${expiredDate.toLocaleDateString('id-ID')}\n` +
-        `📅 <b>Durasi:</b> ${duration} hari\n\n` +
+        `✨ *Status:* VIP Aktif\n` +
+        `⏳ *Berlaku sampai:* ${expiredDate.toLocaleDateString('id-ID')}\n` +
+        `📅 *Durasi:* ${duration} hari\n\n` +
         `Silakan nikmati semua fitur premium ya 😊`,
         { 
           parse_mode: "HTML",

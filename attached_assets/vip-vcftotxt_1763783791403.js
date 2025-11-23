@@ -98,7 +98,7 @@ export default function (bot) {
         await bot.sendDocument(chatId, outputPath);
         await bot.sendMessage(
           chatId,
-          `✅ <b>File TXT berhasil dibuat!</b>\n📂 <b>Nama file:</b> \`${outputFile}\``,
+          `✅ *File TXT berhasil dibuat!</b>\n📂 <b>Nama file:* \`${outputFile}\``,
           { parse_mode: "HTML" }
         );
 

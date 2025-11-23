@@ -447,7 +447,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ✅ Kode berhasil dibuat
 │
-│  Kode: <code>${code}</code>
+│  Kode: \\\`${code}\\\`
 │  Durasi VIP: ${session.duration} hari
 │  Code Expired: ${formatDuration(expiryMs)}
 └─❖`,
@@ -488,7 +488,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ✅ Kode berhasil dihapus
 │
-│  Kode: <code>${code}</code>
+│  Kode: \\\`${code}\\\`
 └─❖`,
         { parse_mode: "Markdown", reply_markup: backKeyboard }
       );

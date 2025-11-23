@@ -51,7 +51,7 @@ export default function (bot, db, saveDB) {
       if (!msg.document) {
         return bot.sendMessage(
           chatId,
-          "⚠️ <b>Kirim file dulu ya Kak</b> 😊",
+          "⚠️ *Kirim file dulu ya Kak* 😊",
           { 
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()
@@ -75,7 +75,7 @@ export default function (bot, db, saveDB) {
 
       return bot.sendMessage(
         chatId,
-        `📝 <b>Masukkan nama baru untuk file ya Kak</b>\n\n` +
+        `📝 *Masukkan nama baru untuk file ya Kak*\n\n` +
         `File asli: \`${msg.document.file_name}\`\n` +
         `Ekstensi: \`${ext}\`\n\n` +
         `Ketik nama baru (tanpa ekstensi).\n` +
@@ -127,9 +127,9 @@ export default function (bot, db, saveDB) {
         await bot.sendDocument(chatId, outputPath);
         await bot.sendMessage(
           chatId,
-          `✅ <b>File berhasil direname Kak!</b> 🎉\n\n` +
-          `📂 <b>Nama lama:</b> \`${session.originalName}\`\n` +
-          `📂 <b>Nama baru:</b> \`${outputFile}\`\n\n` +
+          `✅ *File berhasil direname Kak!* 🎉\n\n` +
+          `📂 *Nama lama:* \`${session.originalName}\`\n` +
+          `📂 *Nama baru:* \`${outputFile}\`\n\n` +
           `Semoga membantu ya! 😊`,
           { 
             parse_mode: "HTML",
@@ -144,7 +144,7 @@ export default function (bot, db, saveDB) {
         console.error("Gagal rename file:", err);
         bot.sendMessage(
           chatId,
-          "⚠️ <b>Yah… ada masalah saat rename file</b> 😔\n\nCoba lagi ya Kak!",
+          "⚠️ *Yah… ada masalah saat rename file* 😔\n\nCoba lagi ya Kak!",
           { 
             parse_mode: "HTML",
             reply_markup: bot.getMainKeyboard()

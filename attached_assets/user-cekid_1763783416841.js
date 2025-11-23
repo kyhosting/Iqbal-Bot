@@ -9,18 +9,18 @@ export default function (bot, db, saveDB) {
     if (!groupCheck.verified) {
       return bot.sendMessage(
         chatId,
-        `⚠️ <b>Akses Ditolak</b>\n\nKamu harus join grup terlebih dahulu ya Kak.`,
+        `⚠️ *Akses Ditolak*\n\nKamu harus join grup terlebih dahulu ya Kak.`,
         { parse_mode: "HTML" }
       );
     }
 
     // Only in PRIVATE chat - show user ID
     if (chatType === 'private') {
-      let message = `🆔 <b>CEK ID TELEGRAM USER</b>\n\n`;
+      let message = `🆔 *CEK ID TELEGRAM USER*\n\n`;
       message += `${'─'.repeat(35)}\n\n`;
-      message += `👤 <b>DATA TELEGRAM KAM:</b>\n`;
+      message += `👤 *DATA TELEGRAM KAM:*\n`;
       message += `├─ User ID: \`${userId}\`\n`;
-      message += `├─ Nama: <b>${msg.from.first_name}${msg.from.last_name ? ' ' + msg.from.last_name : ''}</b>\n`;
+      message += `├─ Nama: *${msg.from.first_name}${msg.from.last_name ? ' ' + msg.from.last_name : ''}*\n`;
       message += `├─ Username: ${msg.from.username ? '@' + msg.from.username : '-'}\n`;
       message += `└─ Chat ID: \`${chatId}\`\n\n`;
       message += `${'─'.repeat(35)}\n\n`;
@@ -31,12 +31,12 @@ export default function (bot, db, saveDB) {
 
     // In GROUP/SUPERGROUP - show group ID only
     if (chatType === 'group' || chatType === 'supergroup') {
-      let groupInfo = `🆔 <b>CEK ID GRUP</b>\n\n`;
+      let groupInfo = `🆔 *CEK ID GRUP*\n\n`;
       groupInfo += `${'─'.repeat(35)}\n\n`;
-      groupInfo += `📌 <b>INFORMASI GRUP:</b>\n`;
+      groupInfo += `📌 *INFORMASI GRUP:*\n`;
       groupInfo += `├─ Grup ID: \`${chatId}\`\n`;
-      groupInfo += `├─ Nama: <b>${msg.chat.title}</b>\n`;
-      groupInfo += `└─ Tipe: <b>${chatType === 'supergroup' ? 'Supergroup' : 'Group'}</b>\n\n`;
+      groupInfo += `├─ Nama: *${msg.chat.title}*\n`;
+      groupInfo += `└─ Tipe: *${chatType === 'supergroup' ? 'Supergroup' : 'Group'}*\n\n`;
       groupInfo += `${'─'.repeat(35)}\n\n`;
       groupInfo += `_ID grup ini sudah tersimpan! 😊_`;
 
@@ -45,11 +45,11 @@ export default function (bot, db, saveDB) {
 
     // In CHANNEL - show channel ID only
     if (chatType === 'channel') {
-      let channelInfo = `🆔 <b>CEK ID CHANNEL</b>\n\n`;
+      let channelInfo = `🆔 *CEK ID CHANNEL*\n\n`;
       channelInfo += `${'─'.repeat(35)}\n\n`;
-      channelInfo += `📢 <b>INFORMASI CHANNEL:</b>\n`;
+      channelInfo += `📢 *INFORMASI CHANNEL:*\n`;
       channelInfo += `├─ Channel ID: \`${chatId}\`\n`;
-      channelInfo += `└─ Nama: <b>${msg.chat.title}</b>\n\n`;
+      channelInfo += `└─ Nama: *${msg.chat.title}*\n\n`;
       channelInfo += `${'─'.repeat(35)}\n\n`;
       channelInfo += `_ID channel ini sudah tercatat! 😊_`;
 

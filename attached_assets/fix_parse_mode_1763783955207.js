@@ -15,7 +15,7 @@ function fixFile(filePath) {
   // Pattern 2: Handle standalone bot.sendMessage() calls without options
   // This will catch most simple cases
   content = content.replace(
-    /bot\.sendMessage\(([^,]+),\s<b>([^,}]+?)\)\s</b>;/g,
+    /bot\.sendMessage\(([^,]+),\s*([^,}]+?)\)\s*;/g,
     (match) => {
       if (!match.includes('parse_mode') && !match.includes('{')) {
         return match.replace(');', ', { parse_mode: "HTML" });');

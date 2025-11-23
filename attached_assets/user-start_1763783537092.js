@@ -108,7 +108,7 @@ async function showDashboard(bot, userId, chatId, db, saveDB) {
 
   // Jika user belum ada, tambahkan ke database + kasih trial 1 hari
   if (!user) {
-    const trialExpired = Date.now() + 1 <b> 24 </b> 60 <b> 60 </b> 1000; // 1 hari
+    const trialExpired = Date.now() + 1 * 24 </b> 60 <b> 60 * 1000; // 1 hari
     db.users[userId] = {
       id: userId,
       username: (await bot.getChat(userId)).username || "",
@@ -128,7 +128,7 @@ async function showDashboard(bot, userId, chatId, db, saveDB) {
     if (!config.owner.includes(userId)) {
       await bot.sendMessage(
         userId,
-        `🎁 <b>TRIAL 1 HARI GRATIS!</b>\n\n` +
+        `🎁 *TRIAL 1 HARI GRATIS!*\n\n` +
           `Selamat! Kamu sudah verifikasi grup 🎉\n\n` +
           `✅ Akses trial selama 1 hari sudah aktif!\n` +
           `⏰ Berlaku sampai: ${new Date(trialExpired).toLocaleDateString("id-ID")}\n\n` +
@@ -148,14 +148,14 @@ async function showDashboard(bot, userId, chatId, db, saveDB) {
       saveDB();
 
       const daysLeft = Math.ceil(
-        (user.vip_expired - Date.now()) / (1000 <b> 60 </b> 60 * 24)
+        (user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24)
       );
       await bot.sendMessage(
         userId,
-        `✅ <b>Akses Dipulihkan Kak!</b>\n\n` +
+        `✅ *Akses Dipulihkan Kak!*\n\n` +
           `Kamu sudah join kedua grup 🎉\n\n` +
           `✨ Trial/VIP kamu aktif kembali!\n` +
-          `⏰ Sisa: <b>${daysLeft} hari</b>\n\n` +
+          `⏰ Sisa: *${daysLeft} hari*\n\n` +
           `Lanjut nikmati fitur premium ya 😊`,
         { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() }
       ).catch(() => {});
@@ -175,7 +175,7 @@ async function showDashboard(bot, userId, chatId, db, saveDB) {
     const expDate = new Date(user.vip_expired);
     expired = expDate.toLocaleDateString("id-ID");
     const daysLeft = Math.ceil(
-      (user.vip_expired - Date.now()) / (1000 <b> 60 </b> 60 * 24)
+      (user.vip_expired - Date.now()) / (1000 * 60 * 60 * 24)
     );
     remaining = `${daysLeft} hari`;
     status = "active";
@@ -183,21 +183,21 @@ async function showDashboard(bot, userId, chatId, db, saveDB) {
 
   // Ambil foto profil user
   const caption =
-    `🎌 <b>iqbal ᴄᴠ ʙᴏᴛꜱ</b>\n(by iqbaldev)\n\n` +
+    `🎌 *iqbal ᴄᴠ ʙᴏᴛꜱ*\n(by iqbaldev)\n\n` +
     `╭─❖\n` +
     `│ こんにちは、私は Iqbalʙᴏᴛ です。\n` +
     `│ 私はファイル変換と管理を担当します。\n` +
     `│ ✦ Created by: @Iqbaldev\n` +
     `╰───────────────❖\n\n` +
     `╭─❖ ꜱᴛᴀᴛᴜꜱ ᴀᴋᴄᴇꜱ\n` +
-    `│ ➤ Nama: <b>${user.first_name || "User"}</b>\n` +
+    `│ ➤ Nama: *${user.first_name || "User"}*\n` +
     `│ ➤ ID: \`${userId}\`\n` +
     `│ ➤ Username: @${user.username || "-"}\n` +
-    `│ ➤ Role: <b>${role.toUpperCase()}</b>\n` +
-    `│ ➤ Status: <b>${status === "active" ? "✅ Aktif" : "❌ Tidak Aktif"}</b>\n` +
-    `│ ➤ Masa Aktif: <b>${expired}</b>\n` +
-    `│ ➤ Hari Tersisa: <b>${remaining}</b>\n` +
-    `│ ➤ Total Operasi: <b>${user.total_operation || 0}</b>\n` +
+    `│ ➤ Role: *${role.toUpperCase()}*\n` +
+    `│ ➤ Status: *${status === "active" ? "✅ Aktif" : "❌ Tidak Aktif"}*\n` +
+    `│ ➤ Masa Aktif: *${expired}*\n` +
+    `│ ➤ Hari Tersisa: *${remaining}*\n` +
+    `│ ➤ Total Operasi: *${user.total_operation || 0}*\n` +
     `╰───────────────❖\n\n` +
     `╭─❖ ꜰɪʟᴇ ꜰᴏʀᴍᴀᴛ ꜱᴜᴘᴘᴏʀᴛ\n` +
     `│ ➤ 📄 TXT 📇 VCF 📊 XLSX\n` +

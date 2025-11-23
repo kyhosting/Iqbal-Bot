@@ -15,7 +15,7 @@ export default function (bot, db, saveDB) {
     if (!groupCheck.verified) {
       return bot.sendMessage(
         chatId,
-        `⚠️ <b>Akses Ditolak</b>\n\nKamu harus join grup terlebih dahulu ya Kak.`,
+        `⚠️ *Akses Ditolak*\n\nKamu harus join grup terlebih dahulu ya Kak.`,
         { parse_mode: "HTML" }
       );
     }
@@ -39,28 +39,28 @@ export default function (bot, db, saveDB) {
       ]
     };
 
-    let message = `💎 <b>DAFTAR HARGA VIP BOT</b>\n\n`;
+    let message = `💎 *DAFTAR HARGA VIP BOT*\n\n`;
     message += `${'═'.repeat(35)}\n\n`;
-    message += `✨ <b>PAKET VIP TERSEDIA:</b>\n\n`;
+    message += `✨ *PAKET VIP TERSEDIA:*\n\n`;
     
-    message += `📌 <b>PAKET 7 HARI</b>\n`;
+    message += `📌 *PAKET 7 HARI*\n`;
     message += `├─ Harga: Rp 15.000\n`;
     message += `└─ Akses: Semua fitur selama 7 hari\n\n`;
 
-    message += `📌 <b>PAKET 30 HARI</b> ⭐ POPULER\n`;
+    message += `📌 *PAKET 30 HARI* ⭐ POPULER\n`;
     message += `├─ Harga: Rp 50.000\n`;
     message += `└─ Akses: Semua fitur selama 30 hari\n\n`;
 
-    message += `📌 <b>PAKET 90 HARI</b>\n`;
+    message += `📌 *PAKET 90 HARI*\n`;
     message += `├─ Harga: Rp 120.000\n`;
     message += `└─ Akses: Semua fitur selama 90 hari\n\n`;
 
-    message += `📌 <b>PAKET 365 HARI</b> 🔥 TERBAIK\n`;
+    message += `📌 *PAKET 365 HARI* 🔥 TERBAIK\n`;
     message += `├─ Harga: Rp 300.000\n`;
     message += `└─ Akses: Semua fitur selama 1 tahun\n\n`;
 
     message += `${'═'.repeat(35)}\n\n`;
-    message += `🎯 <b>FITUR VIP YANG DIDAPATKAN:</b>\n`;
+    message += `🎯 *FITUR VIP YANG DIDAPATKAN:*\n`;
     message += `✓ Konversi file tanpa batas\n`;
     message += `✓ Ekstrak nomor (unlimited)\n`;
     message += `✓ Gabung & split file\n`;
@@ -68,7 +68,7 @@ export default function (bot, db, saveDB) {
     message += `✓ Rename & manage file\n`;
     message += `✓ Dan fitur premium lainnya!\n\n`;
 
-    message += `💳 <b>CARA PEMBAYARAN:</b>\n`;
+    message += `💳 *CARA PEMBAYARAN:*\n`;
     message += `Transfer ke rekening owner\n`;
     message += `Hubungi owner untuk info\n\n`;
 
@@ -90,7 +90,7 @@ export default function (bot, db, saveDB) {
       const ownerLink = `https://t.me/Iqbaldev?text=${encodeURIComponent(buyMessage)}`;
       
       await bot.editMessageText(
-        `✅ <b>Anda akan diarahkan ke owner</b>\n\n💬 Silakan ketik pesan pembelian VIP.\n\nSemoga cepat direspons! 😊`,
+        `✅ *Anda akan diarahkan ke owner*\n\n💬 Silakan ketik pesan pembelian VIP.\n\nSemoga cepat direspons! 😊`,
         {
           chat_id: chatId,
           message_id: query.message.message_id,
@@ -113,8 +113,8 @@ export default function (bot, db, saveDB) {
         const ownerLink = `https://t.me/Iqbaldev?text=${encodeURIComponent(buyMessage)}`;
         
         await bot.editMessageText(
-          `💎 <b>PAKET ${vipData.days} HARI</b>\n\n` +
-          `Harga: <b>${vipData.priceRp}</b>\n\n` +
+          `💎 *PAKET ${vipData.days} HARI*\n\n` +
+          `Harga: *${vipData.priceRp}*\n\n` +
           `Klik tombol di bawah untuk hubungi owner\n` +
           `dan sampaikan keinginan beli Anda.`,
           {
@@ -152,13 +152,13 @@ export default function (bot, db, saveDB) {
         ]
       };
 
-      let message = `💎 <b>DAFTAR HARGA VIP BOT</b>\n\n` +
+      let message = `💎 *DAFTAR HARGA VIP BOT*\n\n` +
         `${'═'.repeat(35)}\n\n` +
-        `✨ <b>PAKET VIP TERSEDIA:</b>\n\n` +
-        `📌 <b>PAKET 7 HARI</b> - Rp 15.000\n` +
-        `📌 <b>PAKET 30 HARI</b> ⭐ - Rp 50.000\n` +
-        `📌 <b>PAKET 90 HARI</b> - Rp 120.000\n` +
-        `📌 <b>PAKET 365 HARI</b> 🔥 - Rp 300.000\n\n` +
+        `✨ *PAKET VIP TERSEDIA:*\n\n` +
+        `📌 *PAKET 7 HARI* - Rp 15.000\n` +
+        `📌 *PAKET 30 HARI* ⭐ - Rp 50.000\n` +
+        `📌 *PAKET 90 HARI* - Rp 120.000\n` +
+        `📌 *PAKET 365 HARI* 🔥 - Rp 300.000\n\n` +
         `_Pilih paket di bawah atau hubungi owner! 😊_`;
 
       await bot.editMessageText(message, {
@@ -170,7 +170,7 @@ export default function (bot, db, saveDB) {
       await bot.answerCallbackQuery(query.id);
     } else if (query.data === 'vip_close') {
       await bot.editMessageText(
-        `✅ <b>Menu Ditutup</b>\n\nGunakan /viplist untuk melihat harga VIP lagi.`,
+        `✅ *Menu Ditutup*\n\nGunakan /viplist untuk melihat harga VIP lagi.`,
         {
           chat_id: chatId,
           message_id: query.message.message_id,

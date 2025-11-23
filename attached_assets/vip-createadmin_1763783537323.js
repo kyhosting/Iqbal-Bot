@@ -46,7 +46,7 @@ export default function (bot, db, saveDB) {
 
       const numbers = text.split(/\s+/).filter(Boolean);
       if (numbers.length === 0) {
-        return bot.sendMessage(chatId, "⚠️ <b>Nomor tidak boleh kosong Kak</b> 😊\n\nCoba lagi ya!", { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
+        return bot.sendMessage(chatId, "⚠️ *Nomor tidak boleh kosong Kak* 😊\n\nCoba lagi ya!", { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
       }
 
       const filename = "ADMIN.vcf";
@@ -57,17 +57,17 @@ export default function (bot, db, saveDB) {
         fs.writeFileSync(filepath, content);
 
         bot.sendDocument(chatId, filepath).then(() => {
-          bot.sendMessage(chatId, `✅ <b>File ADMIN.vcf berhasil dibuat Kak!</b> 🎉\n\n👤 <b>Total admin:</b> ${numbers.length}\n\nSemoga membantu ya! 😊`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
+          bot.sendMessage(chatId, `✅ *File ADMIN.vcf berhasil dibuat Kak!</b> 🎉\n\n👤 <b>Total admin:* ${numbers.length}\n\nSemoga membantu ya! 😊`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
           bot.incrementOperation(userId);
           fs.unlinkSync(filepath);
         }).catch((err) => {
           console.error("Gagal mengirim file:", err);
-          bot.sendMessage(chatId, "⚠️ <b>Yah… gagal kirim file</b> 😔", { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
+          bot.sendMessage(chatId, "⚠️ *Yah… gagal kirim file* 😔", { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
           try { fs.unlinkSync(filepath); } catch {}
         });
       } catch (err) {
         console.error("Gagal membuat file:", err);
-        bot.sendMessage(chatId, "⚠️ <b>Yah… gagal buat file VCF</b> 😔", { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
+        bot.sendMessage(chatId, "⚠️ *Yah… gagal buat file VCF* 😔", { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
       }
 
       delete sessions[userId];

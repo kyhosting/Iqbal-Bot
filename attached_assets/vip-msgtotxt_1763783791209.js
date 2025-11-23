@@ -38,7 +38,7 @@ export default function (bot, db, saveDB) {
 
       session.content = text;
       session.step = 2;
-      return bot.sendMessage(chatId, `📝 <b>Masukkan nama file baru ya Kak</b>\n\nTanpa ekstensi .txt\n\nKetik \`batal\` untuk membatalkan.`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
+      return bot.sendMessage(chatId, `📝 *Masukkan nama file baru ya Kak*\n\nTanpa ekstensi .txt\n\nKetik \`batal\` untuk membatalkan.`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
     }
 
     if (session.step === 2) {
@@ -54,17 +54,17 @@ export default function (bot, db, saveDB) {
         fs.writeFileSync(filepath, session.content);
 
         bot.sendDocument(chatId, filepath, {}, { filename }).then(() => {
-          bot.sendMessage(chatId, `✅ <b>File TXT berhasil dibuat Kak!</b> 🎉\n\n📂 <b>File:</b> \`${filename}\`\n\nSemoga membantu ya! 😊`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
+          bot.sendMessage(chatId, `✅ *File TXT berhasil dibuat Kak!</b> 🎉\n\n📂 <b>File:* \`${filename}\`\n\nSemoga membantu ya! 😊`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
           bot.incrementOperation(userId);
           fs.unlinkSync(filepath);
         }).catch((err) => {
           console.error("Gagal kirim file:", err);
-          bot.sendMessage(chatId, "⚠️ <b>Yah… ada masalah saat kirim file</b> 😔", { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
+          bot.sendMessage(chatId, "⚠️ *Yah… ada masalah saat kirim file* 😔", { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
           try { fs.unlinkSync(filepath); } catch {}
         });
       } catch (err) {
         console.error("Gagal membuat file:", err);
-        bot.sendMessage(chatId, "⚠️ <b>Yah… gagal buat file TXT</b> 😔", { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
+        bot.sendMessage(chatId, "⚠️ *Yah… gagal buat file TXT* 😔", { parse_mode: "HTML", reply_markup: bot.getMainKeyboard() });
       }
 
       delete sessions[userId];
