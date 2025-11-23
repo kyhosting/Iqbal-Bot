@@ -4,7 +4,6 @@ import XLSX from "xlsx";
 
 export default function (bot, db, saveDB) {
   const sessions = {};
-  const panelData = {}; // Simpan {messageId, chatId} untuk EDIT pesan
 
   bot.onText(/^⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ ⛓️$|^⛓️ GABUNG FILE ⛓️$/i, async (msg) => {
     const chatId = msg.chat.id;
@@ -27,9 +26,15 @@ export default function (bot, db, saveDB) {
       );
     }
 
-    // Initialize session
-    sessions[userId] = { step: 1, files: [], fileNames: [], fileType: null, chatId: chatId };
-    panelData[userId] = null; // Reset panel data
+    // Initialize session dengan panelMessageId
+    sessions[userId] = { 
+      step: 1, 
+      files: [], 
+      fileNames: [], 
+      fileType: null, 
+      chatId: chatId,
+      panelMessageId: null // Simpan message ID panel di sini
+    };
 
     await bot.sendMessage(chatId, 
       `◆◆  GABUNG FILE  ◆◆
@@ -64,7 +69,6 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text)) {
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
-        delete panelData[userId];
         
         await bot.sendMessage(chatId, 
           `◆◆  DIBATALKAN  ◆◆
@@ -185,25 +189,30 @@ ${fileList}
 │  • batal — batalkan
 └──────────────────❖`;
 
-        // HANYA kirim panel jika belum ada (file pertama)
-        if (panelData[userId] === null) {
+        // Jika belum ada panelMessageId, SEND pesan baru
+        if (session.panelMessageId === null) {
+          console.log(`[GABUNG] User ${userId}: File pertama, SEND panel`);
           const sentMsg = await bot.sendMessage(chatId, panelText, { parse_mode: "HTML" });
-          panelData[userId] = { messageId: sentMsg.message_id, chatId: chatId };
+          session.panelMessageId = sentMsg.message_id;
         } else {
-          // Jika sudah ada panel, EDIT pesan yang ada
+          // Jika sudah ada panelMessageId, EDIT pesan yang ada
+          console.log(`[GABUNG] User ${userId}: File ke-${session.files.length}, EDIT panel (msgId: ${session.panelMessageId})`);
           try {
             await bot.editMessageText(panelText, {
-              chat_id: panelData[userId].chatId,
-              message_id: panelData[userId].messageId,
+              chat_id: chatId,
+              message_id: session.panelMessageId,
               parse_mode: "HTML"
             });
-          } catch (e) {
-            console.error("Error editing panel:", e);
+          } catch (err) {
+            console.error(`[GABUNG] Error editing panel: ${err.message}`);
+            // Fallback: jika edit gagal, kirim pesan baru
+            const sentMsg = await bot.sendMessage(chatId, panelText, { parse_mode: "HTML" });
+            session.panelMessageId = sentMsg.message_id;
           }
         }
         return;
       } catch (e) {
-        console.error(e);
+        console.error(`[GABUNG] Error processing file: ${e.message}`);
         return bot.sendMessage(chatId, 
           `◆◆  ERROR  ◆◆
 
@@ -220,7 +229,6 @@ ${fileList}
       if (/^batal$/i.test(text)) {
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
-        delete panelData[userId];
         
         return bot.sendMessage(chatId, 
           `◆◆  DIBATALKAN  ◆◆
@@ -266,7 +274,6 @@ ${fileList}
 
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
-        delete panelData[userId];
 
         bot.incrementOperation(userId);
         return bot.sendMessage(chatId, 
@@ -281,10 +288,9 @@ ${fileList}
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       } catch (e) {
-        console.error(e);
+        console.error(`[GABUNG] Error processing: ${e.message}`);
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
-        delete panelData[userId];
         
         return bot.sendMessage(chatId, 
           `◆◆  ERROR  ◆◆
