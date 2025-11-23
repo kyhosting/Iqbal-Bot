@@ -26,14 +26,14 @@ export default function (bot, db, saveDB) {
       );
     }
 
-    // Initialize session dengan panelMessageId
+    // Initialize session
     sessions[userId] = { 
       step: 1, 
       files: [], 
       fileNames: [], 
       fileType: null, 
       chatId: chatId,
-      panelMessageId: null // Simpan message ID panel di sini
+      silentMode: false // Belum send panel
     };
 
     await bot.sendMessage(chatId, 
@@ -174,9 +174,11 @@ export default function (bot, db, saveDB) {
         session.files.push(localPath);
         session.fileNames.push(fileName);
 
-        // Generate panel text dengan daftar file
-        const fileList = session.fileNames.map((fn, i) => `  ${i + 1}. ${fn}`).join("\n");
-        const panelText = `✦✦  GABUNG FILE  ✦✦
+        // HANYA send panel untuk FILE PERTAMA
+        if (!session.silentMode) {
+          // Generate panel text
+          const fileList = session.fileNames.map((fn, i) => `  ${i + 1}. ${fn}`).join("\n");
+          const panelText = `✦✦  GABUNG FILE  ✦✦
 
 ┌──────────────────❖
 │  ✅ ${session.files.length} file diterima
@@ -189,27 +191,11 @@ ${fileList}
 │  • batal — batalkan
 └──────────────────❖`;
 
-        // Jika belum ada panelMessageId, SEND pesan baru
-        if (session.panelMessageId === null) {
-          console.log(`[GABUNG] User ${userId}: File pertama, SEND panel`);
-          const sentMsg = await bot.sendMessage(chatId, panelText, { parse_mode: "HTML" });
-          session.panelMessageId = sentMsg.message_id;
-        } else {
-          // Jika sudah ada panelMessageId, EDIT pesan yang ada
-          console.log(`[GABUNG] User ${userId}: File ke-${session.files.length}, EDIT panel (msgId: ${session.panelMessageId})`);
-          try {
-            await bot.editMessageText(panelText, {
-              chat_id: chatId,
-              message_id: session.panelMessageId,
-              parse_mode: "HTML"
-            });
-          } catch (err) {
-            console.error(`[GABUNG] Error editing panel: ${err.message}`);
-            // Fallback: jika edit gagal, kirim pesan baru
-            const sentMsg = await bot.sendMessage(chatId, panelText, { parse_mode: "HTML" });
-            session.panelMessageId = sentMsg.message_id;
-          }
+          await bot.sendMessage(chatId, panelText, { parse_mode: "HTML" });
+          session.silentMode = true; // Aktivasi silent mode untuk file berikutnya
         }
+        
+        // File 2 dan seterusnya: TIDAK KIRIM APAPUN (DIAM)
         return;
       } catch (e) {
         console.error(`[GABUNG] Error processing file: ${e.message}`);
