@@ -28,7 +28,7 @@ export default function (bot, db, saveDB) {
 │  ❌ Akses Ditolak
 │
 │  Fitur khusus VIP
-└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
     }
 
     sessions[userId] = { step: 1 };
@@ -40,7 +40,7 @@ export default function (bot, db, saveDB) {
 │  Kirim file VCF/TXT
 │
 │  Ketik 'batal' untuk batal
-└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
   });
 
   bot.on("message", async (msg) => {
@@ -57,11 +57,11 @@ export default function (bot, db, saveDB) {
 
 ┌─❖
 │  ✅ Operasi dibatalkan
-└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
       }
 
       if (!msg.document) {
-        return trackMessage(userId, chatId, `⚠️ Silakan kirim file VCF atau TXT Kak`, { parse_mode: "Markdown" });
+        return trackMessage(userId, chatId, `⚠️ Silakan kirim file VCF atau TXT Kak`, { parse_mode: "HTML" });
       }
 
       try {
@@ -69,7 +69,7 @@ export default function (bot, db, saveDB) {
         const ext = fileName.split(".").pop().toLowerCase();
 
         if (!["vcf", "txt"].includes(ext)) {
-          return trackMessage(userId, chatId, `❌ Format tidak didukung. Gunakan VCF atau TXT`, { parse_mode: "Markdown" });
+          return trackMessage(userId, chatId, `❌ Format tidak didukung. Gunakan VCF atau TXT`, { parse_mode: "HTML" });
         }
 
         const fileId = msg.document.file_id;
@@ -96,10 +96,10 @@ export default function (bot, db, saveDB) {
 │
 │  Nama File: \`${fileName}\`
 │  Format: ${ext.toUpperCase()}
-└─❖`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
+└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
       } catch (err) {
         delete sessions[userId];
-        return trackMessage(userId, chatId, `❌ Error membaca file: ${err.message}`, { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) });
+        return trackMessage(userId, chatId, `❌ Error membaca file: ${err.message}`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
       }
     }
   });

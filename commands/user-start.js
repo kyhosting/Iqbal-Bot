@@ -53,7 +53,7 @@ export default function (bot, db, saveDB) {
 │  Ketik 'start' untuk refresh
 │  Ketik 'bantuan' untuk help
 └─❖`,
-        { parse_mode: "Markdown", reply_markup: verifyKeyboard }
+        { parse_mode: "HTML", reply_markup: verifyKeyboard }
       );
     }
 
@@ -76,7 +76,7 @@ export default function (bot, db, saveDB) {
 │
 │  Klik tombol di bawah
 └─❖`,
-      { parse_mode: "Markdown", reply_markup: verifyKeyboard }
+      { parse_mode: "HTML", reply_markup: verifyKeyboard }
     );
   });
 
@@ -111,7 +111,7 @@ export default function (bot, db, saveDB) {
           await bot.sendMessage(
             chatId,
             `❌ Harus join kedua grup dulu Kak`,
-            { parse_mode: "Markdown", reply_markup: joinKeyboard }
+            { parse_mode: "HTML", reply_markup: joinKeyboard }
           );
         } catch (err) {
           console.error("Error di verify_join:", err);
@@ -241,7 +241,7 @@ export default function (bot, db, saveDB) {
           const photoId = userPhotos.photos[0][0].file_id;
           await bot.sendPhoto(chatId, photoId, {
             caption: caption,
-            parse_mode: "Markdown",
+            parse_mode: "HTML",
             reply_markup: bot.getMainKeyboardUser(userId)
           });
           photoSent = true;
@@ -253,13 +253,13 @@ export default function (bot, db, saveDB) {
       // Jika tidak ada foto, kirim text saja
       if (!photoSent) {
         await bot.sendMessage(chatId, caption, {
-          parse_mode: "Markdown",
+          parse_mode: "HTML",
           reply_markup: bot.getMainKeyboardUser(userId)
         });
       }
     } catch (err) {
       console.error("Error di showDashboard:", err);
-      await bot.sendMessage(chatId, "❌ Error loading dashboard", { parse_mode: "Markdown" });
+      await bot.sendMessage(chatId, "❌ Error loading dashboard", { parse_mode: "HTML" });
     }
   };
 }

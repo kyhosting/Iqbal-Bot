@@ -61,6 +61,14 @@ function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// ===== FORMAT MESSAGE HELPER =====
+function formatMessage(text) {
+  return `<pre><code>${text}</code></pre>`;
+}
+
+// Expose to bot
+bot.formatMessage = formatMessage;
+
 // ===== KEYBOARD HELPER =====
 bot.getMainKeyboard = () => {
   return {
@@ -153,7 +161,7 @@ bot.getRole = (userId) => {
     user.status = "inactive";
     saveDB();
     bot.sendMessage(userId, `⏰ *Masa VIP kamu sudah habis Kak*\nSekarang kembali jadi user biasa ya 😊`, {
-      parse_mode: "Markdown",
+      parse_mode: "HTML",
       reply_markup: bot.getMainKeyboard()
     }).catch(() => {});
   }
@@ -180,7 +188,7 @@ bot.verifyGroupAccess = async (userId, chatId) => {
       `Kamu harus tetap join grup ini ya:\n` +
       `${missingGroups.map(g => `• ${g}`).join('\n')}\n\n` +
       `Setelah join, coba lagi 😊`,
-      { parse_mode: "Markdown" }
+      { parse_mode: "HTML" }
     );
     
     return false;
@@ -226,7 +234,7 @@ setInterval(() => {
       user.vip_expired = 0;
       user.status = "inactive";
       bot.sendMessage(id, "⏰ *Masa VIP kamu telah berakhir Kak* 😊\nKembali jadi user biasa ya~", { 
-        parse_mode: "Markdown",
+        parse_mode: "HTML",
         reply_markup: bot.getMainKeyboard()
       }).catch(() => {});
     }

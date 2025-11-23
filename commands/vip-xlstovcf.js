@@ -46,7 +46,7 @@ export default function (bot, db, saveDB) {
 │
 │  Fitur khusus VIP
 └─❖`,
-        { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
       );
     }
 
@@ -73,7 +73,7 @@ export default function (bot, db, saveDB) {
 │  Ketik 'done' selesai
 │  Ketik 'batal' batalkan
 └─❖`,
-      { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+      { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
     );
   });
 
@@ -96,7 +96,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ Proses dibatalkan
 └─❖`,
-          { parse_mode: "Markdown" }
+          { parse_mode: "HTML" }
         );
       }
 
@@ -110,7 +110,7 @@ export default function (bot, db, saveDB) {
 │
 │  Support: XLS atau XLSX
 └─❖`,
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
@@ -125,7 +125,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ⚠️ Hanya XLS atau XLSX
 └─❖`,
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       }
 
@@ -155,7 +155,7 @@ export default function (bot, db, saveDB) {
 │
 │  Isi dulu ya!
 └─❖`,
-            { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+            { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
           );
         }
 
@@ -174,7 +174,7 @@ export default function (bot, db, saveDB) {
 │
 │  (Tanpa ekstensi)
 └─❖`,
-          { parse_mode: "Markdown" }
+          { parse_mode: "HTML" }
         );
       } catch (e) {
         if (fs.existsSync(localPath)) fs.unlinkSync(localPath);
@@ -186,7 +186,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ File tidak valid
 └─❖`,
-          { parse_mode: "Markdown" }
+          { parse_mode: "HTML" }
         );
       }
     }
@@ -203,7 +203,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ Proses dibatalkan
 └─❖`,
-          { parse_mode: "Markdown" }
+          { parse_mode: "HTML" }
         );
       }
 
@@ -242,7 +242,7 @@ export default function (bot, db, saveDB) {
 │
 │  ${vcfEntries.length} kontak
 └─❖`,
-          { parse_mode: "Markdown", reply_markup: bot.getMainKeyboardUser(userId) }
+          { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
       } catch (e) {
         if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
@@ -255,7 +255,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ❌ Ada masalah
 └─❖`,
-          { parse_mode: "Markdown" }
+          { parse_mode: "HTML" }
         );
       }
     }

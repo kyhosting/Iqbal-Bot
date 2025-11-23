@@ -26,7 +26,7 @@ export default function (bot) {
 ┌─❖
 │  ❌ Fitur grup hanya untuk VIP users kak!
 └─❖`,
-        { parse_mode: "Markdown" }
+        { parse_mode: "HTML" }
       );
     }
 
@@ -114,6 +114,6 @@ export default function (bot) {
 │  Ketik 'start' untuk mulai
 └─❖`;
 
-    await trackMessage(userId, chatId, message, { parse_mode: "Markdown" });
+    await trackMessage(userId, chatId, message, { parse_mode: "HTML" });
   });
 }
