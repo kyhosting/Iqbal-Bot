@@ -157,6 +157,14 @@ export default function (bot, db, saveDB) {
         : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
 
       session.step = 3;
+      const keyboard = {
+        inline_keyboard: [
+          [
+            { text: "✅ Done", callback_data: `txttovcf_done_${userId}` },
+            { text: "❌ Batal", callback_data: `txttovcf_batal_${userId}` }
+          ]
+        ]
+      };
       return bot.sendMessage(
         chatId,
         `◆◆  TXT TO VCF  ◆◆
@@ -164,11 +172,23 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ⏳ Processing...
 └─❖`,
-        { parse_mode: "HTML" }
+        { parse_mode: "HTML", reply_markup: keyboard }
       );
     }
 
-    if (session.step === 3) {
+  });
+
+  bot.on("callback_query", async (query) => {
+    const userId = query.from.id;
+    const chatId = query.message.chat.id;
+    const data = query.data;
+    const session = sessions[userId];
+
+    // Handle DONE button
+    if (data === `txttovcf_done_${userId}`) {
+      await bot.answerCallbackQuery(query.id);
+      if (!session || session.step !== 3) return;
+
       try {
         const content = fs.readFileSync(session.file, "utf8");
         const lines = content.split("\n").filter((l) => l.trim());
@@ -221,6 +241,25 @@ export default function (bot, db, saveDB) {
           { parse_mode: "HTML" }
         );
       }
+    }
+
+    // Handle BATAL button
+    if (data === `txttovcf_batal_${userId}`) {
+      await bot.answerCallbackQuery(query.id);
+      if (!session || session.step !== 3) return;
+
+      if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
+      delete sessions[userId];
+      return sendWithDelete(
+        userId,
+        chatId,
+        `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Proses dibatalkan
+└─❖`,
+        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+      );
     }
   });
 }
