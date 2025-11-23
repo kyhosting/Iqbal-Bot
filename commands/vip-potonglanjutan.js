@@ -168,8 +168,10 @@ export default function (bot, db, saveDB) {
           return numA - numB;
         });
 
-        // Kirim semua file PARALLEL dengan urutan terurut - FAST TERSUSUN! 🚀📂
-        await Promise.all(sortedFiles.map(f => bot.sendDocument(chatId, f)));
+        // Kirim file BERURUTAN TERSUSUN RAPI - FAST! 🚀📂
+        for (const f of sortedFiles) {
+          await bot.sendDocument(chatId, f);
+        }
         
         // Cleanup files
         sortedFiles.forEach(f => {
