@@ -117,13 +117,46 @@ export default function (bot, db, saveDB) {
         );
       }
 
-      const filename = text.replace(/[^a-zA-Z0-9-_]/g, "_") + ".txt";
-      const filepath = path.join(process.cwd(), filename);
+      session.filename = text.replace(/[^a-zA-Z0-9-_]/g, "_") + ".txt";
+      session.step = 3;
+      const keyboard = {
+        inline_keyboard: [
+          [
+            { text: "✅ Done", callback_data: `msgtotxt_done_${userId}` },
+            { text: "❌ Batal", callback_data: `msgtotxt_batal_${userId}` }
+          ]
+        ]
+      };
+      return bot.sendMessage(
+        chatId,
+        `◆◆  MSG TO TXT  ◆◆
 
+┌─❖
+│  ⏳ Processing...
+│
+│  Perintah:
+│  • done  — proses & kirim hasil file
+│  • batal — batalkan proses
+└─❖`,
+        { parse_mode: "HTML", reply_markup: keyboard }
+      );
+    }
+  });
+
+  bot.on("callback_query", async (query) => {
+    const userId = query.from.id;
+    const chatId = query.message.chat.id;
+    const data = query.data;
+    const session = sessions[userId];
+
+    if (data === `msgtotxt_done_${userId}`) {
+      await bot.answerCallbackQuery(query.id);
+      if (!session || session.step !== 3) return;
+
+      const filepath = path.join(process.cwd(), session.filename);
       try {
         fs.writeFileSync(filepath, session.content);
-
-        await bot.sendDocument(chatId, filepath, {}, { filename });
+        await bot.sendDocument(chatId, filepath, {}, { filename: session.filename });
 
         await trackMessage(
           userId,
@@ -133,7 +166,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ✅ File TXT dibuat
 │
-│  📄 ${filename}
+│  📄 ${session.filename}
 └─❖`,
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
@@ -154,6 +187,22 @@ export default function (bot, db, saveDB) {
           { parse_mode: "HTML" }
         );
       }
+    }
+
+    if (data === `msgtotxt_batal_${userId}`) {
+      await bot.answerCallbackQuery(query.id);
+      if (!session || session.step !== 3) return;
+      delete sessions[userId];
+      return sendWithDelete(
+        userId,
+        chatId,
+        `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Proses dibatalkan
+└─❖`,
+        { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
+      );
     }
   });
 }
