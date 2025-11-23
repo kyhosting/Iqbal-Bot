@@ -184,7 +184,7 @@ export default function (bot, db, saveDB) {
           const r = bot.redeemDB[code];
           const status = r.used_by ? "✅ Terpakai" : "⏳ Aktif";
           const expTime = formatDuration(r.expires_in_ms);
-          message += `│  ${i + 1}. ${code}\n`;
+          message += `│  ${i + 1}. <code>${code}</code>\n`;
           message += `│     Status: ${status}\n`;
           message += `│     Durasi VIP: ${r.duration} hari\n`;
           message += `│     Code Expired: ${expTime}\n`;
@@ -203,19 +203,66 @@ export default function (bot, db, saveDB) {
       await bot.sendMessage(chatId, message, { parse_mode: "HTML", reply_markup: backKeyboard });
     }
 
-    // CREATE CODE
+    // CREATE CODE - CHOOSE METHOD
     else if (data === "owner_create_code") {
-      sessions[userId] = { step: "create_code_name" };
       await bot.answerCallbackQuery(query.id);
+      const createKeyboard = {
+        inline_keyboard: [
+          [{ text: "✍️ Manual (Ketik Kode)", callback_data: "create_code_manual" }],
+          [{ text: "🎲 Random (Auto Generate)", callback_data: "create_code_random" }],
+          [{ text: "◀️ Kembali", callback_data: "owner_back_menu" }]
+        ]
+      };
       const msg = await bot.sendMessage(
         chatId,
         `◆◆  BUAT KODE  ◆◆
+
+┌─❖
+│  🎯 Pilih metode buat kode
+│
+│  ✍️ Manual: Anda input kode
+│  🎲 Random: Bot generate otomatis
+└─❖`,
+        { parse_mode: "HTML", reply_markup: createKeyboard }
+      );
+      userMessages[userId] = msg.message_id;
+    }
+
+    // CREATE CODE MANUAL
+    else if (data === "create_code_manual") {
+      sessions[userId] = { step: "create_code_name", method: "manual" };
+      await bot.answerCallbackQuery(query.id);
+      const msg = await bot.sendMessage(
+        chatId,
+        `◆◆  BUAT KODE MANUAL  ◆◆
 
 ┌─❖
 │  📝 Masukkan nama kode
 │
 │  Contoh: VIPCODE001
 │
+│  Ketik 'batal' untuk cancel
+└─❖`,
+        { parse_mode: "HTML" }
+      );
+      userMessages[userId] = msg.message_id;
+    }
+
+    // CREATE CODE RANDOM
+    else if (data === "create_code_random") {
+      sessions[userId] = { step: "create_code_random_duration", method: "random" };
+      await bot.answerCallbackQuery(query.id);
+      const msg = await bot.sendMessage(
+        chatId,
+        `◆◆  BUAT KODE RANDOM  ◆◆
+
+┌─❖
+│  ⏰ Masukkan durasi VIP
+│
+│  Format: &lt;angka&gt;&lt;satuan&gt;
+│  • d = hari (contoh: 7d)
+│  • h = jam (contoh: 1h)
+│  
 │  Ketik 'batal' untuk cancel
 └─❖`,
         { parse_mode: "HTML" }
@@ -252,7 +299,7 @@ export default function (bot, db, saveDB) {
         vipUsers.forEach((user, i) => {
           const exp = new Date(user.vip_expired).toLocaleDateString("id-ID");
           message += `│  ${i + 1}. ${user.first_name}\n`;
-          message += `│     ID: ${user.id}\n`;
+          message += `│     ID: <code>${user.id}</code>\n`;
           message += `│     Exp: ${exp}\n`;
           if (i < vipUsers.length - 1) message += `│\n`;
         });
@@ -283,7 +330,7 @@ export default function (bot, db, saveDB) {
           const vipExp = user.vip_expired && user.vip_expired > Date.now() ? new Date(user.vip_expired).toLocaleDateString("id-ID") : "❌ Expired";
           
           message += `│  ${i + 1}. ${user.first_name}\n`;
-          message += `│     ID: ${user.id}\n`;
+          message += `│     ID: <code>${user.id}</code>\n`;
           message += `│     Role: ${role}\n`;
           message += `│     Status: ${status}\n`;
           message += `│     VIP Exp: ${vipExp}\n`;
@@ -365,8 +412,8 @@ export default function (bot, db, saveDB) {
 
     if (!session) return;
 
-    // CREATE CODE - NAME
-    if (session.step === "create_code_name") {
+    // CREATE CODE - NAME (MANUAL)
+    if (session.step === "create_code_name" && session.method === "manual") {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
         await showOwnerMenu(userId, chatId, true);
@@ -389,6 +436,100 @@ export default function (bot, db, saveDB) {
       );
       userMessages[userId] = msg.message_id;
       return;
+    }
+
+    // CREATE CODE - RANDOM DURATION
+    if (session.step === "create_code_random_duration" && session.method === "random") {
+      if (/^batal$/i.test(text)) {
+        delete sessions[userId];
+        await showOwnerMenu(userId, chatId, true);
+        return;
+      }
+
+      const expiryMs = parseDuration(text);
+      if (!expiryMs) {
+        const msg = await bot.sendMessage(
+          chatId,
+          `◆◆  ERROR  ◆◆
+
+┌─❖
+│  ⚠️ Format salah!
+│
+│  Contoh yang benar:
+│  5m, 1h, 7d, 2w
+└─❖`,
+          { parse_mode: "HTML" }
+        );
+        userMessages[userId] = msg.message_id;
+        return;
+      }
+
+      sessions[userId].expiry_ms = expiryMs;
+      sessions[userId].step = "create_code_random_days";
+      const msg = await bot.sendMessage(
+        chatId,
+        `◆◆  DURASI VIP (Hari)  ◆◆
+
+┌─❖
+│  🕐 Berapa hari durasi VIP?
+│
+│  Contoh: 7, 30, 365
+│
+│  Ketik 'batal' untuk cancel
+└─❖`,
+        { parse_mode: "HTML" }
+      );
+      userMessages[userId] = msg.message_id;
+      return;
+    }
+
+    // CREATE CODE - RANDOM DAYS (VIP Duration)
+    if (session.step === "create_code_random_days" && session.method === "random") {
+      if (/^batal$/i.test(text)) {
+        delete sessions[userId];
+        await showOwnerMenu(userId, chatId, true);
+        return;
+      }
+
+      const duration = parseInt(text);
+      if (isNaN(duration) || duration <= 0) {
+        const msg = await bot.sendMessage(chatId, `◆◆  ERROR  ◆◆\n\n┌─❖\n│  ⚠️ Durasi harus angka positif!\n└─❖`, { parse_mode: "HTML" });
+        userMessages[userId] = msg.message_id;
+        return;
+      }
+
+      // Generate random code
+      const randomCode = generateRandomCode();
+      bot.redeemDB[randomCode] = {
+        code: randomCode,
+        duration: duration,
+        expires_in_ms: session.expiry_ms,
+        created_at: Date.now(),
+        used_by: null
+      };
+      if (bot.saveRedeemDB) bot.saveRedeemDB();
+
+      delete sessions[userId];
+
+      const backKeyboard = {
+        inline_keyboard: [
+          [{ text: "◀️ Kembali ke Menu", callback_data: "owner_back_menu" }]
+        ]
+      };
+
+      await bot.sendMessage(
+        chatId,
+        `◆◆  KODE RANDOM DIBUAT  ◆◆
+
+┌─❖
+│  ✅ Kode berhasil dibuat & dikirim
+│
+│  Kode: <code>${randomCode}</code>
+│  Durasi VIP: ${duration} hari
+│  Code Expired: ${formatDuration(session.expiry_ms)}
+└─❖`,
+        { parse_mode: "HTML", reply_markup: backKeyboard }
+      );
     }
 
     // CREATE CODE - DURATION
@@ -482,7 +623,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ✅ Kode berhasil dibuat
 │
-│  Kode: \\\`${code}\\\`
+│  Kode: <code>${code}</code>
 │  Durasi VIP: ${session.duration} hari
 │  Code Expired: ${formatDuration(expiryMs)}
 └─❖`,
@@ -523,7 +664,7 @@ export default function (bot, db, saveDB) {
 ┌─❖
 │  ✅ Kode berhasil dihapus
 │
-│  Kode: \\\`${code}\\\`
+│  Kode: <code>${code}</code>
 └─❖`,
         { parse_mode: "HTML", reply_markup: backKeyboard }
       );

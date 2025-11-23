@@ -80,23 +80,34 @@ The system enforces group membership for VIP commands, uses single-use redeem co
 
 ## Recent Updates
 
-**Session Nov 23, 2025 - COPY-TO-CLIPBOARD FEATURES + HTML FIX (v2.0.4):**
+**Session Nov 23, 2025 - OWNER MENU ENHANCEMENTS + DUAL CODE CREATION (v2.0.5):**
+- 🎯 **COPY-TO-CLIPBOARD EVERYWHERE**
+  - Owner menu list users (VIP & All): IDs shown in `<code>` tags → user long-press to copy
+  - Owner menu list codes: Codes shown in `<code>` tags → user long-press to copy
+  - Both manual & random code creation: Codes displayed in `<code>` tags for easy copying
+  - Native Telegram text selection without buttons (works perfectly!)
+
+- 🎲 **DUAL CODE CREATION SYSTEM**
+  - **✍️ Manual Method**: Owner inputs custom code name → duration (days) → expiry time → Code created
+  - **🎲 Random Method**: Owner inputs expiry time → duration (days) → Bot auto-generates 8-char alphanumeric code
+  - Both methods show success message with code in `<code>` tag for easy copying
+  - Choose method via inline buttons when clicking "➕ Buat Kode"
+
+- ✅ **Bot Status: 25/25 PLUGINS LOADED - PRODUCTION READY** 🚀
+  - All owner features enhanced with copyable IDs and codes
+  - Dual code creation system fully functional
+  - All messages use HTML parse_mode with code tags for copyability
+  - Bot process running stable
+
+**Previous Session (Nov 23, 2025 - COPY-TO-CLIPBOARD FEATURES + HTML FIX v2.0.4):**
 - 🎯 **COPY FUNCTIONALITY ADDED**
-  - `/me` command: ID shown in `<code>` tag + "📋 Salin ID" button
-  - Redeem success: Code shown in `<code>` tag + "📋 Salin Kode" button
-  - Users click button → notification shows copied text
-  - Easy-to-select format for manual copy if needed
+  - `/me` command: ID shown in `<code>` tag
+  - Redeem success: Code shown in `<code>` tag
+  - Easy-to-select format for manual copy
   
 - 🔧 **HTML TAG FIX**
   - Fixed owner-menu.js: `<angka><satuan>` → `&lt;angka&gt;&lt;satuan&gt;`
   - Proper HTML entity encoding for angle brackets
-  - Code creation menu now displays without parsing errors
-  
-- ✅ **Bot Status: 25/25 PLUGINS LOADED - PRODUCTION READY** 🚀
-  - All 25 commands loading successfully
-  - HTML formatting implemented across entire bot (239+ instances)
-  - Copy-to-clipboard features active for ID and redeem codes
-  - Bot process running stable
 
 **Previous Session (Nov 23, 2025 - v2.0.2):**
 - 🎨 **KEYBOARD LAYOUT UPDATE** - Professional 2x2 grid with trailing emoji format
