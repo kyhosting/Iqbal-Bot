@@ -5,6 +5,7 @@ import XLSX from "xlsx";
 export default function (bot, db, saveDB) {
   const sessions = {};
   const userMessages = {};
+  const panelSent = {}; // Track apakah panel sudah dikirim
 
   async function trackMessage(userId, chatId, text, options = {}) {
     if (userMessages[userId]) {
@@ -43,6 +44,7 @@ export default function (bot, db, saveDB) {
     }
 
     sessions[userId] = { step: 1, files: [], fileType: null };
+    panelSent[userId] = false; // Reset panel tracking
     trackMessage(userId, chatId, 
       `◆◆  GABUNG FILE  ◆◆
 
@@ -74,6 +76,7 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text)) {
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
+        delete panelSent[userId]; // Clear panel tracking
         return sendWithDelete(userId, chatId, 
           `◆◆  DIBATALKAN  ◆◆
 
@@ -172,7 +175,10 @@ export default function (bot, db, saveDB) {
         fs.writeFileSync(localPath, Buffer.from(buffer));
         session.files.push(localPath);
 
-        const panelText = `◆◆  GABUNG FILE  ◆◆
+        // CEK: apakah panel sudah dikirim?
+        if (!panelSent[userId]) {
+          // Jika belum, kirim panel SEKALI SAJA
+          const panelText = `◆◆  GABUNG FILE  ◆◆
 
 ┌─❖
 │  ✅ ${session.files.length} file diterima
@@ -181,9 +187,11 @@ export default function (bot, db, saveDB) {
 │  • done  — proses & kirim hasil
 │  • batal — batalkan
 └─❖`;
-
-        // Gunakan trackMessage untuk selalu update pesan yang sama
-        return trackMessage(userId, chatId, panelText, { parse_mode: "HTML" });
+          await bot.sendMessage(chatId, panelText, { parse_mode: "HTML" });
+          panelSent[userId] = true; // Mark panel as sent
+        }
+        // Jika sudah dikirim, jangan kirim pesan apa pun (silent)
+        return;
       } catch (e) {
         console.error(e);
         return bot.sendMessage(chatId, 
@@ -201,6 +209,7 @@ export default function (bot, db, saveDB) {
       if (/^batal$/i.test(text)) {
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
+        delete panelSent[userId]; // Clear panel tracking
         return sendWithDelete(userId, chatId, 
           `◆◆  DIBATALKAN  ◆◆
 
@@ -245,6 +254,7 @@ export default function (bot, db, saveDB) {
 
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
+        delete panelSent[userId]; // Clear panel tracking
 
         bot.incrementOperation(userId);
         return sendWithDelete(userId, chatId, 
@@ -262,6 +272,7 @@ export default function (bot, db, saveDB) {
         console.error(e);
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
+        delete panelSent[userId]; // Clear panel tracking
         return sendWithDelete(userId, chatId, 
           `◆◆  ERROR  ◆◆
 
