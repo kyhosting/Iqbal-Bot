@@ -88,23 +88,55 @@ export default function (bot, db, saveDB) {
         session.vcards = vcards;
         session.fileName = fileName;
         
-        const vcardList = (() => {
-          let listText = `◆◆  ⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ ⛓️  ◆◆\n\n┌─❖\n│  ⏳ Processing...\n│\n`;
-          let contacts = `Kontak di file (${vcards.length}):\n\n`;
-          vcards.slice(0, 5).forEach((v, i) => {
-            const name = v.fn || `Kontak ${i + 1}`;
-            contacts += `${i + 1}. ${name}\n`;
-          });
-          if (vcards.length > 5) contacts += `... dan ${vcards.length - 5} lainnya\n`;
-          return listText + contacts + `│\n│  Format: nomor|nama_baru\n│  Contoh: 1|John Doe\n│\n│  Ketik 'batal' batalkan\n└─❖`;
-        })();
-        
-        return trackMessage(userId, chatId, vcardList, { parse_mode: "HTML" });
+        return trackMessage(userId, chatId, `◆◆  ⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ ⛓️  ◆◆
+
+┌─❖
+│  ⏳ Processing...
+│
+│  Perintah:
+│  • done  — proses & kirim hasil file
+│  • batal — batalkan proses
+└─❖`, { parse_mode: "HTML" });
       } catch (err) {
         delete sessions[userId];
         return trackMessage(userId, chatId, `❌ Error: ${err.message}`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
       }
     } else if (session.step === 2) {
+      if (/^batal$/i.test(text)) {
+        delete sessions[userId];
+        return trackMessage(userId, chatId, `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ✅ Operasi dibatalkan
+└─❖`, { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) });
+      }
+
+      if (!/^done$/i.test(text)) {
+        return trackMessage(
+          userId,
+          chatId,
+          `◆◆  ⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ ⛓️  ◆◆
+
+┌─❖
+│  ⚠️ Ketik 'done' atau 'batal'
+└─❖`,
+          { parse_mode: "HTML" }
+        );
+      }
+
+      session.step = 3;
+      const vcardList = (() => {
+        let listText = `◆◆  RENAME KONTAK  ◆◆\n\n┌─❖\n│  Kontak di file (${session.vcards.length}):\n│\n`;
+        let contacts = ``;
+        session.vcards.slice(0, 5).forEach((v, i) => {
+          const name = v.fn || `Kontak ${i + 1}`;
+          contacts += `${i + 1}. ${name}\n`;
+        });
+        if (session.vcards.length > 5) contacts += `... dan ${session.vcards.length - 5} lainnya\n`;
+        return listText + contacts + `│\n│  Format: nomor|nama_baru\n│  Contoh: 1|John Doe\n│\n│  Ketik 'batal' batalkan\n└─❖`;
+      })();
+      return trackMessage(userId, chatId, vcardList, { parse_mode: "HTML" });
+    } else if (session.step === 3) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
         return trackMessage(userId, chatId, `◆◆  DIBATALKAN  ◆◆

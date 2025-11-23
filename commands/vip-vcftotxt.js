@@ -116,6 +116,52 @@ export default function (bot, db, saveDB) {
       return trackMessage(
         userId,
         chatId,
+        `◆◆  ⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ ⛓️  ◆◆
+
+┌─❖
+│  ⏳ Processing...
+│
+│  Perintah:
+│  • done  — proses & kirim hasil file
+│  • batal — batalkan proses
+└─❖`,
+        { parse_mode: "HTML" }
+      );
+    }
+
+    if (session.step === 2) {
+      if (/^batal$/i.test(text)) {
+        if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
+        delete sessions[userId];
+        return sendWithDelete(
+          userId,
+          chatId,
+          `◆◆  DIBATALKAN  ◆◆
+
+┌─❖
+│  ❌ Proses dibatalkan
+└─❖`,
+          { parse_mode: "HTML" }
+        );
+      }
+
+      if (!/^done$/i.test(text)) {
+        return trackMessage(
+          userId,
+          chatId,
+          `◆◆  ⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ ⛓️  ◆◆
+
+┌─❖
+│  ⚠️ Ketik 'done' atau 'batal'
+└─❖`,
+          { parse_mode: "HTML" }
+        );
+      }
+
+      session.step = 3;
+      return trackMessage(
+        userId,
+        chatId,
         `◆◆  VCF TO TXT  ◆◆
 
 ┌─❖
@@ -129,7 +175,7 @@ export default function (bot, db, saveDB) {
       );
     }
 
-    if (session.step === 2) {
+    if (session.step === 3) {
       if (/^batal$/i.test(text)) {
         if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
         delete sessions[userId];

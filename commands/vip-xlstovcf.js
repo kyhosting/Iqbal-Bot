@@ -122,14 +122,14 @@ END:VCARD`;
       await trackMessage(
         userId,
         chatId,
-        `◆◆  XLS TO VCF  ◆◆
+        `◆◆  ⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ ⛓️  ◆◆
 
 ┌─❖
-│  📝 Nama File
+│  ⏳ Processing...
 │
-│  Masukkan nama file
-│
-│  (Tanpa ekstensi .vcf)
+│  Perintah:
+│  • done  — proses & kirim hasil file
+│  • batal — batalkan proses
 └─❖`,
         { parse_mode: "HTML" }
       );
@@ -190,10 +190,37 @@ END:VCARD`;
         );
       }
 
-      session.newFileName = /^skip$/i.test(text) || !text
-        ? "contacts"
-        : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
+      if (!/^done$/i.test(text)) {
+        return trackMessage(
+          userId,
+          chatId,
+          `◆◆  ⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ ⛓️  ◆◆
 
+┌─❖
+│  ⚠️ Ketik 'done' atau 'batal'
+└─❖`,
+          { parse_mode: "HTML" }
+        );
+      }
+
+      session.step = 3;
+      return trackMessage(
+        userId,
+        chatId,
+        `◆◆  XLS TO VCF  ◆◆
+
+┌─❖
+│  📝 Nama File
+│
+│  Masukkan nama file
+│
+│  (Tanpa ekstensi .vcf)
+└─❖`,
+        { parse_mode: "HTML" }
+      );
+    }
+
+    if (session.step === 3) {
       if (/^batal$/i.test(text)) {
         if (fs.existsSync(session.file)) fs.unlinkSync(session.file);
         delete sessions[userId];
@@ -208,6 +235,10 @@ END:VCARD`;
           { parse_mode: "HTML" }
         );
       }
+
+      session.newFileName = /^skip$/i.test(text) || !text
+        ? "contacts"
+        : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
 
       {
         try {

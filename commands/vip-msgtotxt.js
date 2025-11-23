@@ -91,14 +91,14 @@ export default function (bot, db, saveDB) {
       return trackMessage(
         userId,
         chatId,
-        `◆◆  MSG TO TXT  ◆◆
+        `◆◆  ⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ ⛓️  ◆◆
 
 ┌─❖
-│  📝 Nama File
+│  ⏳ Processing...
 │
-│  Masukkan nama file
-│
-│  (Tanpa ekstensi .txt)
+│  Perintah:
+│  • done  — proses & kirim hasil file
+│  • batal — batalkan proses
 └─❖`,
         { parse_mode: "HTML" }
       );
@@ -119,7 +119,37 @@ export default function (bot, db, saveDB) {
         );
       }
 
-      session.filename = text.replace(/[^a-zA-Z0-9-_]/g, "_") + ".txt";
+      if (!/^done$/i.test(text)) {
+        return trackMessage(
+          userId,
+          chatId,
+          `◆◆  ⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ ⛓️  ◆◆
+
+┌─❖
+│  ⚠️ Ketik 'done' atau 'batal'
+└─❖`,
+          { parse_mode: "HTML" }
+        );
+      }
+
+      session.step = 3;
+      return trackMessage(
+        userId,
+        chatId,
+        `◆◆  MSG TO TXT  ◆◆
+
+┌─❖
+│  📝 Nama File
+│
+│  Masukkan nama file
+│
+│  (Tanpa ekstensi .txt)
+└─❖`,
+        { parse_mode: "HTML" }
+      );
+    }
+
+    if (session.step === 3) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
         return sendWithDelete(
@@ -133,6 +163,8 @@ export default function (bot, db, saveDB) {
           { parse_mode: "HTML" }
         );
       }
+
+      session.filename = text.replace(/[^a-zA-Z0-9-_]/g, "_") + ".txt";
 
       {
         try {
