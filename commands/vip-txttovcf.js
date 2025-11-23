@@ -14,15 +14,32 @@ function createVcfEntry(phone, name) {
 
 export default function (bot) {
   const sessions = {};
+  const userMessages = {};
 
-  bot.onText(/^⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ ⛓️$|^\/txttovcf$/i, (msg) => {
+  async function trackMessage(userId, chatId, text, options = {}) {
+    if (userMessages[userId]) {
+      try {
+        await bot.deleteMessage(chatId, userMessages[userId]);
+      } catch (e) {}
+    }
+    const msg = await bot.sendMessage(chatId, text, options);
+    userMessages[userId] = msg.message_id;
+    return msg;
+  }
+
+  async function sendWithDelete(userId, chatId, text, options = {}) {
+    return trackMessage(userId, chatId, text, options);
+  }
+
+  bot.onText(/^⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ ⛓️$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
     const role = bot.getRole(userId);
 
     // Batasi akses hanya untuk owner/admin/vip
     if (!["owner", "admin", "vip"].includes(role)) {
-      return bot.sendMessage(
+      return trackMessage(
+        userId,
         chatId,
         `◆◆  TXT TO VCF  ◆◆
 
@@ -36,7 +53,8 @@ export default function (bot) {
     }
 
     sessions[userId] = { step: 1 };
-    bot.sendMessage(
+    await trackMessage(
+      userId,
       chatId,
       `◆◆  TXT TO VCF  ◆◆
 
@@ -63,7 +81,8 @@ export default function (bot) {
     if (session.step === 1) {
       if (/^batal$/i.test(text)) {
         delete sessions[userId];
-        return bot.sendMessage(
+        return sendWithDelete(
+          userId,
           chatId,
           `◆◆  DIBATALKAN  ◆◆
 
@@ -75,7 +94,8 @@ export default function (bot) {
       }
 
       if (!msg.document || !msg.document.file_name.endsWith(".txt")) {
-        return bot.sendMessage(
+        return trackMessage(
+          userId,
           chatId,
           `◆◆  TXT TO VCF  ◆◆
 
@@ -100,7 +120,8 @@ export default function (bot) {
       session.originalName = msg.document.file_name.replace(".txt", "");
       session.step = 2;
 
-      return bot.sendMessage(
+      return trackMessage(
+        userId,
         chatId,
         `◆◆  TXT TO VCF  ◆◆
 
@@ -119,7 +140,8 @@ export default function (bot) {
       if (/^batal$/i.test(text)) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
-        return bot.sendMessage(
+        return sendWithDelete(
+          userId,
           chatId,
           `◆◆  DIBATALKAN  ◆◆
 
@@ -135,7 +157,8 @@ export default function (bot) {
         : text.trim().replace(/[^a-zA-Z0-9-_]/g, "_");
 
       session.step = 3;
-      return bot.sendMessage(
+      return trackMessage(
+        userId,
         chatId,
         `◆◆  TXT TO VCF  ◆◆
 
@@ -158,7 +181,8 @@ export default function (bot) {
       if (/^batal$/i.test(text)) {
         fs.unlinkSync(session.file);
         delete sessions[userId];
-        return bot.sendMessage(
+        return sendWithDelete(
+          userId,
           chatId,
           `◆◆  DIBATALKAN  ◆◆
 
@@ -184,7 +208,8 @@ export default function (bot) {
         if (numbers.length === 0) {
           fs.unlinkSync(session.file);
           delete sessions[userId];
-          return bot.sendMessage(
+          return sendWithDelete(
+            userId,
             chatId,
             `◆◆  ERROR  ◆◆
 
@@ -213,7 +238,8 @@ export default function (bot) {
           ? `\n\n👥 Kontak:\n${kontakList.slice(0, 10).map((k, i) => `${i + 1}. ${k}`).join("\n")}${kontakList.length > 10 ? `\n... dan ${kontakList.length - 10} lainnya` : ""}`
           : "";
 
-        await bot.sendMessage(
+        await sendWithDelete(
+          userId,
           chatId,
           `◆◆  SUKSES  ◆◆
 
@@ -230,7 +256,8 @@ export default function (bot) {
         bot.incrementOperation(userId);
       } catch (err) {
         console.error("Gagal convert:", err);
-        bot.sendMessage(
+        sendWithDelete(
+          userId,
           chatId,
           `◆◆  ERROR  ◆◆
 
