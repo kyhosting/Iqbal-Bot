@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 import * as XLSX from "xlsx";
-import { parseVCard } from "vcard-parser";
 
 export default function (bot, db, saveDB) {
   const sessions = {};
