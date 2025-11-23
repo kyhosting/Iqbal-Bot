@@ -4,23 +4,7 @@ import XLSX from "xlsx";
 
 export default function (bot, db, saveDB) {
   const sessions = {};
-  const userMessages = {};
-  const panelSent = {}; // Track apakah panel sudah dikirim
-
-  async function trackMessage(userId, chatId, text, options = {}) {
-    if (userMessages[userId]) {
-      try {
-        await bot.deleteMessage(chatId, userMessages[userId]);
-      } catch (e) {}
-    }
-    const msg = await bot.sendMessage(chatId, text, options);
-    userMessages[userId] = msg.message_id;
-    return msg;
-  }
-
-  async function sendWithDelete(userId, chatId, text, options = {}) {
-    return trackMessage(userId, chatId, text, options);
-  }
+  const panelMessages = {}; // Simpan message_id dari panel yang sudah dikirim
 
   bot.onText(/^⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ ⛓️$|^⛓️ GABUNG FILE ⛓️$/i, async (msg) => {
     const chatId = msg.chat.id;
@@ -43,9 +27,11 @@ export default function (bot, db, saveDB) {
       );
     }
 
-    sessions[userId] = { step: 1, files: [], fileType: null };
-    panelSent[userId] = false; // Reset panel tracking
-    trackMessage(userId, chatId, 
+    // Initialize session
+    sessions[userId] = { step: 1, files: [], fileType: null, chatId: chatId };
+    panelMessages[userId] = null; // Reset panel message ID
+
+    await bot.sendMessage(chatId, 
       `◆◆  GABUNG FILE  ◆◆
 
 ┌─❖
@@ -70,14 +56,17 @@ export default function (bot, db, saveDB) {
     const userId = msg.from.id;
     const text = msg.text?.trim() || "";
     const session = sessions[userId];
+    
     if (!session) return;
 
     if (session.step === 1) {
+      // Batalkan
       if (/^batal$/i.test(text)) {
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
-        delete panelSent[userId]; // Clear panel tracking
-        return sendWithDelete(userId, chatId, 
+        delete panelMessages[userId];
+        
+        await bot.sendMessage(chatId, 
           `◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
@@ -85,8 +74,10 @@ export default function (bot, db, saveDB) {
 └─❖`, 
           { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
         );
+        return;
       }
 
+      // Selesai (done)
       if (/^done$/i.test(text)) {
         if (session.files.length < 2) {
           return bot.sendMessage(chatId, 
@@ -100,8 +91,9 @@ export default function (bot, db, saveDB) {
             { parse_mode: "HTML", reply_markup: bot.getMainKeyboardUser(userId) }
           );
         }
+        
         session.step = 2;
-        return trackMessage(userId, chatId,
+        await bot.sendMessage(chatId,
           `◆◆  GABUNG FILE  ◆◆
 
 ┌─❖
@@ -112,8 +104,10 @@ export default function (bot, db, saveDB) {
 └─❖`, 
           { parse_mode: "HTML" }
         );
+        return;
       }
 
+      // Cek apakah bukan file
       if (!msg.document) {
         return bot.sendMessage(chatId, 
           `◆◆  GABUNG FILE  ◆◆
@@ -175,9 +169,8 @@ export default function (bot, db, saveDB) {
         fs.writeFileSync(localPath, Buffer.from(buffer));
         session.files.push(localPath);
 
-        // CEK: apakah panel sudah dikirim?
-        if (!panelSent[userId]) {
-          // Jika belum, kirim panel SEKALI SAJA
+        // HANYA kirim panel jika belum ada
+        if (panelMessages[userId] === null) {
           const panelText = `◆◆  GABUNG FILE  ◆◆
 
 ┌─❖
@@ -187,10 +180,11 @@ export default function (bot, db, saveDB) {
 │  • done  — proses & kirim hasil
 │  • batal — batalkan
 └─❖`;
-          await bot.sendMessage(chatId, panelText, { parse_mode: "HTML" });
-          panelSent[userId] = true; // Mark panel as sent
+          
+          const sentMsg = await bot.sendMessage(chatId, panelText, { parse_mode: "HTML" });
+          panelMessages[userId] = sentMsg.message_id;
         }
-        // Jika sudah dikirim, jangan kirim pesan apa pun (silent)
+        // Jika panel sudah ada, JANGAN kirim pesan apapun
         return;
       } catch (e) {
         console.error(e);
@@ -205,12 +199,14 @@ export default function (bot, db, saveDB) {
       }
     }
 
+    // Step 2: Input nama file output
     if (session.step === 2) {
       if (/^batal$/i.test(text)) {
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
-        delete panelSent[userId]; // Clear panel tracking
-        return sendWithDelete(userId, chatId, 
+        delete panelMessages[userId];
+        
+        return bot.sendMessage(chatId, 
           `◆◆  DIBATALKAN  ◆◆
 
 ┌─❖
@@ -254,10 +250,10 @@ export default function (bot, db, saveDB) {
 
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
-        delete panelSent[userId]; // Clear panel tracking
+        delete panelMessages[userId];
 
         bot.incrementOperation(userId);
-        return sendWithDelete(userId, chatId, 
+        return bot.sendMessage(chatId, 
           `◆◆  SUKSES  ◆◆
 
 ┌─❖
@@ -272,8 +268,9 @@ export default function (bot, db, saveDB) {
         console.error(e);
         for (const f of session.files) try { fs.unlinkSync(f); } catch {}
         delete sessions[userId];
-        delete panelSent[userId]; // Clear panel tracking
-        return sendWithDelete(userId, chatId, 
+        delete panelMessages[userId];
+        
+        return bot.sendMessage(chatId, 
           `◆◆  ERROR  ◆◆
 
 ┌─❖
