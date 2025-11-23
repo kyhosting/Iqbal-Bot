@@ -81,11 +81,12 @@ The system enforces group membership for VIP commands, uses single-use redeem co
 ## Recent Updates
 
 **Session Nov 23, 2025 - FAST FILE SENDING OPTIMIZATION + ORGANIZED FILE ORDER (v2.0.6):**
-- 📂 **FILES SENT IN ORGANIZED ORDER**
+- 📂 **FILES SENT IN ORGANIZED ORDER - TERSUSUN RAPI!**
   - `⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ ⛓️` & `⛓️ ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛ ⛓️` now sort files by numeric suffix before sending
-  - Files sent sequentially in correct order → **file-1, file-2, file-3 (TERSUSUN RAPI!)** 📊
-  - Numeric sorting ensures files appear organized in user's chat
+  - Files sent sequentially in correct order → **file-1, file-2, file-3** (TERSUSUN RAPI!) 📊
+  - Numeric sorting (`-(\d+)\.vcf` regex) ensures proper ascending order
   - Status message sent immediately after all files sent
+  - No artificial delays - FAST while maintaining perfect order
 
 - ✅ **PROCESSING MESSAGE PATTERN - 5 CONVERSION COMMANDS**
   - Applied to: TXT TO VCF, VCF TO TXT, XLS TO VCF, MSG TO TXT, CREATE ADMIN
