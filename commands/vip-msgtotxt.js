@@ -29,7 +29,8 @@ export default function (bot, db, saveDB) {
 
     const role = bot.getRole(userId);
     if (!["owner", "admin", "vip", "trial"].includes(role)) {
-      return bot.sendMessage(
+      return trackMessage(
+        userId,
         chatId,
         `◆◆  MSG TO TXT  ◆◆
 
@@ -87,7 +88,8 @@ export default function (bot, db, saveDB) {
 
       session.content = text;
       session.step = 2;
-      return bot.sendMessage(
+      return trackMessage(
+        userId,
         chatId,
         `◆◆  MSG TO TXT  ◆◆
 
