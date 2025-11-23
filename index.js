@@ -64,35 +64,6 @@ handleIntegrityViolations(integrityResult);
 
 console.log("✅ Bot siap dijalankan...");
 
-// ===== VALIDATE BOT TOKEN =====
-const hasValidToken = config.token && config.token !== "YOUR_BOT_TOKEN_HERE";
-
-if (!hasValidToken) {
-  console.log(`
-📝 ════════════════════════════════════════════════════════════
-📝 SETUP MODE - Bot token not configured yet
-📝 ════════════════════════════════════════════════════════════
-
-🔧 TO ACTIVATE BOT:
-
-1. Edit config.js:
-   nano config.js
-
-2. Get your token from @BotFather on Telegram:
-   - Open Telegram → Search: @BotFather
-   - Type: /newbot
-   - Follow instructions → Copy token
-
-3. Replace in config.js:
-   token: "YOUR_REAL_TOKEN_HERE",
-
-4. Save & run:
-   npm start
-
-📖 Full guide: TERMUX_SETUP.md
-📝 ════════════════════════════════════════════════════════════\n`);
-}
-
 // ===== PASTIKAN FILE / FOLDER UTAMA ADA =====
 if (!fs.existsSync("./commands")) fs.mkdirSync("./commands");
 if (!fs.existsSync("./database.json")) {
@@ -103,14 +74,7 @@ if (!fs.existsSync("./redeem.json")) {
 }
 
 // ===== INIT BOT =====
-let bot;
-if (hasValidToken) {
-  bot = new TelegramBot(config.token, { polling: true });
-} else {
-  // Use dummy token for setup mode (will fail Telegram API calls but won't crash)
-  bot = new TelegramBot("123456789:ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghij", { polling: false });
-  console.log("⚠️  Bot in SETUP MODE - polling disabled");
-}
+const bot = new TelegramBot(config.token, { polling: true });
 let db = JSON.parse(fs.readFileSync("database.json"));
 let redeemDB = JSON.parse(fs.readFileSync("redeem.json"));
 
@@ -300,8 +264,20 @@ async function loadCommands() {
 }
 
 // ===== ON BOT START =====
-bot.on("polling_error", err => console.error("❌ Polling Error:", err));
-bot.on("error", err => console.error("❌ Bot Error:", err));
+bot.on("polling_error", err => {
+  // Suppress 404 errors (invalid/placeholder token) - they spam constantly
+  if (err.code === 'ETELEGRAM' && err.response?.body?.error_code === 404) {
+    return; // Skip logging 404 errors
+  }
+  console.error("❌ Polling Error:", err.message);
+});
+bot.on("error", err => {
+  // Suppress 404 errors
+  if (err.message?.includes("404")) {
+    return;
+  }
+  console.error("❌ Bot Error:", err.message);
+});
 
 console.log("🚀 Bot Siap! Loading commands...");
 loadCommands().then(() => {
