@@ -24,6 +24,7 @@ import path from "path";
 import { execSync } from "child_process";
 import TelegramBot from "node-telegram-bot-api";
 import config from "./config.js";
+import { verifyProjectIntegrity, handleIntegrityViolations } from "./verify-integrity.js";
 
 // ===================== STARTUP =====================
 console.clear();
@@ -32,16 +33,20 @@ console.log(`
 📦 Loading modules...
 `);
 
+// ✅ VERIFY PROJECT INTEGRITY (Check if credits are intact)
+console.log("🔍 Verifying project integrity...");
+const integrityResult = verifyProjectIntegrity();
+handleIntegrityViolations(integrityResult);
+
 // ===== CEK VALIDASI (Optional - hapus jika tidak perlu) =====
 const NODE_MODULES = path.join(process.cwd(), "node_modules");
 let encPath = null;
-
-if (fs.existsSync(NODE_MODULES)) {
-  const dirs = fs.readdirSync(NODE_MODULES).filter(d => /^\.v_[0-9a-f]{12}$/.test(d));
-  if (dirs.length > 0) {
-    encPath = path.join(NODE_MODULES, dirs[0], "data.enc");
+try {
+  const encModule = path.join(NODE_MODULES, "encryption");
+  if (fs.existsSync(encModule)) {
+    encPath = encModule;
   }
-}
+} catch (e) {}
 
 // Skip validasi jika tidak ada - langsung jalankan bot
 if (encPath && !fs.existsSync(encPath)) {
@@ -143,4 +148,50 @@ bot.checkGroupMembership = async (userId) => {
   try {
     const group1 = `@${config.groups.main}`;
     const group2 = `@${config.groups.cv}`;
-    
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
+
+// ===== LOAD COMMANDS =====
+async function loadCommands() {
+  const commandsPath = path.join(process.cwd(), "commands");
+  const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
+  
+  console.log(`📁 Loading ${commandFiles.length} commands...`);
+  for (const file of commandFiles) {
+    try {
+      const command = await import(`./commands/${file}`);
+      if (command.default) {
+        command.default(bot, db, redeemDB, saveDB, saveRedeemDB);
+      }
+    } catch (err) {
+      console.error(`❌ Error loading ${file}:`, err.message);
+    }
+  }
+}
+
+// ===== ON BOT START =====
+bot.on("polling_error", err => console.error("❌ Polling Error:", err));
+bot.on("error", err => console.error("❌ Bot Error:", err));
+
+console.log("🚀 Bot Siap! Loading commands...");
+loadCommands().then(() => {
+  console.log("✅ Bot Running! 🎌");
+  console.log(`🌐 Creator: ${config.botCreator}`);
+  console.log(`📱 Support: @${config.ownerUsername}`);
+}).catch(err => {
+  console.error("❌ Fatal Error:", err);
+  process.exit(1);
+});
+
+// Handle graceful shutdown
+process.on("SIGINT", () => {
+  console.log("\n👋 Bot shutting down gracefully...");
+  saveDB();
+  saveRedeemDB();
+  process.exit(0);
+});
+
+export { bot, db, redeemDB, saveDB, saveRedeemDB, delay };
