@@ -16,6 +16,15 @@ The bot is built on Node.js using ES Modules, leveraging `node-telegram-bot-api`
 ### User Interface and Interaction
 The bot features a Japanese aesthetic with a clean template. It utilizes Telegram's keyboard buttons for navigation, which are displayed after every operation. All responses are formatted in Markdown, include relevant emojis, and maintain a friendly, professional tone using phrases like "Kak".
 
+### Keyboard Layout (v2.0.2)
+Professional 2x2 grid format with trailing emoji (⛓️):
+- **Row 1-2**: TXT↔VCF, XLS→VCF, MSG→TXT (2x2)
+- **Row 3-4**: Bagi File, Gabung File (full width)
+- **Row 5-6**: Potong File, Create Admin (2x2)
+- **Row 7-8**: Cek Kontak, Hitung File (2x2)
+- **Row 9-10**: Rename Kontak, Rename File (2x2)
+- **Row 11-12**: Redeem Code, Menu Owner (2x2)
+
 ### Group Verification System
 Access to certain bot features requires users to join two mandatory Telegram groups (`@agentviber12` and `@channelviber`). A caching system is implemented to verify group membership efficiently, only performing a full check if the user hasn't been verified before or if their status changes. The system automatically suspends user access if they leave either group and restores it upon rejoining and initiating the bot with `/start`. Owner accounts bypass this verification.
 
@@ -26,13 +35,34 @@ The bot incorporates a VIP system where users can gain premium access using sing
 - **Group Access Control**: In group chats, most bot features are restricted to VIP users and the bot owner. Regular users and those with redeem codes cannot access features in groups but can use them in direct messages with the bot.
 - **Role-Based Features**: Keyboard menus and commands are dynamically displayed based on the user's role (user, VIP, owner).
 
-### Features
-The bot offers a range of features categorized as:
-- **Conversion**: VCF to TXT, TXT to VCF, XLS to VCF, Message to TXT (extract numbers).
-- **File Management**: Split VCF, Merge TXT/VCF, Extract Numbers from various formats, Count contacts, Rename files, Rename contacts within VCF, Create Admin VCF.
-- **Utilities**: Display user profile, redeem VIP codes.
-- **Owner Commands**: Manage redeem codes and user VIP statuses.
-- **Group Management**: Set welcome messages and rules, ban/unban/kick users (VIP and admin only).
+### Features (25 Commands Total)
+**Conversion Features:**
+- ⛓️ ᴛxᴛ ᴛᴏ ᴠᴄꜰ ⛓️ - Convert text to vCard format
+- ⛓️ ᴠᴄꜰ ᴛᴏ ᴛxᴛ ⛓️ - Convert vCard to text format
+- ⛓️ xʟꜱ ᴛᴏ ᴠᴄꜰ ⛓️ - Convert Excel to vCard format
+- ⛓️ ᴍꜱɢ ᴛᴏ ᴛxᴛ ⛓️ - Extract numbers from messages
+
+**File Management Features:**
+- ⛓️ ʙᴀɢɪ ʟᴀɴᴊᴜᴛ ⛓️ - Split files (VCF/TXT/XLSX) by contact count
+- ⛓️ ɢᴀʙᴜɴɢ ꜰɪʟᴇ ⛓️ - Merge multiple files (VCF/TXT/XLSX)
+- ⛓️ ᴘᴏᴛᴏɴɢ ʟᴀɴᴊᴜᴛ ⛓️ - Extract range of contacts (VCF/TXT/XLSX)
+- ⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ ⛓️ - Count total contacts in file
+- ⛓️ ᴄᴇᴋ ᴋᴏɴᴛᴀᴋ ⛓️ - View contact details from file
+- ⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ ⛓️ - Rename individual contacts in VCF
+- ⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ ⛓️ - Rename downloaded files
+- ⛓️ ᴄʀᴇᴀᴛᴇ ᴀᴅᴍɪɴ ⛓️ - Create admin contact list
+
+**Utility Features:**
+- 🎁 ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ - Redeem VIP access code
+- /me - Display user profile
+- /fitur - Show available features
+- /cekid - Check user ID
+- /bantuan - Get help & info
+- /clear - Clear message history
+
+**Owner Commands:**
+- ⛓️ ᴍᴇɴᴜ ᴏᴡɴᴇʀ ⛓️ - Owner management panel
+- Plus redeem code management, user VIP status control, and group settings
 
 ### Database Structure
 User data is stored in `database.json`, including `id`, `username`, `first_name`, `last_name`, `role` (vip|user|owner), `vip_expired` timestamp, `status` (active|inactive|suspended), `total_operation` count, `suspended` flag for group access, `group_verified` for caching, and `notified_expiry` flag.
@@ -42,8 +72,27 @@ The system enforces group membership for VIP commands, uses single-use redeem co
 
 ## External Dependencies
 
-- `cheerio`: For parsing and manipulating HTML/XML (potentially for web scraping or specific file formats).
-- `node-fetch`: A light-weight module that brings `window.fetch` to Node.js for making HTTP requests.
-- `node-telegram-bot-api`: The official Telegram Bot API client for Node.js.
-- `vcard-parser`: Used for parsing and manipulating VCF (vCard) files.
-- `xlsx`: A library for reading and writing spreadsheet files (Excel).
+- `cheerio`: For parsing and manipulating HTML/XML
+- `node-fetch`: Brings `window.fetch` to Node.js for HTTP requests
+- `node-telegram-bot-api`: Official Telegram Bot API client for Node.js
+- `vcard-parser`: Parsing and manipulating VCF (vCard) files
+- `xlsx`: Reading and writing spreadsheet files (Excel)
+
+## Recent Updates
+
+**Session Nov 23, 2025 - KEYBOARD REDESIGN & NEW FEATURES (v2.0.2):**
+- 🎨 **KEYBOARD LAYOUT UPDATE** - Professional 2x2 grid with trailing emoji format
+  - All buttons now have consistent format: `⛓️ ᴛɪᴛʟᴇ ⛓️`
+  - Organized into logical 2x2 groups for better UX
+  
+- ✅ **3 NEW COMMANDS ADDED:**
+  - `⛓️ ʜɪᴛᴜɴɢ ꜰɪʟᴇ ⛓️` - Count contacts in VCF/TXT files
+  - `⛓️ ʀᴇɴᴀᴍᴇ ᴋᴏɴᴛᴀᴋ ⛓️` - Rename individual contacts in VCF
+  - `⛓️ ʀᴇɴᴀᴍᴇ ꜰɪʟᴇ ⛓️` - Rename downloaded files
+  
+- 🔧 **FIXED: Regex Pattern Matching**
+  - Updated 6 command files to match new trailing emoji format
+  - Fixed imports and VCF reconstruction in rename command
+  - All 25 commands now properly registered and working
+  
+- ✅ **Bot Status: 25/25 PLUGINS LOADED - PRODUCTION READY** 🚀

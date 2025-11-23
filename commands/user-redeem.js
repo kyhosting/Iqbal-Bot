@@ -17,7 +17,7 @@ export default function (bot, db, saveDB) {
     return trackMessage(userId, chatId, text, options);
   }
 
-  bot.onText(/^🎁 Redeem Code$|^🎁 REDEEM CODE$|^\/redeem$/i, async (msg) => {
+  bot.onText(/^🎁 ʀᴇᴅᴇᴇᴍ ᴄᴏᴅᴇ$|^🎁 REDEEM CODE$|^\/redeem$/i, async (msg) => {
     const chatId = msg.chat.id;
     const userId = msg.from.id;
 
